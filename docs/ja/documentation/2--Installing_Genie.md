@@ -1,26 +1,26 @@
-# How to Install Genie
+# Genieのインストール
 
-Genie development moves fast. Until reaching v1, the recommended installation is to get the latest and greatest Genie, by running off the `master` branch:
+Genieの開発は迅速です。 v1に到達するまで、`master`ブランチから実行して、最新かつ最高のGenieを取得することをお勧めします。
 
 ```julia
 pkg> add Genie#master
 ```
 
-You can also install Genie from Julia's registry -- for example the latest version:
+Juliaのレジストリからインストールすることもできます。以下は最新バージョンをインストールする例です。
 
 ```julia
 pkg> add Genie
 ```
 
-Genie, just like Julia, uses semantic versioning in the form vX.Y.Z to designate:
+GenieはJuliaと同様に、バージョン指定にX.Y.Z形式のセマンティックバージョニングを利用します。
 
-- X : major version, introducing breaking changes
-- Y : minor version, brings new features, no breaking changes
-- Z : patch version, fixes bugs, no new features or breaking changes
+- X : メジャーバージョン、 互換性を破る変更の導入
+- Y : マイナーバージョン、 新機能の提供、互換性を破る変更なし
+- Z : パッチバージョン、 バグ修正、 新機能なし、互換性を破る変更なし
 
 ---
-**HEADS UP**
+**注意喚起**
 
-Pre version 1, changes in Genie's minor version indicate breaking changes. So a new version 0.15 will introduce breaking changes from 0.14. Patch versions indicate non-breaking changes such as new features and patch releases.
+バージョン1より前では、Genieのマイナーバージョンの変更は、互換性を破る変更を示唆します。そのため、新しいバージョン0.15では、0.14からの互換性を破る変更が導入されます。パッチバージョンは、新機能やパッチリリースなどの互換性を破らない変更を示唆します。
 
 ---
