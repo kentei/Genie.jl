@@ -22,7 +22,7 @@ Genie is compatible with Julia v1.0 and up.
 
 **A deeper dive into the various Genie features and modules.**
 
-[Overview](documentation/1--Overview.md)
+[Overview](ja/documentation/1--Overview.md)
 
 [Installing Genie](documentation/2--Installing_Genie.md)
 
