@@ -1,12 +1,12 @@
-# Hello world with Genie
+# GenieでHello world
 
-Here are a few examples to quickly get you started with building Genie web apps.
+Genie Webアプリの構築をすぐに開始するためにいくつかの例を挙げます。
 
-## Running Genie interactively at the REPL or in Jupyter
+## REPLまたはJupyterで対話的にGenieを動かす
 
-The simplest use case is to configure a routing function at the REPL and start the web server. That's all that's needed to run your code on the web:
+もっとも簡単な使用例は、REPLでルーティング機能を構成し、Webサーバを起動することです。Webでコードを実行するのに必要なことはそれだけです。
 
-### Example
+### 例
 
 ```julia
 julia> using Genie, Genie.Router
@@ -18,34 +18,34 @@ julia> route("/hello") do
 julia> up()
 ```
 
-The `route` function (available in the `Router` module) defines a mapping between a URL (`"/hello"`) and a Julia function which will be automatically invoked to send the response back to the client. In this case we're sending back the string "Hello World".
+`route`関数(`Router`モジュールで利用可能)は、URL(`"/hello"`)とクライアントにレスポンスを送るために自動的に呼び出されるJuila関数とのマッピングを定義します。今回の例の場合は、文字列"Hello World"を送り返します。 
 
-That's all! We have set up an app, a route, and started the web server. Open your favourite web browser and go to <http://127.0.0.1:8000/hello> to see the result.
-
----
-**HEADS UP**
-
-Keep in mind that Julia JIT-compiles. A function is automatically compiled the first time it is invoked. The function, in this case, is our route handler serving the request. This will make the first response slower as it also includes compilation time. But once the function is compiled, for all the subsequent requests, it will be super fast!
+これがすべてです！アプリとルートを設定し、Webサーバを起動しました。お気に入りのブラウザを開き、<http://127.0.0.1:8000/hello>にアクセスして結果を確認します。
 
 ---
+**注意喚起**
 
-## Developing a simple Genie script
+JuliaのJIT(Just-In-Time)コンパイルに注意してください。関数は初めて呼び出されたとき自動的にコンパイルされます。この場合、関数はリクエストを処理するルートハンドラです。このことにより、コンパイル時間も含まれるため最初の応答が遅くなります。しかし、一度関数がコンパイルされてしまえば、そのあとのすべてのリクエストに対して、非常に高速になります！
 
-Genie can also be used in custom scripts, for example when building micro-services with Julia. Let's create a simple Hello World micro-service.
+---
 
-Start by creating a new file to host our code -- let's call it `geniews.jl`
+## シンプルなGenieスクリプトの開発
+
+Genieは、Juliaでマイクロサービスを構築するときなど、カスタムスクリプトでも使用できます。簡単なHello Worldマイクロサービスを作成しましょう。
+
+コードを書く新しいファイルを作成することから始めます。それを`geniews.jl`としましょう。
 
 ```julia
 julia> touch("geniews.jl")
 ```
 
-Now, open it in the editor:
+次に`geniews.jl`をエディタで開きます。
 
 ```julia
 julia> edit("geniews.jl")
 ```
 
-Add the following code:
+以下のコードを追加します。
 
 ```julia
 using Genie, Genie.Router
@@ -66,16 +66,16 @@ end
 up(8001, async = false)
 ```
 
-We begun by defining 2 routes and we used the `html` and `json` rendering functions (available in the `Renderer.Html` and the `Renderer.Json` modules). These functions are responsible for outputting the data using the correct format and document type (with the correct MIME), in our case HTML data for `hello.html`, and JSON data for `hello.json`.
+まず2つのルートを定義し、`html`および` json`レンダリング関数(`Renderer.Html`モジュールや`Renderer.Json`モジュールで利用可能)を使用しました。こららの関数は、正しい形式とドキュメントタイプ(正しいMIME)を利用することでデータを出力する役割を果たします。今回の場合は、`hello.html`のHTMLデータと`hello.json`のJSONデータです。
 
-The third `route` serves text responses. As Genie does not provide a specialized method for sending `text/plain` responses, we use the generic `respond` function, indicating the desired MIME type. In our case `:text`, corresponding to `text/plain`. Other available MIME types shortcuts are `:xml`, `:markdown`, and `:javascript`. If you're looking for something else, you can always pass the full mime type as a string, ie `"text/csv"`.
+3番目の`route`はテキスト形式のレスポンスを提供します。Genieは`text/plain`形式のレスポンスを送信するための特別な方法を提供していないため、一般的な`respond`関数を利用し、望むMIME形式を指定します。今回の場合は、`text / plain`に対応する`：text`です。他に利用可能なMIME形式のショートカットは、`:xml`、`:markdown`、`:javascript`です。他の指定については、文字列でのフルMIME形式の指定ができます。(例：`"text/csv"`)
 
-The `up` function will launch the web server on port `8001`. This time, very important, we instructed it to start the server synchronously (that is, _blocking_ the execution of the script), by passing the `async = false` argument. This way we make sure that our script stays running. Otherwise, at the end of the script, it would normally exit, killing our server.
+`up`関数は`8001`ポートでWebサーバを起動します。この時、非常に重要なのは、`async = false`を引数で渡すことにより、サーバーを同期的(つまり、スクリプト実行のブロッキング操作)に開始できるように命令していることです。このようにして、スクリプトの実行を維持しています。そうしないと、スクリプトの最後で通常終了し、サーバが強制終了します。
 
-In order to launch the script, run `$ julia geniews.jl`.
+スクリプトを起動するには、`$ julia geniews.jl`を実行します。
 
-## Batteries included
+## バッテリー同梱(標準機能の充実性)
 
-Genie readily makes available a rich set of features - you have already seen the rendering and the routing engines in action. But for instance, logging (to file and console) can also be easily triggered with one line of code, powerful caching can be enabled with a couple more lines, and so on.
+Genieでは豊富な機能のセットがすぐに利用できるようになっています。(レンダリングエンジンとルーティングエンジンの動作はすでに見てきたとおりです。)ただし、例えば、1行のコードで(ファイルやコンソールへの)ログを簡単にトリガーしたり、さらに数行で強力なキャッシュを有効にしたりできます。
 
-The app already handles "404 Page Not Found" and "500 Internal Error" responses. If you try to access a URL which is not handled by the app, like say <http://127.0.0.1:8001/not_here>, you'll see Genie's default 404 page. The default error pages can be overwritten with custom ones and we'll see how to do this later on.
+アプリはすでに「404 Page Not Found」や「500 Internal Error」レスポンスを処理しています。もし<http://127.0.0.1:8001/not_here>のようにアプリで処理されないURLにアクセスしようとすると、Genieのデフォルト404ページが表示されます。デフォルトのエラーページはカスタムページで上書きすることができます。手順はあとで示します。

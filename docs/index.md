@@ -26,7 +26,7 @@ Genie is compatible with Julia v1.0 and up.
 
 [Genieのインストール](ja/documentation/2--Installing_Genie.md)
 
-[Getting Started with Genie](documentation/3--Getting_Started.md)
+[Genieを始めよう](ja/documentation/3--Getting_Started.md)
 
 [Using Genie as a Micro Framework](documentation/4--Developing_Web_Services.md)
 
