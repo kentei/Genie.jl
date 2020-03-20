@@ -2,13 +2,13 @@
 
 ![Genie Logo](content/img/genie_logo.png)
 
-## The highly productive Julia web framework
+## 生産性の高いJulia Webフレームワーク
 
-Genie is a full-stack MVC web framework that provides a streamlined and efficient workflow for developing modern web applications. It builds on Julia's strengths (high-level, high-performance, dynamic, JIT compiled), exposing a rich API and a powerful toolset for productive web development.
+Genieは、モダンなWebアプリケーションを開発するための合理化された効率的なワークフローを提供するフルスタックMVC Webフレームワークです。 Juliaの長所（高レベル、高性能、動的、JITコンパイル）に基づいて構築され、生産的なWeb開発のための豊富なAPIと強力なツールセットを公開します。
 
-### Current status
+### 現在の状態
 
-Genie is compatible with Julia v1.0 and up.
+GenieはJulia v1.0以降と互換性があります。
 
 ## Getting started
 
@@ -18,9 +18,9 @@ Genie is compatible with Julia v1.0 and up.
 
 [The Genie Walkthrough: Developing Genie Apps, Intermediate Topics](guides/Working_With_Genie_Apps_Intermediary_Topics.md)
 
-## Documentation
+## ドキュメント
 
-**A deeper dive into the various Genie features and modules.**
+**様々なGenieの機能とモジュールの詳細**
 
 [概要](ja/documentation/1--Overview.md)
 
@@ -28,7 +28,7 @@ Genie is compatible with Julia v1.0 and up.
 
 [Genieを始めよう](ja/documentation/3--Getting_Started.md)
 
-[Using Genie as a Micro Framework](documentation/4--Developing_Web_Services.md)
+[マイクロフレームワークとしてのGenieの利用](ja/documentation/4--Developing_Web_Services.md)
 
 [Handling Query/GET Params](documentation/5--Handling_Query_Params.md)
 
