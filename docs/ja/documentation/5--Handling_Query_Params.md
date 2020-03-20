@@ -1,8 +1,8 @@
-# Handling query params (GET variables)
+# クエリパラメータの処理 (GET変数)
 
-Genie makes it easy to access query params, which are values sent as part of the URL over GET requests (ex: mywebsite.com/index?foo=1&bar=2 `foo` and `bar` are query params corresponding to the variables `foo = 1` and `bar = 2`). All these values are automatically collected by Genie and exposed in the `@params` collection (which is part of the `Router` module).
+Genieは、GETリクエストを介してURLの一部分として送信されるクエリパラメータに簡単にアクセスすることができます(例：「mywebsite.com/index?foo=1&bar=2」の`foo`と`bar`は変数`foo = 1`、`bar = 2`に対応するクエリパラメータです)。これらの値はすべてGenieによって自動的に収集され、`@params`コレクション(`Router`モジュールの一部)に公開されます。
 
-### Example
+### 例
 
 ```julia
 using Genie, Genie.Router
@@ -13,18 +13,17 @@ route("/hi") do
   "Hello $name"
 end
 ```
+<http://127.0.0.1:8000/hi>にアクセスすると、クエリパラメータ指定がないため、アプリは「Hello Anon」を返します。
 
-If you access <http://127.0.0.1:8000/hi> the app will respond with "Hello Anon" since we're not passing any query params.
+しかしながら、<http://127.0.0.1:8000/hi?name=Adrian>へのリクエストは、`name`クエリ変数に`Adrian`という値を渡しているため、「Hello Adrian」と表示します。この変数はGenieによって`@params(:name)`として公開されています。
 
-However, requesting <http://127.0.0.1:8000/hi?name=Adrian> will in turn display "Hello Adrian" as we're passing the `name` query variable with the value `Adrian`. This variable is exposed by Genie as `@params(:name)`.
+しかし、Genieは `Requests`モジュールでこれらの値にアクセスするためのユーティリティメソッドを提供します。
 
-Genie however provides utility methods for accessing these values in the `Requests` module.
+## `Requests`モジュール
 
-## The `Requests` module
+Genieは、`Requests`モジュール内でリクエストデータを操作するためのユーティリティセットを提供しています。`getpayload`メソッドを利用することで、クエリパラメータを`Dict{Symbol,Any}`として取得することができます。`Requests`ユーティリティを利用することで前のルートを書き直すことができます。
 
-Genie provides a set of utilities for working with requests data within the `Requests` module. You can use the `getpayload` method to retrieve the query params as a `Dict{Symbol,Any}`. We can rewrite the previous route to take advantage of the `Requests` utilities.
-
-### Example
+### 例
 
 ```julia
 using Genie, Genie.Router, Genie.Requests
@@ -34,4 +33,4 @@ route("/hi") do
 end
 ```
 
-The `getpayload` function has a few specializations, and one of them accepts the key and a default value. The default value is returned if the `key` variable is not defined. You can see the various implementations for `getpayload` using the API docs or Julia's `help>` mode.
+`getpayload`関数はいくつかの特殊性があり、そのうちの1つにはキーとデフォルト値を受け入れることが挙げられます。`key`変数が定義されていない場合、デフォルト値が返されます。APIドキュメントまたはJuliaの `help>`モードを利用することで、 `getpayload`のさまざまな実装を確認できます。

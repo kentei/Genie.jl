@@ -30,7 +30,7 @@ GenieはJulia v1.0以降と互換性があります。
 
 [マイクロフレームワークとしてのGenieの利用](ja/documentation/4--Developing_Web_Services.md)
 
-[Handling Query/GET Params](documentation/5--Handling_Query_Params.md)
+[クエリパラメータの処理/GETパラメータ](ja/documentation/5--Handling_Query_Params.md)
 
 [Working with POST Payloads](documentation/6--Working_with_POST_Payloads.md)
 
