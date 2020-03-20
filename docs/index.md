@@ -2,6 +2,13 @@
 
 ![Genie Logo](content/img/genie_logo.png)
 
+**注意：本ドキュメントについて**
+
+Juila言語向けのフルスタックMVC WebフレームワークGenieのドキュメントを日本語化しています。
+
+ドキュメントバージョンは`v0.28.0`を元に訳しています。(翻訳中です)
+
+
 ## 生産性の高いJulia Webフレームワーク
 
 Genieは、モダンなWebアプリケーションを開発するための合理化された効率的なワークフローを提供するフルスタックMVC Webフレームワークです。 Juliaの長所（高レベル、高性能、動的、JITコンパイル）に基づいて構築され、生産的なWeb開発のための豊富なAPIと強力なツールセットを公開します。
@@ -48,7 +55,7 @@ GenieはJulia v1.0以降と互換性があります。
 
 [Configuration: Initializers](documentation/13--Initializers.md)
 
-[Configuration: The Secrets File](documentation/14--The_Secrets_File.md)
+[設定: シークレットファイル](ja/documentation/14--The_Secrets_File.md)
 
 [Loading External Modules](documentation/15--The_Lib_Folder.md)
 

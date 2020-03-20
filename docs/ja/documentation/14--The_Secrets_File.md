@@ -1,14 +1,14 @@
-# The secrets (`config/secrets.jl`) file
+# シークレットファイル(`config/secrets.jl`)
 
-Confidential configuration data (like API keys, usernames, passwords, etc) should be added to the `config/secrets.jl` file. This file is by default added to `.gitignore` when creating a Genie app, so it won't be added to source control -- avoid that it is accidentally exposed.
+秘密の設定データ(APIキーやユーザ名、パスワードなど)は、`config/secrets.jl`ファイルに追加すべきです。このファイルはアプリ生成時にデフォルトで`.gitigonre`ファイルに追加されるため、ソース管理に追加されることはありません。誤って公開することは避けてください。
 
-## Scope
+## スコープ
 
-All the definitions (variables, constants, functions, modules, etc) added to the `secrets.jl` file are loaded into your app's module. So if your app is called `MyGenieApp`, the definitions will be available under the `MyGenieApp` module.
+`secrets.jl`ファイルに追加されたすべての定義(変数、定数、関数、モジュールなど)はアプリのモジュールにロードされます。そのため、アプリ名が`MyGenieApp`の場合、定義は`MyGenieApp`モジュールの下で利用できます。
 
 ---
-**HEADS UP**
+**注意喚起**
 
-Given the your app's name is variable, you can also access your app's module through the `UserApp` constant. So all the definitions added to `secrets.jl` can also be accessed through the `UserApp` module (`UserApp === MyGenieApp`).
+アプリの名前が変更可能である場合、`UserApp`定数を介してアプリのモジュールにアクセスすることもできます。つまり、`secrets.jl`に追加されたすべての定義は、`UserApp`モジュールからもアクセスできるということです。(`UserApp === MyGenieApp`ということです)
 
 ---
