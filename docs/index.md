@@ -34,7 +34,7 @@ GenieはJulia v1.0以降と互換性があります。
 
 [POSTペイロードの操作](ja/documentation/6--Working_with_POST_Payloads.md)
 
-[Using JSON Payloads](documentation/7--Using_JSON_Payloads.md)
+[JSONペイロードの利用](ja/documentation/7--Using_JSON_Payloads.md)
 
 [Handling File Uploads](documentation/8--Handling_File_Uploads.md)
 
