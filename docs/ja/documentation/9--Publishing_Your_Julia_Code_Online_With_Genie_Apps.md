@@ -1,16 +1,17 @@
-# Adding your existing Julia code into Genie apps
+# Genieアプリに既存Juliaコードの追加
 
-If you have existing Julia code (modules and libraries) which you'd like to quickly expose on the web without building an app from scratch, Genie provides an easy way to add and load your code into an app.
+既存のJuliaコード(モジュールとライブラリ)があり、アプリをゼロから構築せずにWeb上ですぐに公開したい場合、Genieはアプリにコードを追加したり読み込んだりする簡単な方法を提供します。
 
-## Adding your Julia code to a Genie app
+## JuliaコードをGenieアプリに追加
 
-If you have an existing Julia application or standalone codebase which you'd like to expose over the web through a Genie app, the simplest thing is to add the files to the `lib/` folder. The `lib/` folder is automatically added by Genie to the `LOAD_PATH`, _recursively_.
+既存のJuliaアプリケーションまたはスタンドアローンのコードベースがあり、Genieアプリを介してWeb上で公開した場合、最もシンプルなのはファイルを`lib/`フォルダーに追加することです。`lib/`フォルダはGenieによって再帰的に`LOAD_PATH`に自動で追加されます。
 
-This means that you can also add folders under `lib/`, and they will be recursively added to the `LOAD_PATH`. Beware though that this only happens when the Genie app is initially loaded. Hence, an app restart might be required if you add nested folders after the app is started.
+つまり、`lib/`フォルダ配下にフォルダを追加することもでき、それらが再帰的に`LOAD_PATH`に追加されるということです。ただし、これはGenieアプリが最初にロードされた時にのみ発生することに注意してください。したがって、アプリの起動後にネストされたフォルダを追加する場合は、アプリの再起動が必要になることもあります。
 
 ---
-**HEADS UP**
+**注意喚起**
 
+ほとんどの場合、Genieはデフォルトで`lib/`フォルダを生成しません。アプリのルートに`lib/`フォルダが存在しない場合は、自身で作成するようにしてください。
 In most cases, Genie won't create the `lib/` folder by default. If the `lib/` folder is not present in the root of the app, just create it yourself:
 
 ```julia
@@ -19,7 +20,7 @@ julia> mkdir("lib")
 
 ---
 
-Once your code is added to the `lib/` folder, it will become available in your app's environment. For example, say we have a file called `lib/MyLib.jl`:
+一度コードが`lib/`フォルダに追加されると、アプリから利用可能になります。例として、`lib/MyLib.jl`を追加してみましょう。
 
 ```julia
 # lib/MyLib.jl
@@ -34,7 +35,7 @@ end
 end
 ```
 
-Then we can reference it in `routes.jl` and expose it on the web as follows:
+次に、`routes.jl`で上記ライブラリを参照し、以下のようにWeb上で公開してみましょう。
 
 ```julia
 # routes.jl
@@ -42,8 +43,8 @@ using Genie.Router
 using MyLib
 
 route("/friday") do
-  MyLib.isitfriday() ? "Yes, it's Friday!" : "No, not yet :("
+  MyLib.isitfriday() ? "今日は金曜日です!" : "まだ金曜日ではありません :("
 end
 ```
 
-Use the `lib/` folder to host your Julia code so that Genie knows where to look in order to load it and make it available throughout the application.
+Genieが既存のJuliaコードをロードするために探す場所を知り、アプリケーションを介してコードを利用可能とできるように、コードの置き場所として`lib/`フォルダを利用してください。

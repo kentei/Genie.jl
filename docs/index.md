@@ -38,7 +38,7 @@ GenieはJulia v1.0以降と互換性があります。
 
 [ファイルアップロードの操作](ja/documentation/8--Handling_File_Uploads.md)
 
-[Adding Your Existing Julia Code into Genie](documentation/9--Publishing_Your_Julia_Code_Online_With_Genie_Apps.md)
+[Genieアプリに既存Juliaコードの追加](ja/documentation/9--Publishing_Your_Julia_Code_Online_With_Genie_Apps.md)
 
 [Loading Genie Apps](documentation/10--Loading_Genie_Apps.md)
 
