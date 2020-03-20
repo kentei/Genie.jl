@@ -57,7 +57,7 @@ GenieはJulia v1.0以降と互換性があります。
 
 [設定: シークレットファイル](ja/documentation/14--The_Secrets_File.md)
 
-[Loading External Modules](documentation/15--The_Lib_Folder.md)
+[外部モジュールのロード](ja/documentation/15--The_Lib_Folder.md)
 
 [Working with WebSockets](documentation/17--Working_with_Web_Sockets.md)
 
