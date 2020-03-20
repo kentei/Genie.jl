@@ -42,7 +42,7 @@ GenieはJulia v1.0以降と互換性があります。
 
 [Genieアプリのロード](ja/documentation/10--Loading_Genie_Apps.md)
 
-[Managing External Dependencies](documentation/11--Managing_External_Packages.md)
+[外部パッケージの管理](ja/documentation/11--Managing_External_Packages.md)
 
 [Routing Requests Complete Guide](documentation/12--Advanced_Routing_Techniques.md)
 
@@ -56,7 +56,7 @@ GenieはJulia v1.0以降と互換性があります。
 
 [Eager Compilation of Routes](documentation/80--Force_Compiling_Routes.md)
 
-## Guides
+## ガイド
 
 **Genie can be used for a variety of tasks, from quickly whipping up a web server to full MVC web apps. Use the following resources to dive into each use case.**
 
@@ -68,7 +68,7 @@ GenieはJulia v1.0以降と互換性があります。
 
 [Managing Frontend Assets with the Asset Pipeline](guides/Frontend_assets.md)
 
-## Deployment
+## 開発
 
 **Guides for deployments on various hosts.**
 
@@ -76,11 +76,11 @@ GenieはJulia v1.0以降と互換性があります。
 
 [Deploying with Heroku Buildpacks](documentation/90--Deploying_With_Heroku_Buildpacks.md)
 
-## API docs
+## APIドキュメント
 
 [Developer API Docs](documentation/API)
 
-## Acknowledgements
+## 謝辞
 
-* Genie uses a multitude of packages that have been kindly contributed by the Julia community.
-* The awesome Genie logo was designed by Alvaro Casanova (www.yeahstyledg.com).
+* Genieは、Juliaコミュニティから親切に寄贈された多数のパッケージを使用しています。
+* 素晴らしいGenieロゴは、Alvaro Casanovaによってデザインされました。(www.yeahstyledg.com)

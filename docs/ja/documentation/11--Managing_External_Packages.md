@@ -1,15 +1,15 @@
-# Managing external packages for your Genie app
+# Genieアプリの外部パッケージ管理
 
-Genie fully takes advantage of Julia's excellent package manager, `Pkg` -- while allowing Genie developers to use any 3rd party package available in Julia's ecosystem. This is achieved by taking a common sense approach: Genie apps are just plain Julia projects. This can be easily confirmed by looking at the familiar `Project.toml` and `Manifest.toml` files in the root of your Genie app.
+GenieはJuliaの素晴らしいパッケージマネージャーである`Pkg`をフル活用しますが、一方でGenie開発者はJuliaのエコシステムで利用可能な3rdパーティパッケージを利用できます。これは常識的なアプローチをとることで成し遂げることができます。Genieアプリは単なるJuliaプロジェクトです。このことは、Genieアプリのルートにあるおなじみの`Project.toml`と`Manifest.toml`を見れば一目瞭然です。
 
-In order to add extra packages to your Genie app, thus, we need to use Julia's `Pkg` mode:
+上記のことから、Genieアプリに追加のパッケージを追加するためには、Juliaの`Pkg`モードを使用する必要があります。
 
-1. start a Genie REPL with your app: `$ bin/repl`. This will automatically load the package environment of the app.
-2. switch to `Pkg` mode: `julia> ]`
-3. add the package you want, for example `OhMyREPL`: `(MyGenieApp) pkg> add OhMyREPL`
+1. `$ bin/repl`コマンドによりアプリでGenie REPLを起動します。これにより、アプリのパッケージ環境が自動的にロードされます。
+2. `julia> ]`により、`Pkg`モードに切り替えます。
+3. 追加したいパッケージを追加します。例えば`OhMyREPL`というパッケージを追加する場合、`(MyGenieApp) pkg> add OhMyREPL`を実施する。
 
-That's all! Now you can use the packages at the Genie REPL or anywhere in your files via `using` or `import`.
+これですべてです！これで、`using`または`import`を利用してGenie REPLまたはファイル内の任意の場所でパッケージを利用できます。
 
-Use the same approach to update all the packages, via: `pkg> up` to apply all available updates, or `pkg> up OhMyREPL` to update a single package.
+同じ方法ですべてのパッケージを更新します。`pkg> up`を使用してすべての利用可能な更新を適用するか、または`pkg> up OhMyREPL`のように個別パッケージを更新します。
 
-Finally, you can use `pkg> remove OhMyREPL` to uninstall a dependency.
+最後に、`pkg> remove OhMyREPL`のように実行することで、依存関係をアンインストールすることができます。
