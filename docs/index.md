@@ -40,7 +40,7 @@ GenieはJulia v1.0以降と互換性があります。
 
 [Genieアプリに既存Juliaコードの追加](ja/documentation/9--Publishing_Your_Julia_Code_Online_With_Genie_Apps.md)
 
-[Loading Genie Apps](documentation/10--Loading_Genie_Apps.md)
+[Genieアプリのロード](ja/documentation/10--Loading_Genie_Apps.md)
 
 [Managing External Dependencies](documentation/11--Managing_External_Packages.md)
 
