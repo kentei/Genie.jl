@@ -36,7 +36,7 @@ GenieはJulia v1.0以降と互換性があります。
 
 [JSONペイロードの利用](ja/documentation/7--Using_JSON_Payloads.md)
 
-[Handling File Uploads](documentation/8--Handling_File_Uploads.md)
+[ファイルアップロードの操作](ja/documentation/8--Handling_File_Uploads.md)
 
 [Adding Your Existing Julia Code into Genie](documentation/9--Publishing_Your_Julia_Code_Online_With_Genie_Apps.md)
 
