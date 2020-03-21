@@ -1,73 +1,73 @@
-# Advanced routing techniques
+# 高度なルーティング技術
 
-Genie's router can be considered the brain of the app, matching web requests to functions, extracting and setting up the request's variables and the execution environment, and invoking the response methods. Such power is accompanied by a powerful set of features for defining routes. Let's dive into these.
+Genieのルータは、アプリの頭脳とみなされます。それはWebリクエストを機能と照合し、リクエストの変数と実行環境を抽出、設定し、レスポンスメソッドを呼び出します。このような能力にはルートを定義するための強力な機能セットが必要となります。これらの機能を見ていきましょう。
 
-## Static routing
+## 静的ルーティング
 
-Starting with the simplest case, we can register "plain" routes by using the `route` method. The method takes as its required arguments the URI pattern and the function that should be invoked in order to provide the response. The router supports two ways of registering routes, either `route(pattern::String, f::Function)` or `route(f::Function, pattern::String)`. The first syntax is for passing function references -- while the second is for defining inline function.
+最もシンプルなケースから始めると、`route`メソッドを利用することで「プレーン」なルートを登録することができます。そのメソッドは、URIパターンとレスポンスを返すために必要な関数を必須引数として扱います。ルータは、ルートを登録する2つの方法をサポートしており、`route(pattern::String, f::Function)`または`route(f::Function, pattern::String)`が挙げられます。一番目の構文は関数参照を渡すためのもので、二番目はインライン関数を定義するためのものです。
 
-### Example
+### 例
 
-The following snippet defines a function `greet` which returns the "Welcome to Genie!" string. We use the function as our route handler, by passing it as the second argument to the `route` method.
+以下のスニペットは「Genieへようこそ！」という文字列を返す`greet`関数を定義しています。`route`メソッドへ第二引数としてその関数を渡すことで、ルートハンドラとして関数を利用します。
 
 ```julia
 using Genie, Genie.Router
 
-greet() = "Welcome to Genie!"
+greet() = "Genieへようこそ!"
 
 route("/greet", greet)          # [GET] /greet => greet
 
 up() # start the server
 ```
 
-If you use your browser to navigate to <http://127.0.0.1:8000/greet> you'll see the code in action.
+ブラウザで<http://127.0.0.1:8000/greet>へ移動すると、コードの動きを確認できます。
 
-However, defining a dedicated handler function might be overkill for simple cases like this. As such, Genie allows registering in-line handlers:
+しかし、このようなシンプルなケースでは、専用のハンドラ関数を用意するのはやりすぎかもしれません。そのため、Genieではインラインハンドラを登録できます。
 
 ```julia
 route("/bye") do
-  "Good bye!"
+  "さようなら!"
 end                 # [GET] /bye => getfield(Main, Symbol("##3#4"))()
 ```
 
-You can just navigate to <http://127.0.0.1:8000/bye> -- the route is instantly available in the app.
+<http://127.0.0.1:8000/bye>に移動すると、すぐにアプリでルート(route)を利用することができます。
 
 ---
-**HEADS UP**
+**注意喚起**
 
-The routes are added in the order in which they are defined but are matched from newest to oldest. This means that you can define a new route to overwrite a previously defined one.
+ルートは定義された順に追加されますが、最新のものから最古のものまで一致させます。つまり、以前に定義したルートを上書くための新しいルートを定義できるということです。
 
-Unlike Julia's multiple dispatch, Genie's router won't match the most specific rule, but the first matching one. So if, for example, you register a route to match `/*`, it will handle all the requests, even if you have previously defined more specific routes. As a side-note, you can use this technique to temporarily divert all users to a maintenance page.
+Juliaの複数のディスパッチとは異なり、Genieのルータは具体的なルートではなく、最初に一致したルートに一致します。したがって、例えば`/*`に一致するようにルートを登録すると、以前により具体的なルートを定義していたとしても、すべてのリクエストを処理します。補足としてですが、この手法を利用して、一時的にすべてのユーザをメンテナンスページに誘導することができます。
 
 ---
 
-## Dynamic routing (using route parameters)
+## 動的ルーティング(ルートパラメータの利用)
 
-Static routing works great for fixed URLs. But what if we have dynamic URLs, where the components map to information in the backend (like database IDs) and vary with each request? For example, how would we handle a URL like "/customers/57943/orders/458230", where 57943 is the customer id and 458230 is the order id.
+静的ルーティングは固定URLに最適です。しかし、コンポーネントがバックエンドの情報(データベースのIDなど)に対応づいており、各リクエストで異なる動的URLである場合はどうでしょうか？例えば、`/customers/57943/orders/458230`(顧客ID:57943、注文ID:458230)のようなURLをどのように処理するかです。
 
-Such situations are handled through dynamic routing or route parameters. For the previous example, "/customers/57943/orders/458230", we can define a dynamic route as "/customers/:customer_id/orders/:order_id". Upon matching the request, the Router will unpack the values and expose them in the `@params` collection.
+このような場合、動的ルーティングまたはルートパラメータによって処理されます。以前の例`/customers/57943/orders/458230`では、動的ルートを`/customers/:customer_id/orders/:order_id`として定義できます。リクエストに一致すると、ルータは値を展開し、それらを`@params`コレクションに公開します。
 
-### Example
+### 例
 
 ```julia
 using Genie, Genie.Router, Genie.Requests
 
 route("/customers/:customer_id/orders/:order_id") do
-  "You asked for the order $(payload(:order_id)) for customer $(payload(:customer_id))"
+  "顧客$(payload(:customer_id))の注文$(payload(:order_id))に対して尋ねました。"
 end
 
 up()
 ```
 
-## Routing methods (`GET`, `POST`, `PUT`, `PATCH`, `DELETE`, `OPTIONS`)
+## ルーティングモジュール(`GET`、`POST`、`PUT`、`PATCH`、`DELETE`、`OPTIONS`)
 
-By default, routes handle `GET` requests, since these are the most common. In order to define routes for handling other types of request methods, we need to pass the `method` keyword argument, indicating the HTTP method. Genie's Router supports `GET`, `POST`, `PUT`, `PATCH`, `DELETE`, `OPTIONS` methods.
+最も一般的なリクエストであるということから、デフォルトでルート(route)は`GET`リクエストを処理します。他の種類のリクエストメソッドを処理するためのルートを定義するために、HTTPメソッドを示す`method`キーワード引数を渡す必要があります。Genieのルータは`GET`、`POST`、`PUT`、`PATCH`、`DELETE`、`OPTIONS`メソッドをサポートしています。
 
-The router defines and exports constants for each of these as `Router.GET`, `Router.POST`, `Router.PUT`, `Router.PATCH`, `Router.DELETE`, and `Router.OPTIONS`.
+ルータは`Router.GET`、`Router.POST`、`Router.PUT`、`Router.PATCH`、`Router.DELETE`、`Router.OPTIONS`のように各メソッドに対して定数を定義しエクスポートします。
 
-### Example
+### 例
 
-We can setup the following `PATCH` route:
+以下、`PATCH`ルートを設定します。
 
 ```julia
 using Genie, Genie.Router, Genie.Requests
@@ -79,7 +79,7 @@ end
 up()
 ```
 
-And we can test it using the `HTTP` package:
+そして`HTTP`パッケージを利用してテストします。
 
 ```julia
 using HTTP
@@ -90,15 +90,15 @@ HTTP.request("PATCH", "http://127.0.0.1:8000/patch_stuff").body |> String
 "Stuff to patch"
 ```
 
-By sending a request with the `PATCH` method, our route is triggered. Consequently, we access the response body and convert it to a string, which is "Stuff to patch", corresponding to our response.
+`PATCH`メソッドでリクエストを送信することにより、ルートがトリガーされます。その結果、レスポンスボディにアクセスし、レスポンスに対応する「Stuff to patch」という文字列に変換します。
 
-## Named routes
+## 名前付きルート
 
-Genie allows tagging routes with names. This is a very powerful feature, to be used in conjunction with the `Router.tolink` method, for dynamically generating URLs towards the routes. The advantage of this technique is that if we refer the route by name and generate the links dynamically using `tolink`, as long as the name of the route stays the same, if we change the route pattern, all the URLs will automatically match the new route definiton.
+Genieでは名前でルートにタグ付けをすることができます。これは、ルートに対する動的URLのために、`Router.tolink`メソッドと組み合わせて利用される非常に強力な機能です。この手法の利点は、名前によってルートを参照し`tolink`を使用して動的リンクを生成する場合、ルートの名前が一致している限り、ルートパターンを変えたとしてもすべてのURLが新しいルート定義に自動的に一致することです。
 
-In order to name a route we need to use the `named` keyword argument, which expects a `Symbol`.
+ルートに名前をつけるには、`named`キーワード引数を利用する必要があり、これには`Symbolが必要です`
 
-### Example
+### 例
 
 ```julia
 using Genie, Genie.Router, Genie.Requests
@@ -108,7 +108,7 @@ route("/customers/:customer_id/orders/:order_id", named = :get_customer_order) d
 end         #  [GET] /customers/:customer_id/orders/:order_id => getfield(Main, Symbol("##5#6"))()
 ```
 
-We can check the status of our route with:
+ルートの状態をチェックします。
 
 ```julia
 julia> @routes
@@ -117,13 +117,13 @@ OrderedCollections.OrderedDict{Symbol,Genie.Router.Route} with 1 entry:
 ```
 
 ---
-**HEADS UP**
+**注意喚起**
 
-For consistency, Genie names all the routes. However, the auto-generated name is state dependent. So, if you change the route, it's possible that the name will change as well. Thus, it's best to explicitly name the routes if you plan on referencing them throughout the app.
+一貫性のため、Genieはすべてのルートに名前をつけます。ただし、自動生成された名前は状態に依存します。そのため、ルートを変更した場合、名前も変更される可能性があります。したがって、アプリ全体で参照する場合はルートに明示的に名前をつけておくのが最善であると言えます。
 
 ---
 
-We can confirm this by adding an anonymous route:
+匿名ルートの追加によるルートの状態変化を確認します。
 
 ```julia
 route("/foo") do
@@ -136,7 +136,7 @@ OrderedCollections.OrderedDict{Symbol,Genie.Router.Route} with 2 entries:
   :get_foo            => [GET] /foo => getfield(Main, Symbol("##7#8"))()
 ```
 
-The new route has been automatically named `get_foo`, based on the method and URI pattern.
+新しいルートはメソッドとURIパターンに基づいて、自動的に`get_foo`と名づけられています。
 
 ## Links to routes
 
