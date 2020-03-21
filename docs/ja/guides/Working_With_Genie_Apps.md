@@ -53,22 +53,22 @@ Genieアプリは「リソース」の概念に基づいて設計できます。
 
 ---
 
-## Using Controllers
+## コントローラの利用
 
-Controllers are used to orchestrate interactions between client requests, Models (which handle data access), and Views (which are responsible for rendering the responses which will be sent to the clients' web browsers). In a standard workflow, a `route` points to a method in the controller – which is charged with building and sending the response over the network, back to the client.
+コントローラは、クライアントリクエスト、モデル(データアクセス処理)、ビュー(クライアントのWebブラウザに送られるレスポンスのレンダリングを担当)間の対話を調整するために利用されます。標準のワークフローでは、`route`はコントローラ内のメソッドを指します。ネットワークを介してレスポンスを生成して、クライアントに送信する役割を果たします。
 
-Let's add a "books" controller. Genie comes with handy generators and one of them is for creating new controllers:
+「書籍」コントローラを追加してみましょう。Genieにはお手軽なジェネレータが収録されており、そのうちの一つが新しいコントローラを作るためのものです。
 
-### Generate the Controller
+### コントローラの生成
 
-Let's generate our `BooksController`:
+`BooksController`を生成してみましょう。
 
 ```julia
 julia> Genie.newcontroller("Books")
 [info]: New controller created at ./app/resources/books/BooksController.jl
 ```
 
-Great! Let's edit `BooksController.jl` (`julia> edit("./app/resources/books/BooksController.jl")`) and add something to it. For example, a function which returns some of Bill Gates' recommended books would be nice. Make sure that `BooksController.jl` looks like this:
+素晴らしい！`BooksController.jl`を編集して(`julia> edit("./app/resources/books/BooksController.jl")`)、何かを追加してみましょう。例えば、ビルゲイツのおすすめ本をいくつか返す機能が便利でしょう。`BooksController.jl`が以下のようになっていることを確認してください。
 
 ```julia
 # app/resources/books/BooksController.jl
@@ -99,12 +99,11 @@ end
 end
 ```
 
-Our controller is just a plain Julia module where we define a `Book` type/struct and set up an array of book objects. We then defined a function, `billgatesbooks`, which returns an HTML string, with a `H1` heading and an unordered list of all the books. We used an array comprehension to iterate over each book and render it in a `<li>` element. The elements of the array are then concatenated using the splat `...` operator.
-The plan is to map this function to a route and expose it on the internet.
+コントローラは単なる`Julia`モジュールで、`Book`型/構造と書籍オブジェクトの配列を設定しています。そして、`billgatesbooks`という関数を定義しています。この関数は、`H1`見出しとすべての書籍の番号なしリストを含むHTML文字列を返します。配列内包表記を利用して各書籍を反復処理し、`<li>`要素でレンダリングしています。配列の要素はsplat展開(`...`演算子)を用いて連結されています。計画ではこの関数をルートに紐づけて、インターネット上に公開します。
 
-#### Checkpoint
+#### チェックポイント
 
-Before exposing it on the web, we can test the function in the REPL:
+Web上に公開する前に、REPL上で関数をテストすることができます。
 
 ```julia
 julia> using BooksController
@@ -112,17 +111,17 @@ julia> using BooksController
 julia> BooksController.billgatesbooks()
 ```
 
-The output of the function call should be a HTML string which looks like this:
+関数呼び出しの出力は、以下のようなHTML文字列です。
 
 ```julia
 "\n  <h1>Bill Gates' list of recommended books</h1>\n  <ul>\n    <li>The Best We Could Do by Thi Bui</li><li>Evicted: Poverty and Profit in the American City by Matthew Desmond</li><li>Believe Me: A Memoir of Love, Death, and Jazz Chickens by Eddie Izzard</li><li>The Sympathizer by Viet Thanh Nguyen</li><li>Energy and Civilization, A History by Vaclav Smil</li>\n  </ul>\n"
 ```
 
-Please make sure that it works as expected.
+期待通り動作しているか確認してください。
 
-### Setup the route
+### ルートのセットアップ
 
-Now, let's expose our `billgatesbooks` method on the web. We need to add a new `route` which points to it. Add these to the `routes.jl` file:
+では、`billgatebooks`メソッドをWeb上に公開してみましょう。それを指し示す新しい`route`が必要です。`routes.jl`ファイルに以下を追加しましょう。
 
 ```julia
 # routes.jl
@@ -132,14 +131,14 @@ using BooksController
 route("/bgbooks", BooksController.billgatesbooks)
 ```
 
-In the snippet we declared that we're `using BooksController` (notice that Genie will know where to find it, no need to explicitly include the file) and then we defined a `route` between `/bgbooks` and the `BooksController.billgatesbooks` function (we say that the `BooksController.billgatesbooks` is the route handler for the `/bgbooks` URL or endpoint).
+このスニペットでは、`using BooksController`を宣言(Genieはファイルの場所知っているため、ファイルの場所を明示的に含める必要はありません)し、`/bgbooks`と`BooksController.billgatesbooks`関数の間に`route`を定義します。(`BooksController.billgatesbooks`は`/bgbooks`URLまたはendpointに対するルートハンドラであると言います。)
 
-That's all! If you now visit `http://localhost:8000/bgbooks` you'll see Bill Gates' list of recommended books (well, at least some of them, the man reads a lot!).
+ここまでですべてです! <http://localhost:8000/bgbooks>にアクセスすると、ビルゲイツの推薦書籍の一覧が表示されます。(まぁ少なくともそれらのうちいくつかを、人はよく読みます!)
 
 ---
-**PRO TIP**
+**プロのヒント**
 
-If you would rather work with Julia instead of wrangling HTML strings, you can use Genie's `Html` API. It provides functions which map every standard HTML element. For instance, the `BooksController.billgatesbooks` function can be written as follows, as an array of HTML elements:
+HTML文字列の代わりにJuliaを利用したい場合、Genieの`Html`APIを利用することができます。すべての標準HTML要素を紐づける関数を提供します。例えば、`BooksController.billgatesbooks`関数はHTML要素の配列として以下のように書くことができます。
 
 ```julia
 using Genie.Renderer.Html
@@ -160,44 +159,42 @@ function billgatesbooks()
 end
 ```
 
-The `@foreach` macro iterates over a collection and concatenates the output of each loop into the result of the loop. We'll talk about it more soon.
+`@foreach`マクロはコレクションを反復処理し、各ループの出力をループの結果に連結します。それについてはこの後すぐに説明します。
 
 ---
 
-### Adding views
+### ビューの追加
 
-However, putting HTML into the controllers is a bad idea: HTML should stay in the dedicated view files and contain as little logic as possible. Let's refactor our code to use views instead.
+ただ、HTMLをコントローラに置くことは良い考えとは言えません。HTMLは専用のビューファイルに記載し、できる限りロジックを少なくするべきです。代わりにビューを利用するようにコードをリファクタリングしてみましょう。
 
-The views used for rendering a resource should be placed inside the `views/` folder, within that resource's own folder structure.
-So in our case, we will add an `app/resources/books/views/` folder. Just go ahead and do it, Genie does not provide a generator for this task:
+リソースのレンダリングに利用されるビューは、リソース自体のフォルダ内にある`views/`フォルダに配置されるべきです。そのため今回のケースでは、`app/resources/books/views`フォルダを追加します。そのまま先に進んでください。Genieはこのタスク用のジェネレータを提供していません。
 
 ```julia
 julia> mkdir(joinpath("app", "resources", "books", "views"))
 "app/resources/books/views"
 ```
 
-We created the `views/` folder in `app/resources/books/`. We provided the full path as our REPL is running in the the root folder of the app. Also, we use the `joinpath` function so that Julia creates the path in a cross-platform way.
+`app/resources/books/`フォルダ内に`views/`フォルダを生成しました。REPLがアプリのルートフォルダで実行されるため、フルパスを指定しました。また、Juilaがクロスプラットフォームでパスを作成するように、`joinpath`関数を使用します。
 
-### Naming views
+### ビューの名づけ
 
-Usually each controller method will have its own rendering logic – hence, its own view file. Thus, it's a good practice to name the view files just like the methods, so that we can keep track of where they're used.
+通常、各コントローラメソッドには独自のレンダリングロジックがあります。それゆえに、独自のビューファイルがあります。したがって、ビューファイルにメソッドと同じ名前をつけることをお勧めします。ビューファイルがどこで使われているか追跡できるからです。
 
-At the moment, Genie supports HTML and Markdown view files, as well as plain Julia. Their type is identified by file extension so that's an important part.
-The HTML views use a `.jl.html` extension while the Markdown files go with `.jl.md` and the Julia ones by `.jl`.
+現状、Genieは標準のJuliaと同じくらいにHTMLとMarkdownビューファイルをサポートしています。それらの種類はファイルの拡張子で区別されるため、拡張子は重要な要素です。HTMLビューは`.jl.html`拡張子を利用しており、Markdownファイルは`.jl.md`拡張子を、Juliaファイルは`.jl`を利用します。
 
-### HTML views
+### HTMLビュー
 
-All right then, let's add our first view file for the `BooksController.billgatesbooks` method. Let's create an HTML view file. With Julia:
+それでは、 `BooksController.billgatesbooks`メソッドの最初のビューファイルを追加してみましょう。JuliaでHTMLビューファイルを生成してみましょう。
 
 ```julia
 julia> touch(joinpath("app", "resources", "books", "views", "billgatesbooks.jl.html"))
 ```
 
-Genie supports a special type of dynamic HTML view, where we can embed Julia code. These are high performance compiled views. They are _not_ parsed as strings: instead, **the HTML is converted to native Julia rendering code which is cached to the file system and loaded like any other Julia file**.
-Hence, the first time you load a view, or after you change one, you might notice a certain delay – it's the time needed to generate, compile and load the view.
-On next runs (especially in production) it's going to be blazing fast!
+GenieはJuilaコードの埋め込みが可能な特殊な形式の動的HTMLビューをサポートしています。これらは高性能のコンパイル済みビューです。それらは文字列として解析されません。代わりに、**HTMLはネイティブなJuliaレンダリングコードに変換され、ファイルすシステムにキャッシュされ、他のJuliaファイルと同じようにロードされます。**
+したがって、ビューを初めてロードするとき、または変更した後は、特定の遅延を感じるかもしれません。それはビューの生成、コンパイル、ロードに必要な時間です。次回の実行では、非常に高速になります!(特に本番環境)
 
 Now all we need to do is to move the HTML code out of the controller and into the view, improving it a bit to also show a count of the number of books. Edit the view file as follows (`julia> edit("app/resources/books/views/billgatesbooks.jl.html")`):
+ここで必要なのは、HTMLコードをコントローラから移動し、書籍の数も表示するように少し改善することです。ビューファイルは以下のように編集します。(修正方法：`julia> edit("app/resources/books/views/billgatesbooks.jl.html")`)
 
 ```html
 <!-- billgatesbooks.jl.html -->
@@ -209,20 +206,20 @@ Now all we need to do is to move the HTML code out of the controller and into th
 </ul>
 ```
 
-As you can see, it's just plain HTML with embedded Julia. We can add Julia code by using the `<% ... %>` code block tags – these should be used for more complex, multiline expressions. Or by using plain Julia string interpolation with `$(...)` – for simple values outputting.
+見た通り、Juliaが埋め込まれた標準のHTMLです。`<% ... %>`コードブロックタグを利用することでJuliaコードを追加できます。これらは、より複雑な複数行の式に利用されるべきです。またはシンプルに値を出力するために`$（...）`でJuliaを用いた文字列挿入をします。
 
-To make HTML generation more efficient, Genie provides a series of helpers, like the above `@foreach` macro which allows iterating over a collection, passing the current item into the processing function.
-
----
-**HEADS UP**
-
-**It is very important to keep in mind that Genie views work by rendering a HTML string. Thus, the Julia view code _must return a string_ as its result, so that the output of the computation comes up on the page**. Given that Julia automatically returns the result of the last computation, most of the times this just flows naturally. But if sometimes you notice that the templates don't output what is expected, do check that the code returns a string (or something which can be converted to a string).
+HTML生成をより効率的に行うため、Genieはヘルパー群を提供します。例えば、上記の`@foreach`マクロはコレクションを反復処理し、現在のアイテムを処理関数に渡します。
 
 ---
+**注意喚起**
 
-### Rendering views
+**GenieビューはHTML文字列をレンダリングすることで機能することを気に留めておくことは非常に重要です。したがって、Juliaビューコードは結果として文字列を返す必要があり、処理の出力がページ上に表示されます。**Juliaが最後の処理の結果を自動で返すため、ほとんどの場合これは自然に進みます。ただし、テンプレートが期待したものを出力しないと気づいた場合は、コードが文字列(または文字列に変換することができる何か)を返すことを確認してください。
 
-We now need to refactor our controller to use the view, passing in the expected variables. We will use the `html` method which renders and outputs the response as HTML. Update the definition of the `billgatesbooks` function to be as follows:
+---
+
+### ビューのレンダリング
+
+ここで、ビューを使用するようにコントローラーをリファクタリングし、期待された変数を渡す必要があります。レスポンスをHTMLとしてレンダリングし出力する`html`メソッドを使用します。以下のように`billgatesbooks`関数の定義を更新してください。
 
 ```julia
 # BooksController.jl
@@ -233,13 +230,13 @@ function billgatesbooks()
 end
 ```
 
-First, notice that we needed to add `Genie.Renderer.Html` as a dependency, to get access to the `html` method. As for the `html` method itself, it takes as its arguments the name of the resource, the name of the view file, and a list of keyword arguments representing view variables:
+まず、`html`メソッドへのアクセスをするために、依存関係として`Genie.Renderer.Html`を追加する必要があることに注意してください。`html`メソッドに関しては、リソースの名前、ビューファイルの名前、そしてビュー変数を表すキーワード引数の一覧を引数として取ります。
 
-* `:books` is the name of the resource (which effectively indicates in which `views` folder Genie should look for the view file -- in our case `app/resources/books/views`);
-* `:billgatesbooks` is the name of the view file. We don't need to pass the extension, Genie will figure it out since there's only one file with this name;
-* and finally, we pass the values we want to expose in the view, as keyword arguments.
+* `:books`はリソースの名前です。(どのviewsフォルダでGenieがビューファイルを検索するかを示します。今回のケースでは`app/resources/books/views`となります)
+* `:billgatesbooks`はビューファイルの名前です。拡張子を渡す必要はありません。この名前のファイルは一つしかないため、Genieは判断できます
+* そして最後に、ビューで公開したい値をキーワード引数として渡します
 
-That's it – our refactored app should be ready! You can try it out for yourself at <http://localhost:8000/bgbooks>
+それだけです。リファクタリングされたアプリは準備済みです。<http://localhost:8000/bgbooks>で試してみてください。
 
 ### Markdown views
 
