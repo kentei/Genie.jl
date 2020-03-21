@@ -1,55 +1,55 @@
-# Working with Genie apps (projects)
+# Genieアプリ(プロジェクト)の操作
 
-Working with Genie in an interactive environment can be useful – but usually we want to persist the application and reuse it between sessions. One way to achieve this is to save it as an IJulia notebook and rerun the cells.
+対話型環境でGenieを操作することは便利な場合がありますが、大抵の場合、アプリケーションを永続化し、セッション間で再利用したいことが多いです。これを成し遂げるための1つの方法がIJuliaノートブックとして保存し、セルを再実行することです。
 
-However, you can get the best of Genie by working with Genie apps. A Genie app is a MVC (Model-View-Controller) web application which promotes the convention-over-configuration principle. By working with a few predefined files, within the Genie app structure, the framework can lift a lot of weight and massively improve development productivity. But following Genie's workflow, one instantly gets, out of the box, features like automatic module loading and reloading, dedicated configuration files, logging, support for environments, code generators, caching, support for Genie plugins, and more.
+しかしながら、Genieアプリで操作することでGenieを最大限活用できます。GeneiアプリはMVC(Model-View-Contoroller)構造のWebアプリケーションで、「設定より規約を重視する」(convention-over-configuration,CoC)の原則を促進している。Genieアプリの構造内でいくつかの定義済みファイルを操作することで、フレームワークはたくさんの重大な内容を解決し、開発生産性を大幅に向上することができる。しかし、Genieのワークフローに従うと、自動モジュールのロードと再ロード、専用の設定ファイル、ロギング、環境のサポート、コードジェネレータ、キャッシュ、Genieプラグインのサポートなどのような機能がすぐに利用できます。
 
-In order to create a new Genie app, we need to run `Genie.newapp($app_name)`:
+新規でGenieアプリを生成するために、`Genie.newapp($app_name)`を実行する必要があります。
 
 ```julia
 julia> Genie.newapp("MyGenieApp")
 ```
 
-Upon executing the command, Genie will:
+上記コマンドが実行されれば、Genieは以下を実施する。
 
-* make a new dir called `MyGenieApp` and `cd()` into it,
-* install all the app's dependencies,
-* create a new Julia project (adding the `Project.toml` and `Manifest.toml` files),
-* activate the project,
-* automatically load the new app's environment into the REPL,
-* start the web server on the default Genie port (port 8000) and host (127.0.0.1).
+* `MyGenieApp`という名前の新しいディレクトリを作成し、`cd()`で中に移動する
+* アプリの依存関係をすべてインストールする
+* 新しいJuliaプロジェクトを生成する(`Project.toml`と`Manifest.toml`ファイルを追加)
+* プロジェクトをアクティブな状態にする
+* REPL内に新しいアプリの環境を自動的にロードする
+* Genieのデフォルトホスト(127.0.0.1)とポート(8000)でWebサーバを起動する
 
-At this point you can confirm that everything worked as expected by visiting <http://127.0.0.1:8000> in your favourite web browser. You should see Genie's welcome page.
+この時点で、任意のWebブラウザで<http://127.0.0.1:8000>にアクセスすると、期待した通りにすべてが動作することを確認できます。Genieのウェルカムページが表示されます。
 
-Next, let's add a new route. Routes are used to map request URLs to Julia functions. These functions provide the response that will be sent back to the client. Routes are meant to be defined in the dedicated `routes.jl` file. Open `MyGenieApp/routes.jl` in your editor or run the following command (making sure that you are in the app's directory):
+次に新しいルート(route)を追加してみましょう。ルートはJulia関数にリクエストURLをマッピングするために使われます。これらの関数はクライアントに返信される応答を提供します。ルートはそれ専用の`routes.jl`ファイルで定義されます。エディタで`MyGenieApp/routes.jl`を開くか、以下のコマンドを実行してください。(カレントディレクトリがアプリのディレクトリであることを確認してください)
 
 ```julia
 julia> edit("routes.jl")
 ```
 
-Append this at the bottom of the `routes.jl` file and save it:
+`routes.jl`ファイルの下方に以下のコードを追加し保存してください。
 
 ```julia
 # routes.jl
 route("/hello") do
-  "Welcome to Genie!"
+  "Genieへようこそ！"
 end
 ```
 
-We are using the `route` method, passing in the "/hello" URL and an anonymous function which returns the string "Welcome to Genie!". What this means is that for each request to the "/hello" URL, our app will invoke the route handler function and respond with the welcome message.
+`route`メソッドを利用し、`/hello`URLと「Genieへようこそ！」という文字列を返す匿名関数を渡します。これは、`/hello`URLへの各リクエストに対して、アプリがルートハンドラ関数を呼び出し、ウェルカムメッセージをレスポンスするということです。
 
-Visit <http://127.0.0.1:8000/hello> for a warm welcome!
+<http://127.0.0.1:8000/hello>にアクセスして温かい歓迎を受けてください！
 
-## Working with resources
+## リソースの操作
 
-Adding our code to the `routes.jl` file works great for small projects, where you want to quickly publish features on the web. But for larger projects we're better off using Genie's MVC structure (MVC stands for Model-View-Controller). By employing the Model-View-Controller design pattern we can break our code into modules with clear responsibilities: the Model is used for data access, the View renders the response to the client, and the Controller orchestrates the interactions between Models and Views and handles requests. Modular code is easier to write, test and maintain.
+コードを`routes.jl`ファイルに追加することは、Web上で機能をすばやく公開したい小規模なプロジェクトには最適です。しかし、大規模なプロジェクトの場合、GenieのMVC構造を利用するほうが適切です（MVCはModel-View-Controllerの略です）。MVCデザインパターンを採用することで、コードを明確な責任をもったモジュールに分割することができます。というのも、モデル(Model)はデータのアクセスに利用され、ビュー(View)はクライアントへのレスポンスをレンダリングし、コントローラ(Controller)はモデルとビュー間の相互作用を調整し、リクエストを操作します。モジュール単位のコードはコーディング、テスト、保守がより簡単になります。
 
-A Genie app can be architected around the concept of "resources". A resource represents a business entity (something like a user, or a product, or an account) and maps to a bundle of files (controller, model, views, etc). Resources live under the `app/resources/` folder and each resource has its own dedicated folder, where all of its files are hosted. For example, if we have a web app about "books", a "books" folder would be found at `app/resources/books` and will contain all the files for publishing books on the web (usually called `BooksController.jl` for the controller, `Books.jl` for the model, `BooksValidator.jl` for the model validator -- as well as a `views` folder for hosting all the view files necessary for rendering books data).
+Genieアプリは「リソース」の概念に基づいて設計できます。リソースはビジネスエンティティ(ユーザ、製品、アカウントなど)を表し、一連のファイル(コントローラ、モデル、ビューなど)に対応します。リソースは`app/resources/`フォルダ配下にあり、各リソースにはそれぞれ専用のフォルダがあり、すべてのファイルが配置されています。例えば、「書籍」についてのWebアプリがある場合、「書籍」リソース用のフォルダは`app/resources/books`にあり、Web上に書籍を公開するためのファイルはすべてこのフォルダに含まれます。(大抵の場合、コントローラには`BooksController.jl`、モデルには`Books.jl`、モデルの検証ツール(バリデータ)には`BooksValidator.jl`となります。なお、書籍データのレンダリングに必要なビューファイルは`views`フォルダに配置します。)
 
 ---
-**HEADS UP**
+**注意喚起**
 
-When creating a default Genie app, the `app/` folder might be missing. It will be automatically created the first time you add a resource via Genie's generators.
+デフォルトのGenieアプリを生成する際、`app/`フォルダが見つからない場合があります。Genieのジェネレータを介してリソースを一度追加すると、自動的に生成されます。
 
 ---
 

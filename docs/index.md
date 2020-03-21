@@ -17,11 +17,11 @@ Genieは、モダンなWebアプリケーションを開発するための合理
 
 GenieはJulia v1.0以降と互換性があります。
 
-## Getting started
+## 入門
 
-**First steps for building Genie apps.**
+**Genieアプリを構築するための最初のステップ**
 
-[The Genie Walkthrough: Developing Genie Apps, the Basics](guides/Working_With_Genie_Apps.md)
+[Genieのチュートリアル：Genieアプリの開発と基本(翻訳中)](ja/guides/Working_With_Genie_Apps.md)
 
 [The Genie Walkthrough: Developing Genie Apps, Intermediate Topics](guides/Working_With_Genie_Apps_Intermediary_Topics.md)
 
