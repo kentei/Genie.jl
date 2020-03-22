@@ -405,6 +405,8 @@ function billgatesbooks()
 end
 
 end
+
+end
 ```
 
 `BooksController`モジュールの中にAPIモジュールをネストさせました。そこで、JSONを出力する別の`billgatesbooks`関数を定義しました。
