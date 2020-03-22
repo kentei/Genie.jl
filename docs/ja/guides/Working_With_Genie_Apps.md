@@ -193,7 +193,6 @@ julia> touch(joinpath("app", "resources", "books", "views", "billgatesbooks.jl.h
 GenieはJuilaコードの埋め込みが可能な特殊な形式の動的HTMLビューをサポートしています。これらは高性能のコンパイル済みビューです。それらは文字列として解析されません。代わりに、**HTMLはネイティブなJuliaレンダリングコードに変換され、ファイルすシステムにキャッシュされ、他のJuliaファイルと同じようにロードされます。**
 したがって、ビューを初めてロードするとき、または変更した後は、特定の遅延を感じるかもしれません。それはビューの生成、コンパイル、ロードに必要な時間です。次回の実行では、非常に高速になります!(特に本番環境)
 
-Now all we need to do is to move the HTML code out of the controller and into the view, improving it a bit to also show a count of the number of books. Edit the view file as follows (`julia> edit("app/resources/books/views/billgatesbooks.jl.html")`):
 ここで必要なのは、HTMLコードをコントローラから移動し、書籍の数も表示するように少し改善することです。ビューファイルは以下のように編集します。(修正方法：`julia> edit("app/resources/books/views/billgatesbooks.jl.html")`)
 
 ```html
@@ -240,15 +239,15 @@ end
 
 ### Markdown views
 
-Markdown views work similar to HTML views – employing the same embedded Julia functionality. Here is how you can add a Markdown view for our `billgatesbooks` function.
+MarkdownビューはHTMLビューと同じように動作し、同じく組み込まれたJuliaの機能を使用します。`billgatebooks`関数にMarkdownビューを追加する方法を示していきます。
 
-First, create the corresponding view file, using the `.jl.md` extension. Maybe with:
+初めに、`.jl.md`拡張子を利用することで、対応するビューファイルを生成しましょう。おそらく以下のやり方になるでしょう。
 
 ```julia
 julia> touch(joinpath("app", "resources", "books", "views", "billgatesbooks.jl.md"))
 ```
 
-Now edit the file and make sure it looks like this:
+ここで、ファイルを編集し、以下のようになることを確認してください。
 
 ```md
 <!-- app/resources/books/views/billgatesbooks.jl.md -->
@@ -261,12 +260,11 @@ $(
 )
 ```
 
-Notice that Markdown views do not support Genie's embedded Julia tags `<% ... %>`. Only string interpolation `$(...)` is accepted, but it works across multiple lines.
+MarkdownビューはGenieの埋め込みJuilaタグである`<% ... %>`をサポートしていないことに注意してください。文字列挿入の`$(...)`のみ使用できますが、複数行に渡って機能します。
 
-If you reload the page now, however, Genie will still load the HTML view. The reason is that, _if we have only one view file_, Genie will manage.
-But if there's more than one, the framework won't know which one to pick. It won't error out but will pick the preferred one, which is the HTML version.
+現状、ページをリロードすると、GenieはまだHTMLビューをロードします。その理由は、ビューファイルが1つしかない場合はGenieが管理しますが、複数ある場合はGenieはどれを選択すればよいか判断できないためです。エラーは発生しませんが、優先バージョン(HTMLバージョン)が選択されるのです。
 
-It's a simple change in the `BookiesController`: we have to explicitly tell Genie which file to load, extension and all:
+`BookiesController`に簡単な変更を実施します。Genieに対してロードするファイル、拡張子などを明示的に指定します。
 
 ```julia
 # BooksController.jl
@@ -275,11 +273,12 @@ function billgatesbooks()
 end
 ```
 
-### Taking advantage of layouts
+### レイアウトを活用
 
-Genie's views are rendered within a layout file. Layouts are meant to render the theme of the website, or the "frame" around the view – the elements which are common on all the pages. The layout file can include visible elements, like the main menu or the footer. But also maybe the `<head>` tag or the assets tags (`<link>` and `<script>` tags for loading CSS and JavaScript files in all the pages).
+Genieのビューはレイアウトファイル内でレンダリングされます。レイアウトはWebサイトのテーマ、またはビュー周りの「フレーム」をレンダリングするものです。これは、すべてのページに共通する要素です。レイアウトファイルは、メインメニューやフッターなどの様々な要素を含んでいます。`<head>`タグまたはそれに関連するタグ(`<link>`タグや`<script>`タグなどCSSやJavaScriptをページ全体で読み込むためのもの)も含むでしょう。
 
-Every Genie app has a main layout file which is used by default – it can be found in `app/layouts/` and is called `app.jl.html`. It looks like this:
+
+すべてのGenieアプリはデフォルトで利用するメインレイアウトファイルがあります。これは`app/layouts/`にあり、`app.jl.html`という名前です。内容は以下の通りです。
 
 ```html
 <!-- app/layouts/app.jl.html -->
@@ -299,23 +298,22 @@ Every Genie app has a main layout file which is used by default – it can be fo
 </html>
 ```
 
-We can edit it. For example, add this right under the opening `<body>` tag, just above the `<%` tag:
+これを修正していきましょう。例として、`<body>`開始タグの真下(`<%`タグの真上)に以下を追記します。
 
 ```html
 <h1>Welcome to top books</h1>
 ```
 
-If you reload the page at <http://localhost:8000/bgbooks> you will see the new heading.
+<http://localhost:8000/bgbooks>でページをリロードすると、新たなヘッダを確認できます。
 
-But we don't have to stick to the default; we can add additional layouts. Let's suppose that we have, for example, an admin area which should have a completely different theme.
-We can add a dedicated layout for that:
+しかし、デフォルトで我慢する必要はありません。レイアウトは追加できます。例えば完全に異なるテーマとするべき管理ページがあるとしましょう。それ専用のレイアウトを追加します。
 
 ```julia
 julia> touch(joinpath("app", "layouts", "admin.jl.html"))
 "app/layouts/admin.jl.html"
 ```
 
-Now edit it (`julia> edit("app/layouts/admin.jl.html")`) and make it look like this:
+ここで上記ファイルを編集します。(編集コマンド：`julia> edit("app/layouts/admin.jl.html")`)　以下のように修正します。
 
 ```html
 <!-- app/layouts/admin.jl.html -->
@@ -333,8 +331,7 @@ Now edit it (`julia> edit("app/layouts/admin.jl.html")`) and make it look like t
 </html>
 ```
 
-If we want to apply it, we must instruct our `BooksController` to use it. The `html` function takes a keyword argument named `layout`, for the layout file.
-Update the `billgatesbooks` function to look like this:
+適用したい場合は、`BooksController`で上記を利用するように命令する必要があります。`html`関数でレイアウトファイルを指定するための`layout`という名前のキーワード引数を取るようにします。`billgatesbooks`関数を以下のように更新してみましょう。
 
 ```julia
 # BooksController.jl
@@ -343,15 +340,15 @@ function billgatesbooks()
 end
 ```
 
-Reload the page and you'll see the new heading.
+ページを更新することで、新たなヘッダが表示されます。
 
-#### The `@yield` instruction
+#### `@yield`命令
 
-There is a special instruction in the layouts: `@yield`. It outputs the contents of the view as rendered through the controller. So where this macro is present, Genie will output the HTML resulting from rendering the view by executing the route handler function within the controller.
+レイアウトには`@yield`という特殊な命令があります。それは、コントローラを介してレンダリングされたビューの内容を出力します。そのため、このマクロが存在する場合、Genieはコントローラ内のルートハンドラ関数を実行することで、ビューをレンダリングした結果のHTMLを出力します。
 
-#### Using view paths
+#### ビューパスの利用
 
-For very simple applications the MVC and the resource-centric approaches might involve too much boilerplate. In such cases, we can simplify the code by referencing the view (and layout) by file path, ex:
+非常にシンプルなアプリケーションの場合、MVCやリソース中心のアプローチでは、あまりに多くの定型文を含みすぎているかもしれません。そのようなケースでは、ファイルパスでビュー(またはレイアウト)を参照することでコードを簡素化できます。
 
 ```julia
 # BooksController.jl
@@ -362,17 +359,17 @@ function billgatesbooks()
 end
 ```
 
-### Rendering JSON views
+### JSONビューのレンダリング
 
-A common use case for web apps is to serve as backends for RESTful APIs. For this cases, JSON is the preferred data format. You'll be happy to hear that Genie has built-in support for JSON responses. Let's add an endpoint for our API – which will render Bill Gates' books as JSON.
+Webアプリの一般的なユースケースは、RESTful APIのバックエンドとして動作することです。今回の場合、JSONは優先度の高いデータ形式です。GenieはJSONレスポンスのサポートを組み込んでいるので喜んでもらえるのではないでしょうか。APIのエンドポイントを追加しましょう。この対応でビルゲイツの本がJSONとしてレンダリングされるようになります。
 
-We can start in the `routes.jl` file, by appending this
+`routes.jl`ファイルで、以下を追加することからスタートしましょう。
 
 ```julia
 route("/api/v1/bgbooks", BooksController.API.billgatesbooks)
 ```
 
-Next, in `BooksController.jl`, append the extra logic at the end of the file, before the closing `end`. The whole file should look like this:
+次に、`BooksController.jl`で、ファイルの最下方にある`end`の前に追加処理を追記します。ファイル全体は以下のようになります。
 
 ```julia
 # BooksController.jl
@@ -410,9 +407,9 @@ end
 end
 ```
 
-We nested an API module within the `BooksController` module, where we defined another `billgatesbooks` function which outputs a JSON.
+`BooksController`モジュールの中にAPIモジュールをネストさせました。そこで、JSONを出力する別の`billgatesbooks`関数を定義しました。
 
-If you go to `http://localhost:8000/api/v1/bgbooks` it should already work as expected.
+<http://localhost:8000/api/v1/bgbooks>にアクセスすると、期待通りに動作します。
 
 #### JSON views
 
