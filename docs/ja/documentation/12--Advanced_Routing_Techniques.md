@@ -138,13 +138,13 @@ OrderedCollections.OrderedDict{Symbol,Genie.Router.Route} with 2 entries:
 
 新しいルートはメソッドとURIパターンに基づいて、自動的に`get_foo`と名づけられています。
 
-## Links to routes
+## ルート(routes)へのリンク
 
-We can use the name of the route to link back to it through the `linkto` method.
+`linkto`メソッドを介して、ルートにリンクするためにルート名が使用できます。
 
-### Example
+### 例
 
-Let's start with the previously defined two routes:
+以前定義済みの2つのルートから始めてみましょう。
 
 ```julia
 julia> @routes
@@ -153,29 +153,29 @@ OrderedCollections.OrderedDict{Symbol,Genie.Router.Route} with 2 entries:
   :get_foo            => [GET] /foo => getfield(Main, Symbol("##7#8"))()
 ```
 
-Static routes such as `:get_foo` are straightforward to target:
+`：get_foo`のような静的ルートは簡単にリンクを向けることができます。
 
 ```julia
 julia> linkto(:get_foo)
 "/foo"
 ```
 
-For dynamic routes, it's a bit more involved as we need to supply the values for each of the parameters, as keyword arguments:
+動的なルートの場合、キーワード引数として各パラメータの値を渡す必要があるため、少しだけ複雑です。
 
 ```julia
 julia> linkto(:get_customer_order, customer_id = 1234, order_id = 5678)
 "/customers/1234/orders/5678"
 ```
 
-The `linkto` should be used in conjunction with the HTML code for generating links, ie:
+`linkto`はリンクを生成するためにHTMLコードと組み合わせて使用されます。すなわち、以下のようになります。
 
 ```html
 <a href="$(linkto(:get_foo))">Foo</a>
 ```
 
-## Listing routes
+## ルートの一覧
 
-At any time we can check which routes are registered with `Router.routes`:
+`Router.routes`で登録されているルートをいつでも確認できます。
 
 ```julia
 julia> routes()
@@ -184,7 +184,7 @@ julia> routes()
  [GET] /customers/:customer_id/orders/:order_id => getfield(Main, Symbol("##5#6"))()
 ```
 
-Or, we can use the previously discussed `@routes` macro:
+または、前述の`@routes`マクロも利用できます。
 
 ```julia
 julia> @routes
@@ -193,20 +193,20 @@ OrderedCollections.OrderedDict{Symbol,Genie.Router.Route} with 2 entries:
   :get_foo            => [GET] /foo => getfield(Main, Symbol("##7#8"))()
 ```
 
-### The `Route` type
+### `Route`型
 
-The routes are represented internally by the `Route` type which has 4 fields:
+ルートは4つのフィールドをもつ`Route`型によって内部的に表現されています。
 
-* `method::String` - for storing the method of the route (`GET`, `POST`, etc)
-* `path::String` - represents the URI pattern to be matched against
-* `action::Function` - the route handler to be executed when the route is matched
-* `name::Union{Symbol,Nothing}` - the name of the route
+* `method::String`- ルートのメソッドを保持するため(`GET`や`POST`など)
+* `path::String` - 照合するURIパターンを表現
+* `action::Function` - ルートが一致した際に実行されるルートハンドラ
+* `name::Union{Symbol,Nothing}` - ルートの名前
 
-## Removing routes
+## ルートの削除
 
-We can delete routes from the stack by calling the `delete!` method and passing the collection of routes and the name of the route to be removed. The method returns the collection of (remaining) routes
+`delete!`メソッドを呼び出し、ルートのコレクションと削除対象のルートの名前をわたすことで、スタックからルートを削除できます。そのメソッドは(残りの)ルートのコレクションを返します。
 
-### Example
+### 例
 
 ```julia
 julia> @routes
@@ -223,9 +223,9 @@ OrderedCollections.OrderedDict{Symbol,Genie.Router.Route} with 1 entry:
   :get_customer_order => [GET] /customers/:customer_id/orders/:order_id => getfield(Main, Symbol("##3#4"))()
 ```
 
-## Matching routes by type of arguments
+## 引数の型によるルートの一致
 
-By default route parameters are parsed into the `payload` collection as `SubString{String}`:
+デフォルトでは、ルートパラメータは`SubString {String}`として`payload`コレクションの中で解析されます。
 
 ```julia
 using Genie, Genie.Router, Genie.Requests
@@ -235,9 +235,9 @@ route("/customers/:customer_id/orders/:order_id") do
 end
 ```
 
-This will output `Order ID has type SubString{String} // Customer ID has type SubString{String}`
+上記は、`Order ID has type SubString{String} // Customer ID has type SubString{String}`と出力されます。
 
-However, for such a case, we'd very much prefer to receive our data as `Int` to avoid an explicit conversion -- _and_ to match only numbers. Genie supports such a workflow by allowing type annotations to route parameters:
+しかし、今回のような場合、明示的な変換(数字のみマッチなど)を回避するために`Int`型のデータとして受け取ることが非常に好まれます。Genieは、ルートパラメータに型アノテーションの指定を許すことでこのようなワークフローをサポートします。
 
 ```julia
 route("/customers/:customer_id::Int/orders/:order_id::Int", named = :get_customer_order) do
@@ -245,9 +245,9 @@ route("/customers/:customer_id::Int/orders/:order_id::Int", named = :get_custome
 end     #     [GET] /customers/:customer_id::Int/orders/:order_id::Int => getfield(Main, Symbol("##3#4"))()
 ```
 
-Notice how we've added type annotations to `:customer_id` and `:order_id` in the form `:customer_id::Int` and `:order_id::Int`.
+`:customer_id`と`:order_id`に、`:customer_id::Int`および`:order_id::Int`という形式で型アノテーションを追加していることに注意してください。
 
-However, attempting to access the URL `http://127.0.0.1:8000/customers/10/orders/20` will fail:
+ただし、<http://127.0.0.1:8000/customers/10/orders/20>にアクセスしようとすると失敗します。
 
 ```julia
 Failed to match URI params between Int64::DataType and 10::SubString{String}
