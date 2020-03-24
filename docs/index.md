@@ -65,9 +65,9 @@ GenieはJulia v1.0以降と互換性があります。
 
 ## ガイド
 
-**Genie can be used for a variety of tasks, from quickly whipping up a web server to full MVC web apps. Use the following resources to dive into each use case.**
+**Genieは、Webサーバの迅速な立ち上げからフルMVCのWebアプリまで、様々なタスクで利用できます。以下のリソースを利用し各ユースケースを見ていきましょう**
 
-[Using Genie in an Interactive Environment (Jupyter/IJulia, REPL, etc)](guides/Interactive_environment.md)
+[対話型環境でのGenieの利用(Jupyter/IJulia、REPLなど)](ja/guides/Interactive_environment.md)
 
 [Developing a Simple API Backend](guides/Simple_API_backend.md)
 
