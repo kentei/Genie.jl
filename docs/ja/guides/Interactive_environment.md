@@ -14,6 +14,7 @@ julia> route("/") do
 ここで使用するWebサーバを起動します。
 
 ```julia
+julia> import Genie
 julia> Genie.startup()
 ```
 
