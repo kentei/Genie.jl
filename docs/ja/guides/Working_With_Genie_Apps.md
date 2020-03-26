@@ -415,23 +415,29 @@ end
 
 #### JSON views
 
-However, we have just committed one of the cardinal sins of API development. We have just forever coupled our internal data structure to its external representation. This will make future refactoring very complicated and error prone as any changes in the data will break the client's integrations. The solution is to, again, use views, to fully control how we render our data – and decouple the data structure from its rendering on the web.
+しかしながら、API開発のきわめて重大な過ちの1つをコミットしてしまっています。内部データ構造を外部表現に永続的に結合していることです。これにより、将来のリファクタリングが非常に複雑となり、データ変更を加えることでクライアントとの結合を壊れるためにエラーが発生しやすくなります。解決策としては、ビューを使用して、データのレンダリング方法を完全に制御し、Web上でのレンダリングからデータ構造を切り離すことです。
 
-Genie has support for JSON views – these are plain Julia files which have the ".json.jl" extension. Let's add one in our `views/` folder:
+GenieはJSONビューをサポートしています。これらは、「.json.jl」という拡張子をもつ標準のJuliaファイルです。`views`フォルダに1つ追加してみましょう。
+
+#### JSONビュー
+
+しかし、API開発のきわめて重大な過ちの1つをコミットしてしまいました。 私たちは内部データ構造を外部表現に永続的に結合してしまっています。 これにより、将来のリファクタリングが非常に複雑になり、エラーが発生しやすくなります。データに変更を加えると、クライアントの統合が壊れるからです。 解決策は、やはりビューを使用して、データのレンダリング方法を完全に制御し、データ構造をWebでのレンダリングから切り離すことです。
+
+GenieはJSONビューをサポートしています。これらは ".json.jl"拡張子を持つ簡単なJuliaファイルです。 `views /`フォルダーに追加しましょう：
 
 ```julia
 julia> touch(joinpath("app", "resources", "books", "views", "billgatesbooks.json.jl"))
 "app/resources/books/views/billgatesbooks.json.jl"
 ```
 
-We can now create a proper response. Put this in the view file:
+ここで、適切な応答を作成します。 以下をビューファイルに追加します。
 
 ```julia
 # app/resources/books/views/billgatesbooks.json.jl
 "Bill Gates' list of recommended books" => books
 ```
 
-Final step, instructing `BooksController` to render the view. Simply replace the existing `billgatesbooks` function within the `API` sub-module with the following:
+最後のステップは、ビューをレンダリングするように`BooksController`に命令することです。`API`サブモジュール内の既存の`billgatesbooks`関数を以下のように置き換えるだけです。
 
 ```julia
 function billgatesbooks()
@@ -439,60 +445,60 @@ function billgatesbooks()
 end
 ```
 
-This should hold no surprises – the `json` function is similar to the `html` one we've seen before. So now we're rendering a custom JSON response. That's all – everything should work!
+これは驚くほどの事ではありません。`json`関数は以前見た`html`関数に似ています。今はカスタムJSONレスポンスをレンダリングしています。ここまでですべてが機能します。
 
 ---
-**HEADS UP**
+**注意喚起**
 
-#### Why JSON views have the extension ending in `.jl` but HTML and Markdown views do not?
+#### なぜJSONビューの拡張子の終わりには`.jl`がついていて、HTMLビューやMarkdownビューにはついていないのか?
 
-Good question! The extension of the views is chosen in order to preserve correct syntax highlighting in the IDE/code editor.
+良い質問です! ビューの拡張子はIDE/コードエディタ内で正しい構文のハイライト表示を維持するために選ばれています。
 
-Since practically HTML and Markdown views are HTML and Markdown files with some embedded Julia code, we want to use the HTML or Markdown syntax highlighting. For JSON views, we use pure Julia, so we want Julia syntax highlighting.
-
----
-
-## Accessing databases with `SeachLight` models
-
-You can get the most out of Genie by pairing it with its seamless ORM layer, SearchLight. SearchLight, a native Julia ORM, provides excellent support for working with relational databases. The Genie + SearchLight combo can be used to productively develop CRUD (Create-Read-Update-Delete) apps.
-
----
-**HEADS UP**
-
-CRUD stands for Create-Read-Update-Delete and describes the data workflow in many web apps, where resources are created, read (listed), updated, and deleted.
+HTMLビューとMarkdownビューは、Juliaコードが埋め込まれたHTMLファイルとMarkdownファイルであるため、HTMLまたはMarkdown構文のハイライト表示を使用します。JSONビューの場合は、純正のJuliaを利用するため、Julia構文のハイライト表示を使用します。
 
 ---
 
-SearchLight represents the "M" part in Genie's MVC architecture (thus, the Model layer).
+## `SeachLight`モデルでデータベースに接続
 
-Let's begin by adding SearchLight to our Genie app. All Genie apps manage their dependencies in their own Julia environment, through their `Project.toml` and `Manifest.toml` files.
+シームレスなオブジェクト関係マッピング(ORM)レイヤーであるSearchLightとGenieを組み合わせることで、Genieを最大限に活用できます。ネイティブJulia ORMであるSearchLightは、リレーショナルデータベースでの作業に素晴らしいサポートを提供します。Genie + SearchLightコンボはCRUD(Create-Read-Update-Delete)アプリを生産的に開発するために利用できます。
 
-So we need to make sure that we're in `pkg> ` shell mode first (which is entered by typing `]` in julian mode, ie: `julia>]`).
-The cursor should change to `(MyGenieApp) pkg>`.
+---
+**注意喚起**
 
-Next, we add `SearchLight`:
+CRUDはCreate-Read-Update-Deleteの略称で、リソースの作成、読み込み(一覧化)、更新、削除を行う多くのWebアプリのデータワークフローを表しています。
+
+---
+
+SearchLightはGenieのMVC基盤の「M」部分(モデル層)を表現します。
+
+GenieアプリにSearchLightを追加してみましょう。すべてのGenieアプリは`Project.toml`と`Manifest.toml`ファイルを通して、アプリ独自のJulia環境で依存関係を管理しています。
+
+そのため、最初に`pkg>`シェルモードであることを確認する必要があります。(Juliaモードで`]`を入力すると、シェルモードに入ります。(すなわち`julia>]`)
+カーソルが`(MyGenieApp) pkg>`に変わります。
+
+次に、`SearchLight`を追加します。
 
 ```julia
 (MyGenieApp) pkg> add SearchLight
 ```
 
-### Adding a database adapter
+### データベースアダプタの追加
 
-`SearchLight` provides a database agnostic API for working with various backends (at the moment, MySQL, SQLite, and Postgres). Thus, we also need to add the specific adapter. To keep things simple, let's use SQLite for our app. Hence, we'll need the `SearchLightSQLite` package:
+`SearchLight`は様々なバックエンド(現時点では、MySQL,SQLite,Postgres)を操作するためのデータベースに依存しないAPIを提供します。したがって、特定のアダプタも追加する必要があります。シンプルさを維持するため、アプリにSQLiteを使いましょう。ゆえに、`SearchLightSQLite`パッケージが必要になります。
 
 ```julia
 (MyGenieApp) pkg> add SearchLightSQLite
 ```
 
-### Setup the database connection
+### データベース接続のセットアップ
 
-Genie is designed to seamlessly integrate with SearchLight and provides access to various database oriented generators. First we need to tell Genie/SearchLight how to connect to the database. Let's use them to set up our database support. Run this in the Genie/Julia REPL:
+GenieはSearchLightとシームレスに結合するように設計されており、様々なデータベース指向のジェネレータへのアクセスを提供します。はじめに、Genie/SearchLightにデータベースへの接続方法を伝える必要があります。データベースサポートを設定するためにそれらを利用してみましょう。Genie/Julia REPLで以下を実行します。
 
 ```julia
 julia> Genie.Generator.db_support()
 ```
 
-The command will add a `db/` folder within the root of the app. What we're looking for is the `db/connection.yml` file which tells SearchLight how to connect to the database. Let's edit it. Make the file look like this:
+コマンドはアプリのルートディレクトリ内に`db/`フォルダを追加します。データベースへの接続の方法をSearchLightに伝えるための`db/connection.yml`ファイルを探索します。それを編集してみましょう。以下のようにファイルを修正します。
 
 ```yaml
 env: ENV["GENIE_ENV"]
@@ -503,16 +509,16 @@ dev:
   config:
 ```
 
-This instructs SearchLight to run in the environment of the current Genie app (by default `dev`), using `SQLite` for the adapter (backend) and a database stored at `db/books.sqlite` (the database will be created automatically if it does not exist). We could pass extra configuration options in the `config` object, but for now we don't need anything else.
+これはSearchLightに対して、現在のGenieアプリの環境(デフォルトは`dev`)で動作し、アダプタ(バックエンド)として`SQLight`を利用し、データベースは`db/books.sqlite`(存在しない場合は自動で作成される)で保存するように命令しています。`config`オブジェクト内で追加の設定オプションを渡すこともできますが、今は何も必要ありません。
 
 ---
-**HEADS UP**
+**注意喚起**
 
-If you are using a different adapter, make sure that the database configured already exists and that the configured user can successfully access it -- SearchLight will not attempt to create the database.
+他のアダプタを利用している場合、設定済みのデータベースがすでに存在し、設定済みのユーザがそのデータベースに正常にアクセスできることを確認してください。SearchLightはデータベースの作成を試みることはしません。
 
 ---
 
-Now we can ask SearchLight to load it up:
+ここまでで、SearchLightにロードするよう要求ができます。
 
 ```julia
 julia> using SearchLight
@@ -525,7 +531,7 @@ Dict{String,Any} with 4 entries:
   "adapter"  => "SQLite"
 ```
 
-Let's just go ahead and try it out by connecting to the DB:
+次に進んで、データベースに接続してみましょう。
 
 ```julia
 julia> using SearchLightSQLite
@@ -535,11 +541,12 @@ SQLite.DB("db/books.sqlite")
 ```
 
 The connection succeeded and we got back a SQLite database handle.
+接続が成功し、SQLiteデータベースハンドルが返されました。
 
 ---
-**PRO TIP**
+**プロのヒント**
 
-Each database adapter exposes a `CONNECTIONS` collection where we can access the connection:
+各データベースアダプタは、接続情報にアクセスできる`CONNECTIONS`コレクションを公開します。
 
 ```julia
 julia> SearchLightSQLite.CONNECTIONS
@@ -549,7 +556,7 @@ julia> SearchLightSQLite.CONNECTIONS
 
 ---
 
-Awesome! If all went well you should have a `books.sqlite` database in the `db/` folder.
+素晴らしい！　すべてが順調であれば、`db/`フォルダ内に`books.sqlite`データベースがあります。
 
 ```julia
 shell> tree db
@@ -560,23 +567,23 @@ db
 └── seeds
 ```
 
-### Managing the database schema with `SearchLight` migrations
+### `SearchLight`マイグレーションでデータベーススキーマを管理
 
-Database migrations provide a way to reliably, consistently and repeatedly apply (and undo) schema transformations. They are specialised scripts for adding, removing and altering DB tables – these scripts are placed under version control and are managed by a dedicated system which knows which scripts have been run and which not, and is able to run them in the correct order.
+データベースの移行は、スキーマ変換を確実かつ一貫して繰り返し適用する(元に戻す)方法を提供します。それらはデータベースのテーブルを追加、削除、変更するための特別なスクリプトです。これらのスクリプトはバージョン管理化におかれ、実行されたスクリプトと実行されなかったスクリプトを認識し、正しい順番でスクリプトを実行できる専用のシステムで管理されます。
 
-SearchLight needs its own DB table to keep track of the state of the migrations so let's set it up:
+SearchLightはマイグレーションの状態を追跡しつづけるために独自のデータベーステーブルを必要とします。それを設定してみましょう。
 
 ```julia
 julia> SearchLight.Migrations.create_migrations_table()
 [ Info: Created table schema_migrations
 ```
 
-This command sets up our database with the needed table in order to manage migrations.
+このコマンドは移行を管理するために必要なテーブルをデータベースに設定します。
 
 ---
 **PRO TIP**
 
-You can use the SearchLight API to execute random queries against the database backend. For example we can confirm that the table is really there:
+SearchLight APIを利用して、データベースバックエンドに対してランダムクエリを実行できます。例えばテーブルが実際にあることを確認することができます。
 
 ```julia
 julia> SearchLight.query("SELECT name FROM sqlite_master WHERE type ='table' AND name NOT LIKE 'sqlite_%'")
@@ -590,15 +597,15 @@ julia> SearchLight.query("SELECT name FROM sqlite_master WHERE type ='table' AND
 │ 1   │ schema_migrations │
 ```
 
-The result is a familiar `DataFrame` object.
+結果はおなじみの `DataFrame`オブジェクトです。
 
 ---
 
-### Creating our Book model
+### Bookモデルの作成
 
-SearchLight, just like Genie, uses the convention-over-configuration design pattern. It prefers for things to be setup in a certain way and provides sensible defaults, versus having to define everything in extensive configuration files. And fortunately, we don't even have to remember what these conventions are, as SearchLight also comes with an extensive set of generators.
+Genietと同様に、SearchLightはConvention-over-Configuration設計パターンを利用します。それは大規模な構成ファイルの中ですべてを定義する必要はなく、特定の方法で設定することを好み、実用的なデフォルトを提供します。そして幸いにも、SearchLightには豊富なジェネレータ一式が付属しているため、これらの規則を覚える必要さえありません。
 
-Lets ask SearchLight to create a new model:
+新しいモデルを作成するようにSearchLightに依頼してみましょう。
 
 ```julia
 julia> SearchLight.Generator.newmodel("Book")
@@ -609,7 +616,7 @@ julia> SearchLight.Generator.newmodel("Book")
 [ Info: New unit test created at /Users/adrian/Dropbox/Projects/MyGenieApp/test/books_test.jl
 ```
 
-SearchLight has created the `Books.jl` model, the `*_create_table_books.jl` migration file, the `BooksValidator.jl` model validator and the `books_test.jl` test file.
+SearchLightは`Books.jl`モデルと、`*_create_table_books.jl`マイグレーションファイル、`BooksValidator.jl`モデルバリデータ、`books_test`テストファイルを作成します。
 
 ---
 **HEADS UP**
