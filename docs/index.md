@@ -61,7 +61,7 @@ GenieはJulia v1.0以降と互換性があります。
 
 [WebSocketの利用](ja/documentation/17--Working_with_Web_Sockets.md)
 
-[Eager Compilation of Routes](documentation/80--Force_Compiling_Routes.md)
+[ルートの強制コンパイル](ja/documentation/80--Force_Compiling_Routes.md)
 
 ## ガイド
 
