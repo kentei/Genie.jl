@@ -53,7 +53,7 @@ GenieはJulia v1.0以降と互換性があります。
 
 [ルーティングリクエストコンプリートガイド](ja/documentation/12--Advanced_Routing_Techniques.md)
 
-[Configuration: Initializers](documentation/13--Initializers.md)
+[設定: イニシャライザ](ja/documentation/13--Initializers.md)
 
 [設定: シークレットファイル](ja/documentation/14--The_Secrets_File.md)
 
@@ -79,7 +79,7 @@ GenieはJulia v1.0以降と互換性があります。
 
 **様々なホストへの導入ガイド。**
 
-[GenieとDockerの結合](jp/documentation/16--Using_Genie_With_Docker.md)
+[GenieとDockerの結合](ja/documentation/16--Using_Genie_With_Docker.md)
 
 [Deploying with Heroku Buildpacks](documentation/90--Deploying_With_Heroku_Buildpacks.md)
 
