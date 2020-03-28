@@ -65,7 +65,7 @@ GenieはJulia v1.0以降と互換性があります。
 
 ## ガイド
 
-**Genieは、Webサーバの迅速な立ち上げからフルMVCのWebアプリまで、様々なタスクで利用できます。以下のリソースを利用し各ユースケースを見ていきましょう**
+**Genieは、Webサーバの迅速な立ち上げからフルMVCのWebアプリまで、様々なタスクで利用できます。以下のリソースを利用し各ユースケースを見ていきましょう。**
 
 [対話型環境でのGenieの利用(Jupyter/IJulia、REPLなど)](ja/guides/Interactive_environment.md)
 
@@ -77,9 +77,9 @@ GenieはJulia v1.0以降と互換性があります。
 
 ## 開発
 
-**Guides for deployments on various hosts.**
+**様々なホストへの導入ガイド。**
 
-[Genie and Docker Integration](documentation/16--Using_Genie_With_Docker.md)
+[GenieとDockerの結合](jp/documentation/16--Using_Genie_With_Docker.md)
 
 [Deploying with Heroku Buildpacks](documentation/90--Deploying_With_Heroku_Buildpacks.md)
 
