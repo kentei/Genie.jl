@@ -1,24 +1,24 @@
-# DockerでGenieを利用する
+# Using Genie with Docker
 
-Genieはアプリのコンテナ化のサポートが組み込まれています。その機能は`Genie.Deploy.Docker`モジュールで利用できます。
+Genie comes with built-in support for containerizing apps. The functionality is available in the `Genie.Deploy.Docker` module.
 
-## Genieに最適化された`Dockerfile`を生成する
+## Generating the Genie-optimised `Dockerfile`
 
-`Genie.Deploy.Docker.dockerfile()`関数を呼び出すことでDockerセットアップをブートストラップできます。これにより、Gennie Webアプリコンテナ化のために最適化されたカスタム`Dockerfile`が生成されます。そのファイルは現在の作業ディレクトリ(または`path`オプション引数で指定した場所)に生成されます(`dockerfile()`関数のヘルプを参照してください)。一度生成されれば、それを編集して、必要に応じてカスタマイズできます。Genieはファイルを上書きしないため、変更は保持されます。
+You can bootstrap the Docker setup by invoking the `Genie.Deploy.Docker.dockerfile()` function. This will generate a custom `Dockerfile` optimized for Genie web apps containerization. The file will be generated in the current work dir (or where instructed by the optional argument `path` -- see the help for the `dockerfile()` function). Once generated, you can edit it and customize it as needed - Genie will not overwrite the file, thus preserving any changes.
 
-`dockerfile()`の振る舞いは、サポートされている複数のオプション引数を渡すことでコントロールすることができます。
+The behaviour of `dockerfile()` can be controlled by passing any of the multiple optional arguments supported.
 
-## Dockerコンテナを構築
+## Building the Docker container
 
-一度`Dockerfile`の準備ができたら、Dockerコンテナを構築するために`Genie.Deploy.Docker.build()`を呼び出すことができます。必要に応じて、コンテナの名前(デフォルトは`genie`)とパス(デフォルトは現在の作業ディレクトリ)を渡すことができます。
+Once we have our `Dockerfile` ready, we can invoke `Genie.Deploy.Docker.build()` in order to build the Docker container. You can optionally pass the container's name (by default `"genie"`) and the path (defaults to current work dir).
 
-## Dockerコンテナ内でGenieアプリを実行
+## Running the Genie app within the Docker container
 
-イメージの準備ができたら、`Genie.Deploy.Docker.run()`で実行できます。アプリの実行方法をコントロールするためにオプション引数を構成できます。詳細については、関数のインラインヘルプを確認してください。
+When the image is ready, we can run it with `Genie.Deploy.Docker.run()`. We can configure any of the optional arguments in order to control how the app is run. Check the inline help for the function for more details.
 
-## 例
+## Examples
 
-初めに、Genieアプリを作りましょう。
+First let's create a Genie app:
 
 ```julia
 julia> using Genie
@@ -28,7 +28,7 @@ julia> Genie.newapp("DockerTest")
 # output truncated
 ```
 
-準備ができたら、`Dockerfile`を追加してみましょう。
+When it's ready, let's add the `Dockerfile`:
 
 ```julia
 julia> using Genie.Deploy
@@ -37,7 +37,7 @@ julia> Deploy.Docker.dockerfile()
 Docker file successfully written at /Users/adrian/DockerTest/Dockerfile
 ```
 
-ここでコンテナを構築します。
+Now, to build our container:
 
 ```julia
 julia> Deploy.Docker.build()
@@ -49,7 +49,7 @@ Successfully tagged genie:latest
 Docker container successfully built
 ```
 
-最後にDockerコンテナ内でアプリを実行することができます。
+And finally, we can now run our app within the Docker container:
 
 ```julia
 julia> Deploy.Docker.run()
@@ -72,15 +72,15 @@ Active env: DEV
 Web Server starting at http://0.0.0.0:8000
 ```
 
-アプリケーションはDockerコンテナ内で開始し、コンテナ内のポート8000(Genieアプリが実行されている場所)をホストのポート80にバインドします。だから、<http://localhost>でアプリにアクセスすることができます。もしお気に入りのブラウザで<http://localhost>に移動した場合、Genieのウェルカムページを表示します。ポート8000にアクセスしないことに注目してください。このページは、デフォルトのポート80のDockerコンテナから提供されます。
+Our application starts inside the Docker container, binding port 8000 within the container (where the Genie app is running) to the port 80 of the host. So we are now able to access our app at `http://localhost`. If you navigate to `http://localhost` with your favourite browser you'll see Genie's welcome page. Notice that we don't access on port 8000 - this page is served from the Docker container on the default port 80.
 
-### 開発中にDockerを利用
+### Using Docker during development
 
-開発中のアプリを提供するためにDockerを利用したい場合、アプリをホスト(あなたのPC)からコンテナにマウントする必要がある。ローカルでファイルを編集しつづけても、Dockerコンテナにその変更が反映されます。これを実施するためには、`moubtapp = true`引数を`Deploy.Docker.run()`に渡す必要があります。
+If we want to use Docker to serve the app during development, we need to _mount_ our app from host (your computer) into the container -- so that we can keep editing our files locally, but see the changes reflected in the Docker container. In order to do this we need to pass the `mountapp = true` argument to `Deploy.Docker.run()`, like this:
 
 ```julia
 julia> Deploy.Docker.run(mountapp = true)
 Starting docker container with `docker run -it --rm -p 80:8000 --name genieapp -v /Users/adrian/DockerTest:/home/genie/app genie bin/server`
 ```
 
-アプリの起動が完了した際、好きなIDEを使ってホスト上でファイルを編集することができ、その変更はDockerコンテナに反映されます。
+When the app finishes starting, we can edit the files on the host using our favourite IDE, and see the changes reflected in the Docker container.
