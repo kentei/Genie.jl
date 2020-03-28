@@ -69,7 +69,7 @@ GenieはJulia v1.0以降と互換性があります。
 
 [対話型環境でのGenieの利用(Jupyter/IJulia、REPLなど)](ja/guides/Interactive_environment.md)
 
-[Developing a Simple API Backend](guides/Simple_API_backend.md)
+[シンプルなAPIバックエンドの開発](ja/guides/Simple_API_backend.md)
 
 [Using and Developing Genie Plugins](guides/Genie_Plugins.md)
 

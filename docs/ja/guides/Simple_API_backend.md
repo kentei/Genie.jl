@@ -1,6 +1,6 @@
-# Developing a simple API backend
+# シンプルなAPIバックエンドの開発
 
-Genie makes it very easy to quickly set up a REST API backend. All it takes is a few lines of code:
+GenieによりREST APIバックエンドを素早くとても簡単にセットアップすることができます。必要なものは、数行のコードですべてです。
 
 ```julia
 using Genie
@@ -16,16 +16,15 @@ end
 Genie.startup()
 ```
 
-The key bit here is `Genie.config.run_as_server = true`. This will start the server synchronously so the `startup()` function won't return.
-This endpoint can be run directly from the command line - if say, you save the code in a `rest.jl` file:
+ここで重要になるのは、`Genie.config.run_as_server = true`です。これはサーバを同期的に起動するため、`startup()`関数は返りません。このエンドポイントはコマンドラインから直接実行できます。`rest.jl`ファイルにコードを保存して実行します。
 
 ```shell
 $ julia rest.jl
 ```
 
-## Accepting JSON payloads
+## JSONペイロードの受け入れ
 
-One common requirement when exposing APIs is to accept `POST` payloads. That is, requests over `POST`, with a request body, usually as a JSON encoded object. We can build an echo service like this:
+APIを公開するとき共通の要件の一つは`POST`ペイロードを受け入れることです。つまり、通常JSONエンコードされたオブジェクトであるリクエストボディと一緒に`POST`を介してリクエストを送信します。次のようなechoサービスを構築してみます。
 
 ```julia
 using Genie, Genie.Router, Genie.Renderer.Json, Genie.Requests
@@ -45,10 +44,9 @@ end
 Genie.startup(async = false)
 ```
 
-Here we define two routes, `/send` and `/echo`. The `send` route makes a `HTTP` request over `POST` to `/echo`, sending a JSON payload with two values, `message` and `repeat`.
-In the `/echo` route, we grab the JSON payload using the `Requests.jsonpayload()` function, extract the values from the JSON object, and output the `message` value repeated for a number of times equal to the `repeat` value.
+ここでは2つのルート`/send`と`/echo`を定義しています。`send`ルートは`/echo`への`POST`を介した`HTTP`リクエストを作成し、2つの値`message`と`repeat`とともにJSONペイロードを送信します。`/echo`ルートでは、`Requests.jsonpayload()`関数を利用し、JSONペイロードを取得し、JSONオブジェクトから値を抽出し、`message`値を`repeat`値で指定された数分だけ繰り返し出力します。
 
-If you run the code, the output should be
+コードを実行すると、以下のように出力されます。
 
 ```javascript
 {
@@ -56,5 +54,4 @@ If you run the code, the output should be
 }
 ```
 
-If the payload contains invalid JSON, the `jsonpayload` will be set to `nothing`. You can still access the raw payload by using the `Requests.rawpayload()` function.
-You can also use `rawpayload` if for example the type of request/payload is not JSON.
+ペイロードに無効なJSONが含まれている場合は、`jsonpayload`は`nothing`に設定されます。`Requests.rawpayload()`関数を利用することで生ペイロードに引き続きアクセスすることはできます。例えばリクエスト/ペイロードの型がJSONでない場合でも、`rawpayload`を使用することができます。
