@@ -51,7 +51,7 @@ GenieはJulia v1.0以降と互換性があります。
 
 [外部パッケージの管理](ja/documentation/11--Managing_External_Packages.md)
 
-[ルーティングリクエストコンプリートガイド(翻訳中)](ja/documentation/12--Advanced_Routing_Techniques.md)
+[ルーティングリクエストコンプリートガイド](ja/documentation/12--Advanced_Routing_Techniques.md)
 
 [Configuration: Initializers](documentation/13--Initializers.md)
 

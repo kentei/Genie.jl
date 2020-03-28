@@ -96,7 +96,7 @@ HTTP.request("PATCH", "http://127.0.0.1:8000/patch_stuff").body |> String
 
 Genieでは名前でルートにタグ付けをすることができます。これは、ルートに対する動的URLのために、`Router.tolink`メソッドと組み合わせて利用される非常に強力な機能です。この手法の利点は、名前によってルートを参照し`tolink`を使用して動的リンクを生成する場合、ルートの名前が一致している限り、ルートパターンを変えたとしてもすべてのURLが新しいルート定義に自動的に一致することです。
 
-ルートに名前をつけるには、`named`キーワード引数を利用する必要があり、これには`Symbolが必要です`
+ルートに名前をつけるには、`named`キーワード引数を利用する必要があり、これには`Symbol`が必要です。
 
 ### 例
 
@@ -255,42 +255,42 @@ MethodError(convert, (Int64, "10"), 0x00000000000063fe)
 /customers/10/orders/20 404
 ```
 
-As you can see, Genie attempts to convert the types from the default `SubString{String}` to `Int` -- but doesn't know how. It fails, can't find other matching routes and returns a `404 Not Found` response.
+見た通り、Genieは型をデフォルトの`SubString{String}`から`Int`に変換しようとしています。しかし、その方法がわかりません。そのため失敗し、他に一致するルートを見つけられず`404 Not Found`を返しています。
 
-### Type conversion in routes
+### ルートでの型変換
 
-The error is easy to address though: we need to provide a type converter from `SubString{String}` to `Int`.
+エラーは簡単に対処できます。`SubString{String} `から` Int`への型変換器を提供する必要があります。
 
 ```julia
 Base.convert(::Type{Int}, v::SubString{String}) = parse(Int, v)
 ```
 
-Once we register the converter in `Base`, our request will be correctly handled, resulting in `Order ID has type Int64 // Customer ID has type Int64`
+一度`Base`内で、その変換器を登録すれば、リクエストは正しく処理され、その結果`Order ID has type Int64 // Customer ID has type Int64`となります。
 
-## Matching individual URI segments
+## 個々のURIセグメントの一致
 
-Besides matching the full route, Genie also allows matching individual URI segments. That is, enforcing that the various route parameters obey a certain pattern. In order to introduce constraints for route parameters we append `#pattern` at the end of the route parameter.
+完全一致のルートだけでなく、Genieは個々のURIセグメントでの一致をサポートしています。つまり、さまぁまなルートパラメータが特定のパターンに従うよう強制します。ルートパラメータの制約を導入するためには、ルートパラメータの末尾に`#pattern`を追加します。
 
-### Example
+### 例
 
-For instance, let's assume that we want to implement a localized website where we have a URL structure like: `mywebsite.com/en`, `mywebsite.com/es` and `mywebsite.com/de`. We can define a dynamic route and extract the locale variable to serve localized content:
+例えば、`mywebsite.com/en`、`mywebsite.com/es`、`mywebsite.com/de`のようなURL構造を持つローカライズされたWebサイトを実装してみましょう。動的ルートを定義し、ロケール変数を抽出することで、ローカライズされたコンテンツを提供することができます。
 
 ```julia
 route(":locale", TranslationsController.index)
 ```
 
-This will work very well, matching requests and passing the locale into our code within the `payload(:locale)` variable. However, it will also be too greedy, virtually matching all the requests, including things like static files (ie `mywebsite.com/favicon.ico`). We can constrain what the `:locale` variable can match, by appending the pattern (a regex pattern):
+これは非常にうまく機能し、リクエストを照合し、`payload(:locale)`変数内のコードにロケール情報を渡します。しかし、それはとても貪欲で、静的ファイル(`mywebsite.com/favicon.ico`等)のようなものを含むすべてのリクエストにほとんどが一致します。以下のようにパターン(正規表現パターン)を追加することで、`:locale`変数が一致できるものを制限できます。
 
 ```julia
 route(":locale#(en|es|de)", TranslationsController.index)
 ```
 
-The refactored route only allows `:locale` to match one of `en`, `es`, and `de` strings.
+リファクタリングされたルートは、`:locale`は`en`、`es`、`de`のどれか一文字列にのみ一致します。
 
 ---
-**HEADS UP**
+**注意喚起**
 
-Keep in mind not to duplicate application logic. For instance, if you have an array of supported locales, you can use that to dynamically generate the pattern -- routes can be fully dynamically generated!
+アプリケーションのロジックを重複させないように気を付けてください。サポート済みのロケールの配列があれば、そのパターンを動的に生成するのに利用できます。ルートを完全に動的生成することができます。
 
 ```julia
 const LOCALE = ":locale#($(join(TranslationsController.AVAILABLE_LOCALES, '|')))"
@@ -300,6 +300,6 @@ route("/$LOCALE", TranslationsController.index, named = :get_index)
 
 ---
 
-## The `@params` collection
+## `@params`コレクション
 
-It's good to know that the router bundles all the parameters of the current request into the `@params` collection (a `Dict{Symbol,Any}`). This contains valuable information, such as route parameters, query params, POST payload, the original HTTP.Request and HTTP.Response objects, etcetera. In general it's recommended not to access the `@params` collection directly but through the utility methods defined by `Genie.Requests` and `Genie.Responses` -- but knowing about `@params` might come in handy for advanced users.
+ルータが現在のリクエストのすべてのパラメータを`@params`コレクション(`Dict{Symbol, Any}`型)に入れていることは知っておくとよいです。これはルートパラメータ、クエリパラメータ、POSTペイロード、オリジナルHTTP,RequestとHTTP.Responseオブジェクトなどの貴重な情報が含まれています。一般的に、直接`@params`コレクションにアクセスするのではなく、`Genie.Requests`と`Genie.Responses`で定義されたユーティリティメソッドを介してアクセスすることを推奨します。ただし、`@params`について知っていることは、上級ユーザにとって役に立つでしょう。
