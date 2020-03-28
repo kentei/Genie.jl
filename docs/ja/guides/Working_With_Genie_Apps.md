@@ -581,7 +581,7 @@ julia> SearchLight.Migrations.create_migrations_table()
 このコマンドは移行を管理するために必要なテーブルをデータベースに設定します。
 
 ---
-**PRO TIP**
+**プロのヒント**
 
 SearchLight APIを利用して、データベースバックエンドに対してランダムクエリを実行できます。例えばテーブルが実際にあることを確認することができます。
 
@@ -619,25 +619,21 @@ julia> SearchLight.Generator.newmodel("Book")
 SearchLightは`Books.jl`モデルと、`*_create_table_books.jl`マイグレーションファイル、`BooksValidator.jl`モデルバリデータ、`books_test`テストファイルを作成します。
 
 ---
-**HEADS UP**
+**注意喚起**
 
-The first part of the migration file will be different for you!
+移行ファイルの最初の部分はあなたのものとは異なります。
 
-The `*_create_table_books.jl` file will be named differently as the first part of the name is the file creation timestamp. This timestamp part guarantees that names are unique and file name clashes are avoided (for example when working as a team a creating similar migration files).
+名前の前半部分はファイル作成のタイムスタンプであるため、`*_create_table_books.jl`ファイルには別の名前がつけられます。このタイムスタンプ部分は、名前はユニークで、ファイル競合を回避することを保証します。(例えばチームとで作業していて似たような移行ファイルを作成する場合)
 
 ---
 
+#### テーブルマイグレーションの記載
 
-#### Writing the table migration
+booksテーブルを作成するため、マイグレーションを記述してみましょう。SearchLightはマイグレーションを記載するために強力なDSLを提供します。各マイグレーションファイルは2つのメソッドを定義する必要があります。1つは変更を適用する`up`メソッド、もう1つはその`up`メソッドの効果を元に戻す`down`メソッドです。そのため、`up`メソッドはテーブルを生成し、`down`メソッドはテーブルを削除します。
 
-Lets begin by writing the migration to create our books table. SearchLight provides a powerful DSL for writing migrations.
-Each migration file needs to define two methods: `up` which applies the changes – and `down` which undoes the effects of the `up` method.
-So in our `up` method we want to create the table – and in `down` we want to drop the table.
+SearchLightのテーブルの命名規則では、テーブル名を複数形(例：`books`)にする必要があります。なぜなら、テーブルには複数の本(books)が含まれるためです(各行はオブジェクト"book"を表現しています)　。しかし、心配することはありません。マイグレーションファイルは正しいテーブル名で既に入力されているからです。
 
-The naming convention for tables in SearchLight is that the table name should be pluralized (`books`) – because a table contains multiple books (each row represents an object, a "book").
-But don't worry, the migration file should already be pre-populated with the correct table name.
-
-Edit the `db/migrations/*_create_table_books.jl` file and make it look like this:
+`db/migrations/*_create_table_books.jl`ファイルを編集して、以下のようにしてください。
 
 ```julia
 module CreateTableBooks
@@ -664,11 +660,11 @@ end
 end
 ```
 
-The DSL is pretty readable: in the `up` function we call `create_table` and pass an array of columns: a primary key, a `title` column and an `author` column (both strings have a max length of 100). We also add two indices (one on the `title` and the other on the `author` columns). As for the `down` method, it invokes the `drop_table` function to remove the table.
+DSLはとても読みやすいです。`up`関数内で`create_table`を呼び、列の配列を渡します。主キー、`title`列と`author`列(両方とも文字列は最大長100文字)です。また、2つのインデックス(1つは`title`列で、もう一方は`author`列)を追加します。`down`メソッドは、テーブルを削除するために`drop_table`関数を呼びます。
 
-#### Running the migration
+#### マイグレーションの実行
 
-We can see what SearchLight knows about our migrations with the `SearchLight.Migrations.status` command:
+`SearchLight.Migrations.status`コマンドでSearchLightがマイグレーションについてわかっていることを確認します。
 
 ```julia
 julia> SearchLight.Migrations.status()
@@ -679,14 +675,14 @@ julia> SearchLight.Migrations.status()
 | 1 | 2020020909574048_create_table_books.jl |
 ```
 
-So our migration is in the `down` state – meaning that its `up` method has not been run. We can easily fix this:
+マイグレーションは`down`状態です。つまり、`up`メソッドはまだ実行されていません。これは簡単に直せます。
 
 ```julia
 julia> SearchLight.Migrations.last_up()
 [ Info: Executed migration CreateTableBooks up
 ```
 
-If we recheck the status, the migration is up:
+再びチェックすると、マイグレーションがupとなります。
 
 ```julia
 julia> SearchLight.Migrations.status()
@@ -697,13 +693,13 @@ julia> SearchLight.Migrations.status()
 | 1 | 2020020909574048_create_table_books.jl |
 ```
 
-Our table is ready!
+テーブルが準備できました！
 
-#### Defining the model
+#### モデルの定義
 
-Now it's time to edit our model file at `app/resources/books/Books.jl`. Another convention in SearchLight is that we're using the pluralized name (`Books`) for the module – because it's for managing multiple books. And within it we define a type (a `mutable struct`), called `Book` – which represents an item (a single book) which maps to a row in the underlying database.
+今度は、`app/resources/books/Books.jl`のモデルファイルを修正するときです。SearchLightの他の規則は、モジュールに複数形の名前(`Books`)を利用していることです。なぜなら、複数の本を管理するためのものだからです。その中で`Book`という名の型(`可変構造体(mutable struct)`)を定義します。基盤となるデータベースの行に割り当てるアイテム(単一の本)を表現します。
 
-Edit the `Books.jl` file to make it look like this:
+`Books.jl`ファイルを修正して、以下のようにしてください。
 
 ```julia
 # Books.jl
@@ -734,11 +730,11 @@ Book(;
 end
 ```
 
-We defined a `mutable struct` which matches our previous `Book` type except that it has a few special fields used internally by SearchLight: the fields starting with an underscore  reference the table name and the name of the primary key column. We also define a keyword constructor as SearchLight needs it.
+前の`Book`型と一致する`butable struct`を定義しましたが、それ以外にSearchLightによって内部的に利用されるいくつか特別なフィールドがあります。アンダースコアで始まるフィールドはテーブル名と主キー列の名前を参照します。SearchLightが必要とする時は、キーワードコンストラクタも定義します。
 
-#### Using our model
+#### モデルの利用
 
-To make things more interesting, we should import our current books into the database. Add this function to the `Books.jl` module, under the `Book()` constructor definition (just above the module's closing `end`):
+もっと興味深くするために、データベースに現在の本をインポートする必要があります。`Books.jl`モジュールの`Book()`コンストラクタ定義の下(モジュールの`end`のちょうど上)に、この関数を追加してください。
 
 ```julia
 # Books.jl
