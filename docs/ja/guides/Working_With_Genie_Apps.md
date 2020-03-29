@@ -753,9 +753,9 @@ function seed()
 end
 ```
 
-#### Auto-loading the DB configuration
+#### データベース設定の自動読み込み
 
-Now, to try things out. Genie takes care of loading all our resource files for us when we load the app. To do this, Genie comes with a special file called an initializer, which automatically loads the database configuration and sets up SearchLight. Check `config/initializers/searchlight.jl`. It should look like this:
+実際に試してみます。Genieはアプリを読み込む際、すべてのリソースファイルを読み込みます。これを実施するため、Genieはデータベースの設定を自動で読み込み、SearchLightをセットアップするイニシャライザと呼ばれる特別なファイルを備えています。`config/initializers/searchlight.jl`を確認してください。それは以下のようになっています。
 
 ```julia
 using SearchLight
@@ -766,21 +766,21 @@ SearchLight.connect()
 ```
 
 ---
-**Heads up!**
+**注意喚起!**
 
-All the `*.jl` files placed into the `config/initializers/` folder are automatically included by Genie upon starting the Genie app. They are included early (upon initialisation), before the controllers, models, views, are loaded.
+`config/initializers/`フォルダの中に配置された`*.jl`ファイルのすべてはGenieアプリ起動時にGenieによって自動的にインクルードされます。それらはコントローラ、モデル、ビューが読み込まれるより前の初期化時にインクルードされます。
 
 ---
 
-#### Trying it out
+#### 試してみる
 
-Now it's time to restart our REPL session and test our app. Close the Julia REPL session to exit to the OS command line and run:
+REPLセッションを再開して、アプリをテストしてみましょう。Julia REPLセッションを閉じて、OSコマンドラインに戻り、以下のコマンドを実行します。
 
 ```bash
 $ bin/repl
 ```
 
-The `repl` executable script placed within the app's `bin/` folder starts a new Julia REPL session and loads the applications' environment. Everything should be automatically loaded now, DB configuration included - so we can invoke the previously defined `seed` function to insert the books:
+アプリの`bin/`フォルダに配置された`repl`実行可能スクリプトは新たなJulia REPLセッションを開始し、アプリケーションの環境を読み込みます。すべてが自動的に読み込まれ、データベース設定がインクルードされます。以前定義したbooksを挿入する`seed`関数を呼び出します。
 
 ```julia
 julia> using Books
@@ -788,7 +788,7 @@ julia> using Books
 julia> Books.seed()
 ```
 
-There should be a list of queries showing how the data is inserted in the DB:
+データがデータベースに挿入される方法を示すクエリの一覧があります。
 
 ```julia
 julia> Books.seed()
@@ -797,7 +797,7 @@ julia> Books.seed()
 # output truncated
 ```
 
-If you want to make sure all went right (although trust me, it did, otherwise SearchLight would've thrown an `Exception`!), just ask SearchLight to retrieve them:
+すべてがうまくいったことを確認したければ、挿入結果を取得するようにSearchLightに要求します。
 
 ```julia
 julia> using SearchLight
@@ -823,11 +823,11 @@ julia> all(Book)
 # output truncated
 ```
 
-The `SearchLight.all` method returns all the `Book` items from the database.
+`SearchLight.all`メソッドはデータベースからすべての`Book`アイテムを返します。
 
-All good!
+すべてうまくいきました！
 
-The next thing we need to do is to update our controller to use the model. Make sure that `app/resources/books/BooksController.jl` reads like this:
+次に、モデルを利用するためにコントローラを更新する必要があります。`app/resources/books/BooksController.jl`を以下のようになっているか確認してください。
 
 ```julia
 # BooksController.jl
@@ -853,23 +853,23 @@ end
 end
 ```
 
-Our JSON view needs a bit of tweaking too:
+JSONビューも少しだけ調整が必要です。
 
 ```julia
 # app/resources/books/views/billgatesbooks.json.jl
 "Bill's Gates list of recommended books" => [Dict("author" => b.author, "title" => b.title) for b in books]
 ```
 
-Now if we just start the server we'll be able to see the list of books served from the database:
+サーバを起動すれば、データベースから提供される本の一覧を表示できるようになります。
 
 ```julia
 # Start the server
 julia> up()
 ```
 
-The `up` method starts up the web server and takes us back to the interactive Julia REPL prompt.
+`up`メソッドはWebサーバを起動し、対話型のJulia REPLプロンプトに戻ります
 
-Now, if, for example, we navigate to <http://localhost:8000/api/v1/bgbooks>, the output should match the following JSON document:
+例えば、<http://localhost:8000/api/v1/bgbooks>に移動した場合、出力結果は以下のJSONドキュメントと一致します。
 
 ```json
 {
@@ -898,7 +898,7 @@ Now, if, for example, we navigate to <http://localhost:8000/api/v1/bgbooks>, the
 }
 ```
 
-Let's add a new book to see how it works. We'll create a new `Book` item and persist it using the `SearchLight.save!` method:
+その動き方を確認するために新しい本を追加してみましょう。新たな`Book`アイテムを生成し、`SearchLight.save!`メソッドを利用してそれを永続化します。
 
 ```julia
 julia> newbook = Book(title = "Leonardo da Vinci", author = "Walter Isaacson")
@@ -925,9 +925,9 @@ Book
 | title::String  | Leonardo da Vinci |
 ```
 
-Calling the `save!` method, SearchLight has persisted the object in the database and then retrieved it and returned it (notice the updated `id::DbId` field).
+`save!`メソッドを呼び出すことで、SearchLightはデータベースにオブジェクトを永続化し、それを取得して返しました(`id::DbId`が更新されたことに注意してください)。
 
-The same `save!` operation can be written as a one-liner:
+同じように`save!`操作はワンライナーで書くことができます。
 
 ```julia
 julia> Book(title = "Leonardo da Vinci", author = "Walter Isaacson") |> save!
@@ -936,7 +936,7 @@ julia> Book(title = "Leonardo da Vinci", author = "Walter Isaacson") |> save!
 ---
 **HEADS UP**
 
-If you also run the one-liner `save!` example, it will add the same book again. No problem, but if you want to remove it, you can use the `delete` method:
+ワンライナーの`save!`例を実行する場合、」同じ本が再び追加されます。問題はありませんが、それを消したい場合は`delete`メソッドを利用します。
 
 ```julia
 julia> delete(ans)
@@ -952,7 +952,7 @@ Book
 
 ---
 
-If you reload the page at <http://localhost:8000/bgbooks> the new book should show up.
+<http://localhost:8000/bgbooks>のページをリロードすると、新しい本が表示されます。
 
 ```json
 {
@@ -986,14 +986,14 @@ If you reload the page at <http://localhost:8000/bgbooks> the new book should sh
 ```
 
 ---
-**PRO TIP**
+**プロのヒント**
 
-SearchLight exposes two similar data persistence methods: `save!` and `save`. They both perform the same action (persisting the object to the database), but `save` will return a `Bool` `true` to indicate that the operation was successful or a `Bool` `false` to indicate that the operation has failed. While the `save!` variant will return the persisted object upon success or will throw an exception on failure.
+SearchLightは、2つの似たようなデータ永続化メソッドである`save!`と`save`を公開します。それらは両方とも同じ動作(データベースにオブジェクトを永続化)をしますが、`save`メソッドは操作が成功したことを示す`Bool`型の`true`を、または失敗したことを示す`Bool`型の`false`を返します。一方で`save!`は成功すると永続化オブジェクトを返し、失敗すると例外をスローします。
 
 ---
 
-## Congratulations
+## おめでとうございます
 
-You have successfully finished the first part of the step by step walkthrough - you now master the Genie basics, allowing you to set up a new app, register routes, add resources (controllers, models, and views), add database support, version the database schema with migrations, and execute basic queries with SearchLight!
+段階的なウォークスルーの最初のパートを無事終わらせることができました。Genieの基本をマスターし、新しいアプリのセットアップ、ルート登録、リソース(コントローラ、モデル、ビュー)の追加、データベースサポートの追加、マイグレーションを伴うデータベーススキーマバージョン管理、SearchLightでの基本的なクエリ実行が可能となりました！
 
-In the next part we'll look at more advanced topics like handling forms and file uploads, templates rendering, interactivity and more.
+次のパートでは、フォームやファイルのアップロード、テンプレートによるレンダリング、対話型の処理など、より高度なトピックを見ていきます。
