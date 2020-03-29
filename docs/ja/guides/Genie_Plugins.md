@@ -1,40 +1,41 @@
-# Genie Plugins
+# Genieプラグイン
 
-Genie plugins are special Julia packages which extend Genie apps with powerful  functionality by providing specific integration points. A Genie plugin is made of two parts:
+Genieプラグインは、特別な統合ポイント(integration points)を提供することにより、強力な機能でGenieアプリを拡張する特別なJuliaパッケージです。Genieプラグインは2つのパートで構成されています。
 
-1. the Julia package exposing the core functionality of the plugin, and
-2. a files payload (controllers, modules, views, database migrations, initializers, etc) which are copied into the client app upon plugin installation.
+1. プラグインのコア機能を公開するJuliaパッケージ
+2. プラグインのインストール時にクライアントアプリにコピーされるファイルペイロード(コントローラ、モジュール、ビュー、データベースマイグレーション、イニシャライザなど)
 
-## Using Genie Plugins
+## Genieプラグインの利用
 
-The plugins are created by third party Genie/Julia developers. Take this simple demo plugin as an example: <https://github.com/GenieFramework/HelloPlugin.jl>
+プラグインはサードパーティであるGenie/Julia開発者によって作成されます。例としてシンプルなデモプラグインを扱ってみましょう。(<https://github.com/GenieFramework/HelloPlugin.jl>)
 
-In order to add the plugin to an existing Genie app you need to:
+プラグインを既存のアプリに追加するために、以下を実施する必要があります。
 
-Add the `HelloPlugin` package to your Genie app, just like any other Julia Pkg dependency:
+`HelloPlugin`パッケージを、他のJulia Pkg依存のように、Genieアプリに追加してください。
+
 ```julia
 pkg> add https://github.com/GenieFramework/HelloPlugin.jl
 ```
 
-Bring the package into scope:
+スコープ内にパッケージを持ってきます。
 ```julia
 julia> using HelloPlugin
 ```
 
-Install the plugin (this is a one time operation, when the package is added):
+プラグインをインストールします。(これはパッケージを追加するときに一度だけ実施します)
 ```julia
 julia> HelloPlugin.install(@__DIR__)
 ```
 
-### Running the Plugin
+### プラグインの実行
 
-The installation will add a new `hello` resource in `app/resources/hello/` in the form of `HelloController.jl` and `views/greet.jl.html`. Also, in your Genie app's `plugins/` folder you fill find a new file, `helloplugin.jl` (which is the plugins' initializer and is automatically loaded by Genie early in the bootstrap process).
+プラグインのインストールにより、`app/resources/hello/`に`HelloController.jl`と`views/greet.jl.html`という形式で新たな`hello`リソースが追加されます。また、Genieアプリの`plugins/`フォルダに新しいファイル`helloplugin.jl`(プラグインのイニシャライザであり、ブートストラッププロセスの早い段階でGenieによって自動的に読み込まれます)があります。
 
-The `helloplugin.jl` initializer is defining a new route `route("/hello", HelloController.greet)`. If you restart your Genie app and navigate to `/hello` you will get the plugin's greeting.
+`helloplugin.jl`イニシャライザは新しいルート`route("/hello", HelloController.greet)`を定義しています。Genieアプリを再起動し、`/hello`に移動すると、プラグインの挨拶が表示されます。
 
-## Walkthrough
+## ウォークスルー
 
-Create a new Genie app:
+新しいGenieアプリを作成します。
 
 ```julia
 julia> using Genie
@@ -42,7 +43,7 @@ julia> using Genie
 julia> Genie.newapp("Greetings", autostart = false)
 ```
 
-Add the plugin as a dependency:
+依存関係としてプラグインを追加します。
 
 ```julia
 julia> ]
@@ -50,7 +51,7 @@ julia> ]
 pkg> add https://github.com/GenieFramework/HelloPlugin.jl
 ```
 
-Bring the plugin into scope and run the installer (the installer should be run only once, upon adding the plugin package)
+プラグインをスコープ内に入れ、インストーラを実行します。(インストーラはプラグインパッケージを追加する際に、一度だけ実行されます)
 
 ```julia
 julia> using HelloPlugin
@@ -58,9 +59,9 @@ julia> using HelloPlugin
 julia> HelloPlugin.install(@__DIR__)
 ```
 
-The installation might show a series of logging messages informing about failure to copy some files or create folders. Normally it's nothing to worry about: these are due to the fact that some of the files and folders already exist in the app so they are not overwritten by the installer.
+インストール時には、ファイルのコピーやフォルダの作成に失敗した旨を通知する一連のログメッセージが表示されるかもしれません。通常、そのことは心配する必要がありません。これらはいくつかのファイルまたはフォルダがすでに存在するためにインストーラが上書きできないために発生しています。
 
-Restart the app to load the plugin:
+プラグインを読み込むためにアプリを再起動してください。
 
 ```julia
 julia> exit()
@@ -70,19 +71,19 @@ $ cd Greetings/
 $ bin/repl
 ```
 
-Start the server:
+サーバを開始します。
 
 ```julia
 julia> Genie.startup()
 ```
 
-Navigate to `http://localhost:8000/hello` to get the greeting from the plugin.
+<http://localhost:8000/hello>に移動するとプラグインから挨拶を受けることができます。
 
 ---
 
-## Developing Genie Plugins
+## Genieプラグインの開発
 
-Genie provides an efficient scaffold for bootstraping a new plugin package. All you need to do is run this code to create your plugin project:
+Genieは新しいプラグインパッケージのブートストラップ用の効率的なスキャフォールド(scaffold)を提供します。プラグインプロジェクトを作成するためには以下のコードを実行するだけです。
 
 ```julia
 julia> using Genie
@@ -119,7 +120,7 @@ You can use this default installation function in your plugin's module:
   end
 ```
 
-The scaffold command will create the file structure of your plugin, including the Julia project, the `.git` repo, and the file structure for integrating with Genie apps:
+スキャフォールドコマンドはプラグインのファイル構造を生成します。それはJuliaプロジェクト、`git`リポジトリ、Genieアプリを統合するためのファイル構造を含んでいます。
 
 ```
 .
@@ -145,19 +146,19 @@ The scaffold command will create the file structure of your plugin, including th
     └── GenieHelloPlugin.jl
 ```
 
-The core of the functionality shoud go into the `src/GenieHelloPlugin.jl` module. While everything placed within the `files/` folder should be copied into the corresponding folders of the Genie apps installing the plugin. You can add resources, controllers, models, database migrations, views, assets and any other files inside the `files/` folder to be copied.
+機能のコア部分は`src/GenieHelloPlugin.jl`モジュールにあります。`files/`フォルダ内に配置されたすべてのものは、プラグインをインストールするGenieアプリの対応するフォルダにコピーする必要があります。リソース、コントローラ、モデル、データベースマイグレーション、ビュー、アセットおよびコピーするべき`files/`フォルダの中にあるその他のファイルを追加できます。
 
-The scaffolding will also create a `plugins/geniehelloplugin.jl` file - this is the initializer of the plugin and is meant to bootstrap the functionality of the plugin. Here you can load dependencies, define routes, set up configuration, etc.
+スキャフォールディングは`plugins/geniehelloplugin.jl`ファイルも作成します。これはプラグインのイニシャライザであり、プラグインの機能をブートストラップすることを意図しています。ここでは、依存関係の読み込み、ルートの定義、設定のセットアップなどを実施できます。
 
-Because any Genie plugin is a Julia `Pkg` project, you can add any other Julia packages as dependencies.
+GenieプラグインはJulia `Pkg`プロジェクトであるため、依存関係として他のJuliaパッケージを追加することができます。
 
-### The Installation Function
+### インストール機能
 
-The main module file, present in `src/GenieHelloPlugin.jl` should also expose an `install(path::String)` function, responsible for copying the files of your plugin into the user Genie app. The `path` param is the root of the Genie app where the installation will be performed.
+`src/GenieHelloPlugin.jl`にあるメインモジュールファイルは、ユーザのGenieアプリにプラグインのファイルをコピーする役割を持つ`install(path::String)`関数も公開する必要があります。その`path`パラメータは、インストールが実行されるGenieアプリのルートディレクトリです。
 
-As copying the plugin's files is a standard but tedious operation, Genie provides some helpers to get you started. The `Genie.Plugins` module provides an `install(path::String, dest::String; force = false)` which can be used for copying the plugin's files to their destination in the app.
+プラグインのファイルをコピーすることは普通ですが、面倒な操作であるため、Genieはそれを開始するためのいくつかのヘルパーを提供します。`Genie.Plugins`モジュールは、アプリのプラグインファイルのコピー先にファイルをコピーするのに使うことができる`install(path::String, dest::String; force = false)`を提供します。
 
-The scaffolding function will also recommend a default `install(path::String)` that you can use in your module:
+スキャフォールディング機能は、モジュールで使用できるデフォルトの`install(path::String)`も推奨しています。
 
 ```julia
 function install(dest::String; force = false)
@@ -170,4 +171,4 @@ function install(dest::String; force = false)
 end
 ```
 
-You can use it as a starting point - and add any other specific extra logic to it.
+ここまでをスタート地点として利用し、他の独自のロジックを追加できます。

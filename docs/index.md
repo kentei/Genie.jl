@@ -71,7 +71,7 @@ GenieはJulia v1.0以降と互換性があります。
 
 [シンプルなAPIバックエンドの開発](ja/guides/Simple_API_backend.md)
 
-[Using and Developing Genie Plugins](guides/Genie_Plugins.md)
+[Genieプラグインの利用と開発](ja/guides/Genie_Plugins.md)
 
 [Managing Frontend Assets with the Asset Pipeline](guides/Frontend_assets.md)
 
@@ -85,7 +85,7 @@ GenieはJulia v1.0以降と互換性があります。
 
 ## APIドキュメント
 
-[Developer API Docs](documentation/API)
+[Developer API Docs](ja/documentation/API)
 
 ## 謝辞
 
