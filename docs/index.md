@@ -73,7 +73,7 @@ GenieはJulia v1.0以降と互換性があります。
 
 [Genieプラグインの利用と開発](ja/guides/Genie_Plugins.md)
 
-[Managing Frontend Assets with the Asset Pipeline](guides/Frontend_assets.md)
+[アセットパイプラインによるフロントエンドアセットの管理](ja/guides/Frontend_assets.md)
 
 ## 開発
 
