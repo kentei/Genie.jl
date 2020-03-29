@@ -1,106 +1,104 @@
-# Deploying Genie apps with Heroku Buildpacks
+# HerokuビルドパックによるGenieアプリのデプロイ
 
-This tutorial shows how to host a Julia/Genie app using a Heroku Buildpack.
+これはHerokuビルドパックを利用してJulia/Genieアプリを提供する方法のチュートリアルです。
 
-## Prerequesites
+## 前提条件
 
-This guide assumes you have a Heroku account and are signed into the Heroku CLI. [Information on how to setup the Heroku CLI is available here](https://devcenter.heroku.com/articles/heroku-cli).
+このガイドは、Herokuアカウントがあり、Heroku CLIにサインインしていることを想定しています。[Heroku CLIのセットアップ方法の情報はこちらから](https://devcenter.heroku.com/articles/heroku-cli).
 
-## The application
+## アプリケーション
 
-In order to try the deployment, you will need a sample application. Either pick one of yours or clone this sample one, as indicated next.
+デプロイを試すために、サンプルアプリケーションが必要です。次で示すように、自分のものを利用するかサンプルをクローンするかどちらかを選択してください。
 
-### All Steps (in easy copy-paste format):
+### 全ステップ (簡単なコピー/ペースト形式)
 
-Customize your `HEROKU_APP_NAME` to something unique:
+`HEROKU_APP_NAME`をユニークなものにカスタマイズします。
 
 ```sh
 HEROKU_APP_NAME=my-app-name
 ```
 
-Clone a sample app if needed:
+必要に応じてサンプルアプリをクローンします。
 
 ```sh
 git clone https://github.com/milesfrain/GenieOnHeroku.git
 ```
 
-Go into the app's folder:
+アプリのフォルダに移動します。
 
 ```sh
 cd GenieOnHeroku
 ```
 
-And create a Heroku app:
+次にHerokuアプリを作成します。
 
 ```sh
 heroku create $HEROKU_APP_NAME --buildpack https://github.com/Optomatica/heroku-buildpack-julia.git
 ```
 
-Push the newly created app to Heroku:
+Herokuに新しく作成したアプリをプッシュします。
 
 ```sh
 git push heroku master
 ```
 
-Now you can open the app in the browser:
+ここで、ブラウザでアプリを開くことができます。
 
 ```sh
 heroku open -a $HEROKU_APP_NAME
 ```
 
-If you need to check the logs:
+必要であればログをチェックします。
 
 ```sh
 heroku logs -tail -a $HEROKU_APP_NAME
 ```
 
-### Steps with more detailed descriptions
+### より詳細な説明のあるステップ
 
-#### Select an app name
+#### アプリ名を選択
 
 ```sh
 HEROKU_APP_NAME=my-app-name
 ```
 
-This must be unique among all Heroku projects, and is part of the url where your project is hosted (e.g. https://my-app-name.herokuapp.com/).
+これはすべてのHerokuプロジェクト間でユニークである必要があり、プロジェクトが提供されるURLの一部になります。(例：https://my-app-name.herokuapp.com/)
 
-If the name is not unique, you will see this error at the `heroku create` step.
+名前がユニークでない場合、`heroku create`ステップでエラーが発生します。
 
 ```sh
 Creating ⬢ my-app-name... !
  ▸    Name my-app-name is already taken
 ```
 
-#### Clone an example project
+#### サンプルプロジェクトのクローン
 
 ```sh
 git clone https://github.com/milesfrain/GenieOnHeroku.git
 cd GenieOnHeroku
 ```
 
-You may also point to your own project, but it must be a git repo.
+自身のプロジェクトを選択することもできますが、gitリポジトリである必要があります。
 
-A `Procfile` in the root contains the launch command to load your app.
-The contents of the `Procfile` for this project is this single line:
+ルートディレクトリの`Procfile`はアプリを読み込むための起動コマンドを含んでいます。このプロジェクトの`Procfile`の内容は以下の1行です。
 
 ```sh
 web: julia --project src/app.jl $PORT
 ```
 
-You may edit the `Procfile` to point to your own project's launch script. (for example `src/my_app_launch_file.jl` instead of `src/app.jl`),
-but be sure to take into account the dynamically changing `$PORT` environment variable which is set by Heroku.
+`Procfile`を編集して自身のプロジェクトの起動スクリプトに向けることもできます。(例えば`src/app.jl`の代わりに`src/my_app_launch_file.jl`)　ただし、Herokuによって設定され動的に変化する`$PORT`環境変数は考慮にいれてください。
 
-If you're deploying a standard Genie application built with `Genie.newapp`, the launch script will be `bin/server`. Genie will automatically pick the `$PORT` number from the environment.
+`Genie.newapp`で構築した標準Genieアプリケーションをデプロイする場合、起動スクリプトは`bin/sever`になります。Genieは自動的に環境から`$PORT`番号を選択します。
 
-#### Create a Heroku project
+#### Herokuプロジェクトの生成
 
 ```sh
 heroku create $HEROKU_APP_NAME --buildpack https://github.com/Optomatica/heroku-buildpack-julia.git
 ```
 
-This creates a project on the Heroku platform, which includes a separate git repository.
+上記により、Herokuプラットフォーム上にプロジェクトが作成されます。これには個別のgitリポジトリが含まれます。
 
-This `heroku` repository is added to the list of tracked repositories and can be observed with `git remote -v`.
+この`heroku`レポジトリは追跡対象リポジトリの一覧に追加され、`git remote -v`で監視が可能です。
 
 ```sh
 heroku  https://git.heroku.com/my-app-name.git (fetch)
@@ -109,52 +107,51 @@ origin  https://github.com/milesfrain/GenieOnHeroku.git (fetch)
 origin  https://github.com/milesfrain/GenieOnHeroku.git (push)
 ```
 
-We are using a buildpack for Julia. This runs many of the common deployment operations required for Julia projects.
-It relies on the directory layout found in the example project, with `Project.toml`, `Manifest.toml` in the root,
-and all Julia code in the `src` directory.
+Juliaのビルドパックを使用します。これはJuliaプロジェクトが必要とする共通のデプロイ操作の多くを実行します。それは、ルートディレクトリにある`Project.toml`, `Manifest.toml`、`src`ディレクトリ内のすべてのJuliaコードとともにサンプルプロジェクト内にあるディレクトリレイアウトに依存します。
 
-#### Deploy your app
+#### アプリのデプロイ
 
 ```sh
 git push heroku master
 ```
 
-This pushes your current branch of your local repo to the `heroku` remote repo's `master` branch.
+`heroku`リモートレポジトリの`master`ブランチに対して、ローカルレポジトリの現在のブランチをプッシュしています。
 
-Heroku will automatically execute the commands described in the Julia buildpack and Procfile of this latest push.
+Herokuは自動的に最新のプッシュのProcfileとJuliaビルドパックで書かれたコマンドを実行します。
 
-You must push to the heroku `master` branch to trigger an automated deploy.
+自動デプロイをトリガーするには、herokuの`master`ブランチにプッシュする必要があります。
 
-#### Open your app's webpage
+#### アプリのWebページを開く
 
 ```sh
 heroku open -a $HEROKU_APP_NAME
 ```
 
 This is a convenience command to open your app's webpage in your browser.
+上記はアプリのWebページをブラウザで開く便利なコマンドです。
 
-The webpage is: `https://$HEROKU_APP_NAME.herokuapp.com/`
+Webページ: `https://$HEROKU_APP_NAME.herokuapp.com/`
 
-For example: <https://my-app-name.herokuapp.com/>
+例: <https://my-app-name.herokuapp.com/>
 
-#### View app logs
+#### アプリログの表示
 
 ```sh
 heroku logs -tail -a $HEROKU_APP_NAME
 ```
 
-This is another convenience command to launch a log viewer that remains open to show the latest status of your app.
+これはアプリの最新のステータスを表示し続けるログビューアを起動する別の便利なコマンドです。
 
-The `println` statements from Julia will also appear here.
+Juliaの`println`文もここに表示されます。
 
-Exit this viewer with `Ctrl-C`.
+このビューアからは`Ctrl-C`で抜けてください。
 
-Logs can also be viewed from the Heroku web dashboard.
-For example: <https://dashboard.heroku.com/apps/my-app-name/logs>
+ログはHerokuのWebダッシュボードからも表示できます。
+例: <https://dashboard.heroku.com/apps/my-app-name/logs>
 
-### Deploy app updates changes
+### アプリの修正をデプロイ
 
-To deploy any changes made to your app, simply commit those changes locally, and re-push to heroku.
+アプリへの変更をデプロイするために、ローカルにこれらの変更をコミットし、herokuに再度プッシュします。
 
 ```sh
 <make changes>

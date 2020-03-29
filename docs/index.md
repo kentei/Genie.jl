@@ -81,7 +81,7 @@ GenieはJulia v1.0以降と互換性があります。
 
 [GenieとDockerの結合](ja/documentation/16--Using_Genie_With_Docker.md)
 
-[Deploying with Heroku Buildpacks](documentation/90--Deploying_With_Heroku_Buildpacks.md)
+[Herokuビルドパックによるデプロイ](ja/documentation/90--Deploying_With_Heroku_Buildpacks.md)
 
 ## APIドキュメント
 
