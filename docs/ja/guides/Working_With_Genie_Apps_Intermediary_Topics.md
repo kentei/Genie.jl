@@ -131,14 +131,14 @@ end
 end
 ```
 
-Looking good - lets ask SearchLight to run it:
+いい感じです。SearchLightに上記を実行するように命令しましょう。
 
 ```julia
 julia> SearchLight.Migration.last_up()
 [debug] Executed migration AddCoverColumn up
 ```
 
-If you want to double check, ask SearchLight for the migrations status:
+ダブルチェックをしたい場合は、マイグレーションステータスをSearchLightに尋ねましょう。
 
 ```julia
 julia> SearchLight.Migration.status()
@@ -152,7 +152,7 @@ julia> SearchLight.Migration.status()
 | 2 |   2019030813344258_add_cover_column.jl |
 ```
 
-Perfect! Now we need to add the new column as a field to the `Books.Book` model:
+完璧ですね！　次に`Books.Book`モデルに新しいカラムをフィールドとして追加する必要があります。
 
 ```julia
 module Books
@@ -184,7 +184,7 @@ end
 end
 ```
 
-As a quick test we can extend our JSON view and see that all goes well - make it look like this:
+簡単なテストとして、JSONビューを拡張して、すべてがうまくいってることを確認できます。以下のように修正してください。
 
 ```julia
 # app/resources/books/views/billgatesbooks.json.jl
@@ -193,15 +193,15 @@ As a quick test we can extend our JSON view and see that all goes well - make it
                                                   "cover" => b.cover) for b in @vars(:books)]
 ```
 
-If we navigate <http://localhost:8000/api/v1/bgbooks> you should see the newly added "cover" property (empty, but present).
+<http://localhost:8000/api/v1/bgbooks>に移動すると、新たに追加された`cover`プロパティを確認できます。(現状は空ですが)
 
-##### Heads up!
+##### 注意喚起!
 
-Sometimes Julia/Genie/Revise fails to update `structs` on changes. If you get an error saying that `Book` does not have a `cover` field, please restart the Genie app.
+時々、Julia/Genie/Reviseは、変更時に`構造体(structs)`の更新に失敗します。`Book`に`cover`フィールドがないというエラーであれば、Genieアプリを再起動してください。
 
-### File uploading
+### ファイルアップロード
 
-Next step, extending our form to upload images (book covers). Please edit the `new.jl.html` view file as follows:
+次のステップで、画像(本の表紙)をアップロードするためにフォームを拡張します。`new.jl.html`ビューファイルを以下のように修正してください。
 
 ```html
 <h3>Add a new book recommended by Bill Gates</h3>
@@ -216,18 +216,18 @@ Next step, extending our form to upload images (book covers). Please edit the `n
 </form>
 ```
 
-The new bits are:
+新規部分は以下の通りです。
 
-* we added a new attribute to our `<form>` tag: `enctype="multipart/form-data"`. This is required in order to support files payloads.
-* there's a new input of type file: `<input type="file" name="book_cover" />`
+* 新たな属性`enctype="multipart/form-data"`を`<form>`タグに追加しました。これは、ファイルのペイロードをサポートするために必要なものです。
+* 新たにファイル型の入力エリア`<input type="file" name="book_cover" />`があります。
 
-You can see the updated form by visiting <http://localhost:8000/bgbooks/new>
+<http://localhost:8000/bgbooks/new>に移動することで、更新されたフォームを確認できます。
 
-Now, time to add a new book, with the cover! How about "Identity" by Francis Fukuyama? Sounds good.
-You can use whatever image you want for the cover, or maybe borrow the one from Bill Gates, I hope he won't mind <https://www.gatesnotes.com/-/media/Images/GoodReadsBookCovers/Identity.png>.
-Just download the file to your computer so you can upload it through our form.
+ここで、表紙つきの新たな本を追加してみましょう。フランシス・フクヤマの"Identity"なんてどうでしょうか？いい感じですね。
+表紙にしたい画像を何でも利用することができます。もしくはビルゲイツから借りてくるのもいいかもしれないです。(彼は気にしないと思うから。<https://www.gatesnotes.com/-/media/Images/GoodReadsBookCovers/Identity.png>)
+ファイルをコンピュータにダウンロードするだけで、フォームを通してアップロードできます。
 
-Almost there - now to add the logic for handling the uploaded file server side. Please update the `BooksController.create` method to look like this:
+もう少しです。サーバ側でアップロードされたファイルを処理するロジックを追加します。`BooksController.create`メソッドを以下のように更新してください。
 
 ```julia
 # BooksController
@@ -247,14 +247,14 @@ function create()
 end
 ```
 
-Also, very important, you need to make sure that `BooksController` is `using Genie.Requests`.
+非常に重要な点は、`BooksController`が`using Genie.Requests`であることを確認する必要があることです。
 
-Regarding the code, there's nothing very fancy about it. First we check if the files payload contains an entry for our `book_cover` input.
-If yes, we compute the path where we want to store the file, write the file, and store the path in the database.
+コードについては、そこまで手は込んでいません。初めに`book_cover`入力のエントリ内容にファイルペイロードが含まれているかチェックしています。
+含まれている場合、ファイルを保存するパスを作成し、ファイルを書き込み、データベースにパスを保存します。
 
-**Please make sure that you create the folder `covers/` within `public/img/`**.
+**`public/img/`の中に`covers`フォルダが作成されていることを確認してください。**
 
-Great, now let's display the images. Let's start with the HTML view - please edit `app/resources/books/views/billgatesbooks.jl.html` and make sure it has the following content:
+いいですね。では次に画像を表示してみましょう。HTMLビューから始めましょう。`app/resources/books/views/billgatesbooks.jl.html`を修正し、以下の内容となっていることを確認してください。
 
 ```html
 <!-- app/resources/books/views/billgatesbooks.jl.html -->
@@ -270,90 +270,87 @@ end
 </ul>
 ```
 
-Basically here we check if the `cover` property is not empty, and display the actual cover. Otherwise we show a placeholder image.
-You can check the result at <http://localhost:8000/bgbooks>
+基本的にここでは`cover`プロパティが空でないことのチェックをし、実際の表紙を表示します。空の場合はプレースホルダー画像を表示します。<http://localhost:8000/bgbooks>で結果をチェックできます。
 
-As for the JSON view, it already does what we want - you can check that the `cover` property is now outputted, as stored in the database: <http://localhost:8000/api/v1/bgbooks>
+JSONビューについては、すでに完成しています。<http://localhost:8000/api/v1/bgbooks>に移動することで、データベースに保存されているように、`cover`プロパティが出力されることを確認できます。
 
-Success, we're done here!
-
+成功しました。ここで完了です！
 
 
-#### Heads up!
 
-In production you will have to make the upload code more robust - the big problem here is that we store the cover file as it comes from the user which can lead to name clashes and files being overwritten - not to mention security vulnerabilities.
-A more robust way would be to compute a hash based on author and title and rename the cover to that.
+#### 注意喚起!
 
-### One more thing...
+本番環境では、よりアップロード部分のコードはより堅牢にしなければなりません。ここでの大きな問題は、ユーザからの表紙ファイルを保存することです。それにより、ファイル名の衝突やファイル上書きを招く可能性があります。セキュリティの脆弱性は言うまでもないでしょう。
+より堅牢にする方法は、作者とタイトルに基づいてハッシュ計算し、表紙のファイル名をそれに変えることです。
 
-So far so good, but what if we want to update the books we have already uploaded? It would be nice to add those missing covers.
-We need to add a bit of functionality to include editing features.
+### もう一つ...
 
-First things first - let's add the routes. Please add these two new route definitions to the `routes.jl` file:
+ここまで問題はありませんが、既にアップロードされた本を更新したい場合はどうでしょうか。これらの欠けている表紙を追加するのがよいでしょう。
+編集機能を含めるならば、機能を少々加える必要があります。
+
+まず最初にルートを追加しましょう。2つの新しいルート定義を`routes.jl`ファイルに追加してください。
 
 ```julia
 route("/bgbooks/:id::Int/edit", BooksController.edit)
 route("/bgbooks/:id::Int/update", BooksController.update, method = POST, named = :update_book)
 ```
 
-We defined two new routes. The first will display the book object in the form, for editing. While the second will take care of actually updating the database, server side.
-For both routes we need to pass the id of the book that we want to edit - and we want to constrain it to an `Int`. We express this as the `/:id::Int/` part of the route.
+2つの新しいルートを定義しました。一つは編集用で、フォームに本のオブジェクトを表示します。一方はサーバ側でデータベースを実際に更新してくれます。
+両方のルートは編集したい本のidを渡す必要があります。さらにそれを`Int`型に制限します。これはルートの`/:id::Int/`部分で表現しています。
 
-We also want to:
+また以下も実施します。
 
-* reuse the form which we have defined in `app/resources/books/views/new.jl.html`
-* make the form aware of whether it's used to create a new book, or for editing an existing one respond accordingly by setting the correct `action`
-* pre-fill the inputs with the book's info when editing a book.
+* `app/resources/books/views/new.jl.html`で定義したフォームを再利用します。
+* 適切な`action`を設定することで、新規で本を追加しているのか、すでにある本を編集しているのかがフォームに伝わるようにします
+* 本を編集する際、本の情報を入力エリアに事前に入力するようにします
 
-OK, that's quite a list and this is where things become interesting. This is an important design pattern for CRUD web apps.
-So, are you ready, cause here is the trick: in order to simplify the rendering of the form, we will always pass a book object into it.
-When editing a book it will be the book corresponding to the `id` passed into the `route`. And when creating a new book, it will be just an empty book object we'll create and then dispose of.
+よいでしょう。上記は素晴らしい一覧で、面白くなってくるところです。これは、CRUD Webアプリの重要なデザインパターンです。
+準備はよいでしょうか、これがコツです。フォームのレンダリングを単純化するために、常に本オブジェクトをフォームに渡します。本の編集の際、`route`に渡された`id`に対応する本になります。新しい本を作る際は、私たちが作成し、そのあと処理するであろう空の本オブジェクトになります。
 
-#### Using view partials
+#### 部分ビューの利用
 
-First, let's set up the views. In `app/resources/books/views/` please create a new file called `form.jl.html`.
-Then, from `app/resources/books/views/new.jl.html` cut the `<form>` code. That is, everything between the opening and closing `<form>...</form>` tags.
-Paste it into the newly created `form.jl.html` file. Now, back to `new.jl.html`, instead of the previous `<form>...</form>` code add:
+最初に、ビューをセットアップしましょう。`app/resources/books/views/`に`form.jl.html`という名前のファイルを作成してください。そして、`app/resources/books/views/new.jl.html`から`<form>`コード部分を切り取ってください。つまり、`<form>...</form>`タグの開始から終了まですべてということです。
+切り取った内容を新しく作った`form.jl.html`に貼り付けてください。そして、`new.jl.html`に戻って`<form>...</form>`コードの代わりに以下のコードを追加してください。
 
 ```julia
 <% partial("app/resources/books/views/form.jl.html", context = @__MODULE__) %>
 ```
 
-This line, as the `partial` function suggests, includes a view partial, which is a part of a view file, effectively including a view within another view. Notice that we're explicitly passing the `context` so Genie can set the correct variable scope when including the partial.
+`partial`関数が示しているように、この行はビューファイルの一部である部分ビューを含んでおり、他のビュー内のビューを事実上含んでいます。Geneiが部分ビューを含む際、正しい変数スコープを設定できるように`context`を明示的に渡していることに注意してください。
 
-You can reload the `new` page to make sure that everything still works: <http://localhost:8000/bgbooks/new>
+`new`ページをリロードして、すべてがまだ機能していることを確認してください。(<http://localhost:8000/bgbooks/new>)
 
-Now, let's add an Edit option to our list of books. Please go back to our list view file, `billgatesbooks.jl.html`.
-Here, for each iteration, within the `@foreach` block we'll want to dynamically link to the edit page for the corresponding book.
+次に、本の一覧に編集オプションを追加しましょう。一覧ビューファイル `billgatesbooks.jl.html`に戻ってください。
+ここでは、`@foreach`ブロック内の各反復で、対応する本の編集ページへ動的にリンクする必要があります。
 
-##### `@foreach` with view partials
+##### 部分ビューの`@foreach`
 
-However, this `@foreach` which renders a Julia string is very ugly - and we now know how to refactor it, by using a view partial.
-Let's do it. First, replace the body of the `@foreach` block:
+しかし、Julia文字列をレンダリングするこの`@foreach`はとても醜いです。部分ビューを利用することでそれをリファクタリングする方法を示します。実際にやってみましょう。初めに`@foreach`ブロックの本体を置き換えます。
 
 ```html
 <!-- app/resources/books/views/billgatesbooks.jl.html -->
 """<li><img src='$( isempty(book.cover) ? "img/docs.png" : book.cover )' width="100px" /> $(book.title) by $(book.author)"""
 ```
 
-with:
+上記を以下で置き換えてください。
 
 ```julia
 partial("app/resources/books/views/book.jl.html", book = book, context = @__MODULE__)
 ```
 
-Notice that we are using the `partial` function and we pass the book object into our view, under the name `book` (will be accessible in `@vars(:book)` inside the view partial). Again, we're passing the scope's `context` (our controller object).
+`partial`関数を利用して、ビューに`book`という名前で、本のオブジェクトを渡していることに注意してください(部分ビュー内の`@vars(:book)`からアクセスすることができます)。再び、スコープの`context`(コントローラオブジェクト)を渡しています。
 
-Next, create the `book.jl.html` in `app/resources/books/views/`, for example with
+次に`app/resources/books/views/`に`book.jl.html`を作ります。
+例えば
 
 ```julia
 julia> touch("app/resources/books/views/book.jl.html")
 ```
 
-Add this content to it:
+このコンテンツをそれに追加します。
 TO BE CONTINUED
 
 
-#### View helpers
+#### ビューヘルパー
 
-#### Using Flax elements
+#### Flax要素の利用

@@ -23,7 +23,7 @@ GenieはJulia v1.0以降と互換性があります。
 
 [Genieのチュートリアル：Genieアプリの開発と基本](ja/guides/Working_With_Genie_Apps.md)
 
-[Genieウォークスルー(Genieアプリの開発、中級トピック)(翻訳中)](ja/guides/Working_With_Genie_Apps_Intermediary_Topics.md)
+[Genieウォークスルー(Genieアプリの開発、中級トピック)](ja/guides/Working_With_Genie_Apps_Intermediary_Topics.md)
 
 ## ドキュメント
 
