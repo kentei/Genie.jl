@@ -1,0 +1,26 @@
+site_name:        Genie.jl
+repo_url:         https://github.com/kentei/Genie.jl
+site_description: Genie(Julia向けフルスタックMVC Webフレームワーク)の日本語訳ページです。
+site_author:      Kentei Syunrai
+
+theme: readthedocs
+
+extra_css:
+  - assets/Documenter.css
+
+extra_javascript:
+  - https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML
+  - assets/mathjaxhelper.js
+
+markdown_extensions:
+  - extra
+  - tables
+  - fenced_code
+  - mdx_math
+
+docs_dir: 'src'
+
+pages:
+  - Home: index.md
+
+google_analytics: ['UA-92307135-1', 'Genie Docs Japan']

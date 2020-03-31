@@ -1,4 +1,4 @@
-![Genie Logo](https://genieframework.github.io/Genie.jl/content/img/genie_logo.png)
+![Genie Logo](https://kentei.github.io/Genie.jl/content/img/genie_logo.png)
 
 # Genie
 
