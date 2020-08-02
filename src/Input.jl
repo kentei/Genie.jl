@@ -7,13 +7,18 @@ import HttpCommon, URIParser, HTTP
 
 export post, files, HttpInput, HttpPostData, HttpFiles, HttpFile
 
+
+"""
+    HttpFile
+
+Represents a file sent over HTTP
+"""
 mutable struct HttpFile
   name::String
   mime::String
   data::Array{UInt8}
-
-  HttpFile() = new("", "", UInt8[])
 end
+HttpFile() = HttpFile("", "", UInt8[])
 
 const HttpPostData  = Dict{String,String}
 const HttpFiles     = Dict{String,HttpFile}
@@ -21,18 +26,16 @@ const HttpFiles     = Dict{String,HttpFile}
 mutable struct HttpInput
   post::HttpPostData
   files::HttpFiles
-
-  HttpInput() = new(HttpPostData(), HttpFiles())
 end
+HttpInput() = HttpInput(HttpPostData(), HttpFiles())
 
 ###
 
 mutable struct HttpFormPart
   headers::Dict{String, Dict{String,String}}
   data::Array{UInt8}
-
-  HttpFormPart() = new(Dict{String,Dict{String,String}}(), UInt8[])
 end
+HttpFormPart() = HttpFormPart(Dict{String,Dict{String,String}}(), UInt8[])
 
 ###
 
@@ -293,9 +296,11 @@ function parse_seicolon_fields(dataString::String)
   dataStringLengthLoop::Int = dataStringLength + 1
 
   charIndex::Int = 1
+  utfIndex::Int = 1 # real index for uft-8
 
   while charIndex < dataStringLengthLoop
-    character = dataString[charIndex]
+    # character = dataString[charIndex]
+    character = dataString[utfIndex]
 
     if ! inSingleQuotes && character == '"' && prevCharacter != '\\'
       inDoubleQuotes = ! inDoubleQuotes
@@ -330,6 +335,8 @@ function parse_seicolon_fields(dataString::String)
     prevCharacter = character
 
     charIndex  = charIndex + 1
+
+    utfIndex = nextind(dataString, utfIndex)   # real index for uft-8
 
     ignore = false
   end

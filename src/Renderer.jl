@@ -28,6 +28,7 @@ const CONTENT_TYPES = Dict{Symbol,String}(
   :xml        => "text/xml; $DEFAULT_CHARSET",
   :markdown   => "text/markdown; $DEFAULT_CHARSET",
   :favicon    => "image/x-icon",
+  :css        => "text/css; $DEFAULT_CHARSET",
 )
 
 const MIME_TYPES = Dict(
@@ -36,7 +37,8 @@ const MIME_TYPES = Dict(
   :json       => MIME"application/json",
   :javascript => MIME"application/javascript",
   :xml        => MIME"text/xml",
-  :markdown   => MIME"text/markdown"
+  :markdown   => MIME"text/markdown",
+  :css        => MIME"text/css"
 )
 
 push_content_type(s::Symbol, content_type::String, charset::String = DEFAULT_CHARSET) = (CONTENT_TYPES[s] = "$content_type; $charset")
@@ -58,6 +60,7 @@ export WebRenderable
 
 init_task_local_storage() = (haskey(task_local_storage(), :__vars) || task_local_storage(:__vars, Dict{Symbol,Any}()))
 init_task_local_storage()
+clear_task_storage() = task_local_storage(:__vars, Dict{Symbol,Any}())
 
 
 """
@@ -161,6 +164,11 @@ function WebRenderable(f::Function, args...)
 end
 
 
+"""
+    render
+
+Abstract function that needs to be specialized by individual renderers.
+"""
 function render end
 
 
@@ -249,10 +257,22 @@ function registervars(vars...) :: Nothing
 end
 
 
+"""
+    injectvars() :: String
+
+Sets up variables passed into the view, making them available in the
+generated view function.
+"""
 function injectvars() :: String
   output = ""
   for kv in task_local_storage(:__vars)
+    output *= "$(kv[1]) = try \n"
     output *= "$(kv[1]) = Genie.Renderer.@vars($(repr(kv[1]))) \n"
+    output *= "
+catch ex
+  @error ex
+end
+"
   end
 
   output
@@ -261,7 +281,6 @@ end
 
 function injectvars(context::Module) :: Nothing
   for kv in task_local_storage(:__vars)
-    # isdefined(context, Symbol(kv[1])) ||
     Core.eval(context, Meta.parse("$(kv[1]) = Renderer.@vars($(repr(kv[1])))"))
   end
 
@@ -294,6 +313,12 @@ function view_file_info(path::String, supported_extensions::Vector{String}) :: T
 end
 
 
+"""
+    vars_signature() :: String
+
+Collects the names of the view vars in order to create a unique hash/salt to identify
+compiled views with different vars.
+"""
 function vars_signature() :: String
   task_local_storage(:__vars) |> keys |> collect |> sort |> string
 end
@@ -367,6 +392,11 @@ function preparebuilds(subfolder = BUILD_NAME) :: Bool
 end
 
 
+"""
+    purgebuilds(subfolder = BUILD_NAME) :: Bool
+
+Removes the views builds folders with all the generated views.
+"""
 function purgebuilds(subfolder = BUILD_NAME) :: Bool
   rm(joinpath(Genie.config.path_build, subfolder), force = true, recursive = true)
 
@@ -374,6 +404,11 @@ function purgebuilds(subfolder = BUILD_NAME) :: Bool
 end
 
 
+"""
+    changebuilds(subfolder = BUILD_NAME) :: Bool
+
+Changes/creates a new builds folder.
+"""
 function changebuilds(subfolder = BUILD_NAME) :: Bool
   Genie.config.path_build = Genie.Configuration.buildpath()
   preparebuilds()
@@ -417,11 +452,17 @@ macro vars(key, value)
 end
 
 
+"""
+    set_negotiated_content(req::HTTP.Request, res::HTTP.Response, params::Dict{Symbol,Any})
+
+Configures the request, response, and params response content type based on the request and defaults.
+"""
 function set_negotiated_content(req::HTTP.Request, res::HTTP.Response, params::Dict{Symbol,Any})
   req_type = Genie.Router.request_type(req)
-  params[:response_type] = req_type === nothing ? DEFAULT_CONTENT_TYPE : req_type
-  params[Genie.PARAMS_MIME_KEY] = get(MIME_TYPES, params[:response_type], MIME_TYPES[DEFAULT_CONTENT_TYPE])
-  push!(res.headers, "Content-Type" => get(CONTENT_TYPES, params[:response_type], "text/html"))
+
+  params[:response_type] = req_type
+  params[Genie.PARAMS_MIME_KEY] = get!(MIME_TYPES, params[:response_type], typeof(MIME(req_type)))
+  push!(res.headers, "Content-Type" => get!(CONTENT_TYPES, params[:response_type], string(MIME(req_type))))
 
   req, res, params
 end
@@ -442,13 +483,14 @@ function negotiate_content(req::HTTP.Request, res::HTTP.Response, params::Dict{S
 
     res.headers = [k for k in headers]
 
-    return req,res,params
+    return req, res, params
   end
 
   negotiation_header = haskey(headers, "Accept") ? "Accept" : ( haskey(headers, "Content-Type") ? "Content-Type" : "" )
 
   if isempty(negotiation_header)
     req, res, params = set_negotiated_content(req, res, params)
+
     return req, res, params
   end
 
@@ -456,6 +498,7 @@ function negotiate_content(req::HTTP.Request, res::HTTP.Response, params::Dict{S
 
   if isempty(accept_parts)
     req, res, params = set_negotiated_content(req, res, params)
+
     return req, res, params
   end
 
@@ -463,6 +506,7 @@ function negotiate_content(req::HTTP.Request, res::HTTP.Response, params::Dict{S
 
   if isempty(accept_order_parts)
     req, res, params = set_negotiated_content(req, res, params)
+
     return req, res, params
   end
 
@@ -475,7 +519,8 @@ function negotiate_content(req::HTTP.Request, res::HTTP.Response, params::Dict{S
         headers["Content-Type"] = CONTENT_TYPES[params[:response_type]]
 
         res.headers = [k for k in headers]
-        return req,res,params
+
+        return req, res, params
       end
     end
   end

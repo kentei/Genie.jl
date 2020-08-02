@@ -40,8 +40,6 @@ websockets() = map(c -> c.client, clients())
 channels() = collect(keys(SUBSCRIPTIONS))
 
 
-"""
-"""
 function connected_clients(channel::ChannelName) :: Vector{ChannelClient}
   clients = ChannelClient[]
   for client_id in SUBSCRIPTIONS[channel]
@@ -60,8 +58,6 @@ function connected_clients() :: Vector{ChannelClient}
 end
 
 
-"""
-"""
 function disconnected_clients(channel::ChannelName) :: Vector{ChannelClient}
   clients = ChannelClient[]
   for client_id in SUBSCRIPTIONS[channel]
@@ -141,6 +137,11 @@ function unsubscribe_client(channel_client::ChannelClient) :: ChannelClientsColl
 end
 
 
+"""
+unsubscribe_disconnected_clients() :: ChannelClientsCollection
+
+Unsubscribes clients which are no longer connected.
+"""
 function unsubscribe_disconnected_clients() :: ChannelClientsCollection
   for channel_client in disconnected_clients()
     unsubscribe_client(channel_client)

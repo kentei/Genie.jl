@@ -135,10 +135,8 @@ Loads (includes) the framework's configuration files into the app's module `cont
 The files are set up with `Revise` to be automatically reloaded.
 """
 function load_configurations(root_dir::String = Genie.config.path_config; context::Union{Module,Nothing} = nothing) :: Nothing
-  context = default_context(context)
-
   secrets_path = joinpath(root_dir, Genie.SECRETS_FILE_NAME)
-  isfile(secrets_path) && Revise.track(context, secrets_path, define = true)
+  isfile(secrets_path) && Revise.track(default_context(context), secrets_path, define = true)
 
   nothing
 end
@@ -151,15 +149,13 @@ Loads (includes) the framework's initializers.
 The files are set up with `Revise` to be automatically reloaded.
 """
 function load_initializers(root_dir::String = Genie.config.path_config; context::Union{Module,Nothing} = nothing) :: Nothing
-  context = default_context(context)
-
   dir = joinpath(root_dir, Genie.config.initializers_folder)
 
   isdir(dir) || return nothing
 
   Threads.@threads for i in readdir(dir)
     fi = joinpath(dir, i)
-    endswith(fi, ".jl") && @async Revise.track(context, fi, define = true)
+    endswith(fi, ".jl") && Revise.track(default_context(context), fi, define = true)
   end
 
   nothing
@@ -172,13 +168,11 @@ end
 Loads (includes) the framework's plugins initializers.
 """
 function load_plugins(root_dir::String = Genie.config.path_plugins; context::Union{Module,Nothing} = nothing) :: Nothing
-  context = default_context(context)
-
   isdir(root_dir) || return nothing
 
   Threads.@threads for i in readdir(root_dir)
     fi = joinpath(root_dir, i)
-    endswith(fi, ".jl") && @async Revise.track(context, fi, define = true)
+    endswith(fi, ".jl") && Revise.track(default_context(context), fi, define = true)
   end
 
   nothing
@@ -190,10 +184,8 @@ end
 
 Loads the routes file.
 """
-function load_routes_definitions(routes_file::String = Genie.ROUTES_FILE_NAME; context::Union{Module,Nothing} = nothing) :: Nothing
-  context = default_context(context)
-
-  isfile(routes_file) && @async Revise.track(context, routes_file, define = true)
+function load_routes_definitions(routes_file::String = Genie.ROUTES_FILE_NAME; context::Union{Module,Nothing} = nothing, additional_routes_file::String = Genie.APP_FILE_NAME) :: Nothing
+  isfile(routes_file) && Revise.track(default_context(context), routes_file, define = true)
 
   nothing
 end
@@ -212,14 +204,18 @@ function secret_token(; context::Union{Module,Nothing} = nothing) :: String
   if isdefined(context, :SECRET_TOKEN) && ! isempty(context.SECRET_TOKEN)
     context.SECRET_TOKEN
   else
-    @warn "SECRET_TOKEN not configured - please make sure that you have a valid secrets.jl file.
+    @warn "
+          SECRET_TOKEN not configured - please make sure that you have a valid secrets.jl file.
           You can generate a new secrets.jl file with a random SECRET_TOKEN using Genie.Generator.write_secrets_file()
-          or use the included /app/config/secrets.jl.example file as a model."
+          or use the included /app/config/secrets.jl.example file as a model.
 
-    st = Generator.secret_token()
-    Core.eval(@__MODULE__, Meta.parse("""const SECRET_TOKEN = "$st" """))
+          SECRET_TOKEN is used for hashing and encrypting/decrypting sensitive data in Genie.
+          I'm now setting up a random SECRET_TOKEN which will be used for this session only.
+          Data that is encoded with this SECRET_TOKEN will potentially be lost
+          upon restarting the application (like for example the HTTP sessions data).
+          "
 
-    st
+    SECRET_TOKEN = Generator.secret_token()
   end
 end
 
@@ -274,12 +270,20 @@ function load(; context::Union{Module,Nothing} = nothing) :: Nothing
   replprint("routes", t, prefix = "Loading ")
   load_routes_definitions(context = context)
 
-  replprint("Ready! ", t, clearline = 2, color = :green, bold = :true)
+  replprint("\nReady! \n", t, clearline = 2, color = :green, bold = :true)
   println()
 
   nothing
 end
 
+
+"""
+    replprint(output::String, terminal;
+                    newline::Int = 0, clearline::Int = 1, color::Symbol = :white, bold::Bool = false, sleep_time::Float64 = 0.2,
+                    prefix::String = "", prefix_color::Symbol = :green, prefix_bold::Bool = true)
+
+Prints app loading progress to the console.
+"""
 function replprint(output::String, terminal;
                     newline::Int = 0, clearline::Int = 1, color::Symbol = :white, bold::Bool = false, sleep_time::Float64 = 0.2,
                     prefix::String = "", prefix_color::Symbol = :green, prefix_bold::Bool = true)

@@ -1,7 +1,6 @@
-![Genie Logo](https://genieframework.github.io/Genie.jl/content/img/genie_logo.png)
+# Genie
 
-[![Stable](https://readthedocs.org/projects/docs/badge/?version=stable)](http://geniejl.readthedocs.io/en/stable/build/)
-[![Latest](https://readthedocs.org/projects/docs/badge/?version=latest)](http://geniejl.readthedocs.io/en/latest/build/)
+![Genie Logo](https://raw.githubusercontent.com/GenieFramework/Genie.jl/master/docs/content/img/genie_logo.png)
 
 # Genie
 
@@ -11,16 +10,16 @@ Genie is a full-stack MVC web framework that provides a streamlined and efficien
 
 ### Current status
 
-Genie is compatible with Julia v1.0 and up.
+Genie is compatible with Julia v1.3 and up.
 
 ---
 
 ## Documentation
-<https://genieframework.github.io/Genie.jl/>
+<https://genieframework.github.io/Genie.jl/dev/>
 
 ---
 
 ## Acknowledgements
 
 * Genie uses a multitude of packages that have been kindly contributed by the Julia community.
-* The awesome Genie logo was designed by Alvaro Casanova (www.yeahstyledg.com).
+* The awesome Genie logo was designed by Alvaro Casanova.

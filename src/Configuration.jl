@@ -3,10 +3,18 @@ Core genie configuration / settings functionality.
 """
 module Configuration
 
-const GENIE_VERSION = v"0.28.0"
+using Revise
+
+"""
+  const GENIE_VERSION
+
+References the current Genie version number.
+"""
+const GENIE_VERSION = v"1.1"
 
 import Logging
 import Genie
+import MbedTLS
 
 export isdev, isprod, istest, env
 export Settings, DEV, PROD, TEST
@@ -86,7 +94,12 @@ julia> Configuration.env()
 env() :: String = Genie.config.app_env
 
 
-buildpath() :: String = Base.Filesystem.mktempdir(prefix = "jl_genie_build_")
+"""
+    buildpath() :: String
+
+Constructs the temp dir where Genie's view files are built.
+"""
+buildpath() :: String = Base.Filesystem.mktempdir(prefix = "jl_genie_build_", cleanup = false)
 
 
 """
@@ -112,6 +125,9 @@ App configuration - sets up the app's defaults. Individual options are overwritt
 - `inflector_irregulars::Vector{Tuple{String,String}}`: additional irregular singular-plural forms to be used by the Inflector
 - `run_as_server::Bool`: when true the server thread is launched synchronously to avoid that the script exits
 - `websockets_server::Bool`: if true, the websocket server is also started together with the web server
+- `html_parser_close_tag::String`: default " /". Can be changed to an empty string "" so the single tags would not be closed.
+- `ssl_enabled::Bool`: default false. Server runs over SSL/HTTPS in development.
+- `ssl_config::MbedTLS.SSLConfig`: default `nothing`. If not `nothing` and `ssl_enabled`, it will use the config to start the server over HTTPS.
 """
 mutable struct Settings
   server_port::Int
@@ -168,6 +184,15 @@ mutable struct Settings
   webchannels_unsubscribe_channel::String
   webchannels_autosubscribe::Bool
 
+  html_parser_close_tag::String
+  html_parser_char_at::String
+  html_parser_char_dot::String
+  html_parser_char_column::String
+  html_parser_char_dash::String
+
+  ssl_enabled::Bool
+  ssl_config::Union{MbedTLS.SSLConfig,Nothing}
+
   Settings(;
             server_port                 = (haskey(ENV, "PORT") ? parse(Int, ENV["PORT"]) : 8000), # default port for binding the web server
             server_host                 = ENV["HOST"],
@@ -203,7 +228,7 @@ mutable struct Settings
             run_as_server = false,
 
             websockets_server = false,
-            websockets_port   = 8001,
+            websockets_port   = server_port + 1,
 
             initializers_folder = "initializers",
 
@@ -228,6 +253,15 @@ mutable struct Settings
             webchannels_subscribe_channel   = "subscribe",
             webchannels_unsubscribe_channel = "unsubscribe",
             webchannels_autosubscribe       = true,
+
+            html_parser_close_tag = " /",
+            html_parser_char_at = "!!",
+            html_parser_char_dot = "!",
+            html_parser_char_column = "!",
+            html_parser_char_dash = "__",
+
+            ssl_enabled = false,
+            ssl_config = nothing
         ) =
               new(
                   server_port, server_host,
@@ -244,7 +278,9 @@ mutable struct Settings
                   initializers_folder,
                   path_config, path_env, path_app, path_resources, path_lib, path_helpers, path_log, path_tasks, path_build,
                   path_plugins, path_cache, path_initializers, path_db, path_bin, path_src,
-                  webchannels_default_route, webchannels_js_file, webchannels_subscribe_channel, webchannels_unsubscribe_channel, webchannels_autosubscribe
+                  webchannels_default_route, webchannels_js_file, webchannels_subscribe_channel, webchannels_unsubscribe_channel, webchannels_autosubscribe,
+                  html_parser_close_tag, html_parser_char_at, html_parser_char_dot, html_parser_char_column, html_parser_char_dash,
+                  ssl_enabled, ssl_config
                 )
 end
 

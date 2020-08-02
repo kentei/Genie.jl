@@ -51,7 +51,7 @@ config.cache_storage == :File && include("cache_adapters/FileCache.jl")
 include("Sessions.jl")
 config.session_storage == :File && include("session_adapters/FileSession.jl")
 
-export serve, up
+export serve, up, down
 
 
 """
@@ -75,8 +75,11 @@ julia> Genie.serve("public", 8888, async = false, verbose = true)
 ```
 """
 function serve(path::String = Genie.config.server_document_root, params...; kwparams...)
+  cd(path)
+  path = "."
+
   Router.route("/") do
-    Router.serve_static_file("index.html", root = path)
+    Router.serve_static_file(path, root = path)
   end
   Router.route(".*") do
     Router.serve_static_file(Router.@params(:REQUEST).target, root = path)
@@ -218,6 +221,9 @@ Web Server starting at http://127.0.0.1:8000
 """
 const startup = AppServer.startup
 const up = startup
+
+
+const down = AppServer.down
 
 
 ### PRIVATE ###

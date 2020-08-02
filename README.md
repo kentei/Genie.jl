@@ -4,7 +4,7 @@
 
 このリポジトリではJuila言語向けのフルスタックMVC WebフレームワークGenieのドキュメントを日本語化しています。
 
-現在は`v0.28.0`当時のものを訳している最中です。
+現在は`v1.1`当時のものを訳している最中です。
 
 # Genie
 
@@ -14,14 +14,14 @@ Genieは、モダンなWebアプリケーションを開発するための合理
 
 ### 現在の状態
 
-GenieはJulia v1.2以降と互換性があります。
+GenieはJulia v1.3以降と互換性があります。
 
 ---
 
 ## ドキュメント
 <https://kentei.github.io/Genie.jl/>
 
-翻訳元(最新版)：<https://genieframework.github.io/Genie.jl/>
+翻訳元(最新版)：<https://genieframework.github.io/Genie.jl/dev/>
 
 ---
 

@@ -1,3 +1,6 @@
+"""
+Functionality for creating and working with Genie plugins.
+"""
 module Plugins
 
 import Genie
@@ -16,12 +19,17 @@ const FOLDERS = [ joinpath(path_prefix, APP_FOLDER),
                   joinpath(path_prefix, Genie.config.server_document_root) ]
 
 
+"""
+    recursive_copy(path::String, dest::String; only_hidden = true, force = false)
+
+Utility function to copy plugin files from package dir to app.
+"""
 function recursive_copy(path::String, dest::String; only_hidden = true, force = false)
   for (root, dirs, files) in walkdir(path)
     dest_path = joinpath(dest, replace(root, (path_prefix * "/")=>""))
 
     try
-      mkdir(dest_path)
+      mkpath(dest_path)
       @info "Created dir $dest_path"
     catch ex
       @error "Failed to create dir $dest_path"
@@ -40,6 +48,11 @@ function recursive_copy(path::String, dest::String; only_hidden = true, force = 
 end
 
 
+"""
+    congrats()
+
+Shows success message and instructions when scaffolding a plugin.
+"""
 function congrats()
   message = """
   Congratulations, your plugin is ready!
@@ -66,6 +79,11 @@ function congrats()
 end
 
 
+"""
+    scaffold(plugin_name::String, dest::String = "."; force = false)
+
+Scaffolds a new plugin as a Julia project
+"""
 function scaffold(plugin_name::String, dest::String = "."; force = false)
   plugin_name = replace(plugin_name, " "=>"") |> strip |> string
   dest = normpath(dest) |> abspath
@@ -101,16 +119,24 @@ function scaffold(plugin_name::String, dest::String = "."; force = false)
 end
 
 
+"""
+    install(path::String, dest::String; force = false)
+
+Utility to allow users to install a plugin
+"""
 function install(path::String, dest::String; force = false)
+  isdir(dest) || mkpath(dest)
+
+  cd(dest)
+
   isdir(Genie.config.path_plugins) || mkpath(Genie.config.path_plugins)
 
-  isdir(dest) || mkdir(dest)
-
+  depth = 0
   for (root, dirs, files) in walkdir(path)
-    dest_path = joinpath(dest, split(root, "/" * FILES_FOLDER * "/")[end])
+    dest_path = joinpath(abspath(dest), splitpath(root)[end-depth:end]...)
 
     try
-      mkdir(dest_path)
+      mkpath(dest_path)
       @info "Created dir $dest_path"
     catch ex
       @error "Did not create dir $dest_path"
@@ -124,6 +150,8 @@ function install(path::String, dest::String; force = false)
         @error "Did not copy $(joinpath(root, f)) to $(joinpath(dest_path, f))"
       end
     end
+
+    depth += 1
   end
 end
 

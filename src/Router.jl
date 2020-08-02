@@ -1,3 +1,7 @@
+"""
+Parses requests and extracts parameters, setting up the call variables and invoking
+the appropiate route handler function.
+"""
 module Router
 
 import Revise
@@ -31,7 +35,8 @@ const request_mappings = Dict{Symbol,String}(
   :javascript => "application/javascript",
   :form       => "application/x-www-form-urlencoded",
   :multipart  => "multipart/form-data",
-  :file       => "application/octet-stream"
+  :file       => "application/octet-stream",
+  :xml        => "text/xml"
 )
 
 const pre_match_hooks = Function[]
@@ -49,10 +54,9 @@ mutable struct Route
   path::String
   action::Function
   name::Union{Symbol,Nothing}
-
-  Route(; method = GET, path = "", action = (() -> error("Route not set")), name = nothing) =
-    new(method, path, action, name)
 end
+
+Route(; method = GET, path = "", action = (() -> error("Route not set")), name = nothing) = Route(method, path, action, name)
 
 
 """
@@ -98,6 +102,19 @@ Base.getindex(params, keys...) = getindex(Dict(params), keys...)
 
 
 """
+    _params_()
+
+Reference to the request variables collection.
+"""
+function _params_()
+  task_local_storage(:__params)
+end
+function _params_(key::Union{String,Symbol})
+  task_local_storage(:__params)[key]
+end
+
+
+"""
     ispayload(req::HTTP.Request)
 
 True if the request can carry a payload - that is, it's a `POST`, `PUT`, or `PATCH` request
@@ -118,8 +135,6 @@ function route_request(req::HTTP.Request, res::HTTP.Response, ip::Sockets.IPv4 =
     req, res, params.collection = f(req, res, params.collection)
   end
 
-  # @show params
-
   if is_static_file(req.target)
     Genie.config.server_handle_static_files && return serve_static_file(req.target)
 
@@ -131,8 +146,6 @@ function route_request(req::HTTP.Request, res::HTTP.Response, ip::Sockets.IPv4 =
   for f in unique(pre_match_hooks)
     req, res, params.collection = f(req, res, params.collection)
   end
-
-  # @show params
 
   res = match_routes(req, res, params)
 
@@ -235,6 +248,11 @@ function channelname(params::Channel) :: Symbol
 end
 
 
+"""
+    baptizer(params::Union{Route,Channel}, parts::Vector{String}) :: Symbol
+
+Generates default names for routes and channels.
+"""
 function baptizer(params::Union{Route,Channel}, parts::Vector{String}) :: Symbol
   for uri_part in split(params.path, "/", keepempty = false)
     startswith(uri_part, ":") && continue # we ignore named params
@@ -288,8 +306,15 @@ end
 """
 Gets the `Route` correspoding to `routename`
 """
-function get_route(route_name::Symbol) :: Route
-  haskey(named_routes(), route_name) ? named_routes()[route_name] : error("Route named `$route_name` is not defined")
+function get_route(route_name::Symbol; default::Union{Route,Nothing} = Route()) :: Route
+  haskey(named_routes(), route_name) ?
+    named_routes()[route_name] :
+    (if default === nothing
+      Base.error("Route named `$route_name` is not defined")
+    else
+      @warn "Route named `$route_name` is not defined"
+      default
+    end)
 end
 
 
@@ -351,8 +376,12 @@ function to_link(route_name::Symbol, d::Dict{Symbol,T}; preserve_query::Bool = t
     query = URIParser.URI(task_local_storage(:__params)[:REQUEST].target).query
     if ! isempty(query)
       for pair in split(query, '&')
-        parts = split(pair, '=')
-        query_vars[parts[1]] = parts[2]
+        try
+          parts = split(pair, '=')
+          query_vars[parts[1]] = parts[2]
+        catch ex
+          # @error ex
+        end
       end
     end
   end
@@ -394,6 +423,9 @@ end
 
 
 """
+    action_controller_params(action::Function, params::Params) :: Nothing
+
+Sets up the :action_controller, :action, and :controller key - value pairs of the `params` collection.
 """
 function action_controller_params(action::Function, params::Params) :: Nothing
   params.collection[:action_controller] = action |> string |> Symbol
@@ -405,6 +437,9 @@ end
 
 
 """
+    run_hook(controller::Module, hook_type::Symbol) :: Bool
+
+Invokes the designated hook.
 """
 function run_hook(controller::Module, hook_type::Symbol) :: Bool
   isdefined(controller, hook_type) || return false
@@ -438,6 +473,7 @@ function match_routes(req::HTTP.Request, res::HTTP.Response, params::Params) :: 
     occursin(regex_route, uri.path) || parsed_route == "/*" || continue
 
     params.collection = setup_base_params(req, res, params.collection)
+    task_local_storage(:__params, params.collection)
 
     occursin("?", req.target) && extract_get_params(URIParser.URI(to_uri(req.target)), params)
 
@@ -453,13 +489,13 @@ function match_routes(req::HTTP.Request, res::HTTP.Response, params::Params) :: 
 
     params.collection[Genie.PARAMS_ROUTE_KEY] = r
 
-    task_local_storage(:__params, params.collection)
+    get!(params.collection, Genie.PARAMS_MIME_KEY, MIME(request_type(req)))
 
     controller = (r.action |> typeof).name.module
 
     return  try
               run_hook(controller, BEFORE_HOOK)
-              # result =  (Genie.Configuration.isdev() ? Base.invokelatest(r.action) : (r.action)()) |> to_response
+
               result = try
                 (r.action)() |> to_response
               catch
@@ -514,14 +550,13 @@ function match_channels(req, msg::String, ws_client, params::Params) :: String
     (! occursin(regex_channel, uri)) && continue
 
     params.collection = setup_base_params(req, nothing, params.collection)
+    task_local_storage(:__params, params.collection)
 
     extract_uri_params(uri, regex_channel, param_names, param_types, params) || continue
 
     action_controller_params(c.action, params)
 
     params.collection[Genie.PARAMS_CHANNELS_KEY] = c
-
-    task_local_storage(:__params, params.collection)
 
     controller = (c.action |> typeof).name.module
 
@@ -699,6 +734,9 @@ end
 
 
 """
+    extract_request_params(req::HTTP.Request, params::Params) :: Nothing
+
+Sets up the `params` key-value pairs corresponding to a JSON payload.
 """
 function extract_request_params(req::HTTP.Request, params::Params) :: Nothing
   ispayload(req) || return nothing
@@ -723,16 +761,19 @@ end
 
 
 """
+    content_type(req::HTTP.Request) :: String
+
+Gets the content-type of the request.
 """
 function content_type(req::HTTP.Request) :: String
-  get(Genie.HTTPUtils.Dict(req), "content-type", "")
-end
-function content_type() :: String
-  content_type(_params_(Genie.PARAMS_REQUEST_KEY))
+  get(Genie.HTTPUtils.Dict(req), "content-type", get(Genie.HTTPUtils.Dict(req), "accept", ""))
 end
 
 
 """
+    content_length(req::HTTP.Request) :: Int
+
+Gets the content-length of the request.
 """
 function content_length(req::HTTP.Request) :: Int
   parse(Int, get(Genie.HTTPUtils.Dict(req), "content-length", "0"))
@@ -743,6 +784,9 @@ end
 
 
 """
+    request_type_is(req::HTTP.Request, request_type::Symbol) :: Bool
+
+Checks if the request content-type is of a certain type.
 """
 function request_type_is(req::HTTP.Request, request_type::Symbol) :: Bool
   ! in(request_type, keys(request_mappings) |> collect) && error("Unknown request type $request_type - expected one of $(keys(request_mappings) |> collect).")
@@ -757,18 +801,22 @@ end
 
 
 """
+    request_type(req::HTTP.Request) :: Symbol
+
+Gets the request's content type.
 """
-function request_type(req::HTTP.Request) :: Union{Symbol,Nothing}
-  for (k,v) in request_mappings
-    if occursin(v, content_type(req))
-      return k
+function request_type(req::HTTP.Request) :: Symbol
+  accepted_encodings = split(content_type(req), ',')
+
+  for accepted_encoding in accepted_encodings
+    for (k,v) in request_mappings
+      if occursin(v, accepted_encoding)
+        return k
+      end
     end
   end
 
-  return nothing
-end
-function request_type() :: Symbol
-  request_type(_params_(Genie.PARAMS_REQUEST_KEY))
+  Symbol(accepted_encodings[1])
 end
 
 
@@ -827,9 +875,14 @@ to_response(action_result::Exception)::HTTP.Response = throw(action_result)
 to_response(action_result::Any)::HTTP.Response = HTTP.Response(string(action_result))
 
 
+"""
+    @params
+
+The object containing the request variables collection.
+"""
 macro params()
   quote
-    haskey(task_local_storage(), :__params) ? task_local_storage(:__params) : setup_base_params()
+    task_local_storage(:__params)
   end
 end
 macro params(key)
@@ -840,16 +893,15 @@ macro params(key, default)
     haskey(@params, $key) ? @params($key) : $default
   end
 end
-function _params_()
-  task_local_storage(:__params)
-end
-function _params_(key::Union{String,Symbol})
-  task_local_storage(:__params)[key]
-end
 
 
+"""
+    @request()
+
+The request object.
+"""
 macro request()
-  :(@params(Genie.PARAMS_REQUEST_KEY))
+  :(_params_(Genie.PARAMS_REQUEST_KEY))
 end
 
 
@@ -860,7 +912,7 @@ end
 Returns the content-type of the current request-response cycle.
 """
 function response_type(params::Dict{Symbol,T})::Symbol where {T}
-  params[:response_type]
+  get(params, :response_type, request_type(params[Genie.PARAMS_REQUEST_KEY]))
 end
 function response_type(params::Params) :: Symbol
   response_type(params.collection)
@@ -924,6 +976,11 @@ function to_uri(resource::String) :: URIParser.URI
 end
 
 
+"""
+    escape_resource_path(resource::String)
+
+Cleans up paths to resources.
+"""
 function escape_resource_path(resource::String)
   startswith(resource, "/") || return resource
   resource = resource[2:end]
@@ -947,34 +1004,69 @@ function serve_static_file(resource::String; root = Genie.config.server_document
   f = file_path(resource_path, root = root)
 
   if isfile(f)
-    HTTP.Response(200, file_headers(f), body = read(f, String))
+    return HTTP.Response(200, file_headers(f), body = read(f, String))
+  elseif isdir(f)
+    isfile(joinpath(f, "index.html")) && return serve_static_file(joinpath(f, "index.html"), root = root)
+    isfile(joinpath(f, "index.htm")) && return serve_static_file(joinpath(f, "index.htm"), root = root)
   else
     bundled_path = joinpath(@__DIR__, "..", "files", "static", resource[2:end])
     if isfile(bundled_path)
-      HTTP.Response(200, file_headers(bundled_path), body = read(bundled_path, String))
-    else
-      @error "404 Not Found $f"
-      error(resource, response_mime(), Val(404))
+      return HTTP.Response(200, file_headers(bundled_path), body = read(bundled_path, String))
     end
   end
+
+  @error "404 Not Found $f"
+  error(resource, response_mime(), Val(404))
 end
 
 
+"""
+preflight_response() :: HTTP.Response
+
+Sets up the preflight CORS response header.
+"""
 function preflight_response() :: HTTP.Response
   HTTP.Response(200, Genie.config.cors_headers, body = "Success")
 end
 
 
-function response_mime()
-  @params(Genie.PARAMS_MIME_KEY, MIME"text/html")
-end
+"""
+    response_mime()
 
-function response_mime(params::Dict{Symbol,Any})
+Returns the MIME type of the response.
+"""
+function response_mime(params::Dict{Symbol,Any} = _params_())
+  rm = get!(params, Genie.PARAMS_MIME_KEY, request_type(params[Genie.PARAMS_REQUEST_KEY]))
+
+  if isempty(string(rm()))
+    params[Genie.PARAMS_MIME_KEY] = request_type(params[Genie.PARAMS_REQUEST_KEY])
+  end
+
   params[Genie.PARAMS_MIME_KEY]
 end
 
 
+"""
+    error
+
+Not implemented function for error response.
+"""
 function error end
+
+
+function error(error_message::String, mime::Any, ::Val{500}; error_info::String = "") :: HTTP.Response
+  HTTP.Response(500, ["Content-Type" => string(mime())], body = "500 Internal Error - $error_message. $error_info")
+end
+
+
+function error(error_message::String, mime::Any, ::Val{404}; error_info::String = "") :: HTTP.Response
+  HTTP.Response(404, ["Content-Type" => string(mime())], body = "404 Not Found - $error_message. $error_info")
+end
+
+
+function error(error_code::Int, error_message::String, mime::Any; error_info::String = "") :: HTTP.Response
+  HTTP.Response(error_code, ["Content-Type" => string(mime())], body = "$error_code Error - $error_message. $error_info")
+end
 
 
 """
@@ -1003,7 +1095,6 @@ pathify(x) :: String = replace(string(x), " "=>"-") |> lowercase |> URIParser.es
 Returns the file extesion of `f`.
 """
 file_extension(f) :: String = ormatch(match(r"(?<=\.)[^\.\\/]*$", f), "")
-const fileextension = file_extension
 
 
 """
@@ -1014,6 +1105,7 @@ Returns the file headers of `f`.
 function file_headers(f) :: Vector{Pair{String,String}}
   ["Content-Type" => get(mimetypes, file_extension(f), "application/octet-stream")]
 end
+
 
 ormatch(r::RegexMatch, x) = r.match
 ormatch(r::Nothing, x) = x

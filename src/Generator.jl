@@ -10,12 +10,19 @@ import Genie
 const JULIA_PATH = joinpath(Sys.BINDIR, "julia")
 
 
+function validname(name::String)
+  filter(! isempty, [x.match for x in collect(eachmatch(r"[0-9a-zA-Z_\\/:]*", name))]) |> join
+end
+
+
 """
     newcontroller(resource_name::String) :: Nothing
 
 Generates a new Genie controller file and persists it to the resources folder.
 """
 function newcontroller(resource_name::String; path::Union{String,Nothing} = nothing, pluralize::Bool = true) :: Nothing
+  resource_name = validname(resource_name)
+
   Genie.Inflector.is_singular(resource_name) && pluralize && (resource_name = Genie.Inflector.to_plural(resource_name))
   resource_name = uppercasefirst(resource_name)
 
@@ -34,6 +41,8 @@ end
 Generates all the files associated with a new resource and persists them to the resources folder.
 """
 function newresource(resource_name::String; path::String = ".", pluralize::Bool = true) :: Nothing
+  resource_name = validname(resource_name)
+
   Genie.Inflector.is_singular(resource_name) && pluralize &&
     (resource_name = Genie.Inflector.to_plural(resource_name))
 
@@ -92,7 +101,7 @@ function write_resource_file(resource_path::String, file_name::String, resource_
     if resource_type == :test
       resource_does_not_exist(resource_path, file_name) || return true
       open(joinpath(resource_path, file_name), "w") do f
-        name = pluralize ? (Genie.Inflector.tosingular(resource_name)) : resource_name
+        name = pluralize ? (Genie.Inflector.to_singular(resource_name)) : resource_name
         write(f, Genie.FileTemplates.newtest(resource_name,  name))
       end
     end
@@ -215,7 +224,7 @@ end
 Writes the file necessary to create a microstack app.
 """
 function microstack_app(app_path::String = ".") :: Nothing
-  isdir(app_path) || mkdir(app_path)
+  isdir(app_path) || mkpath(app_path)
 
   for f in [Genie.config.path_bin, Genie.config.path_config, Genie.config.server_document_root, Genie.config.path_src,
             Genie.GENIE_FILE_NAME, Genie.ROUTES_FILE_NAME,
@@ -297,6 +306,7 @@ function install_app_dependencies(app_path::String = "."; testmode::Bool = false
   testmode ? Pkg.develop("Genie") : Pkg.add("Genie")
   Pkg.add("Revise")
   Pkg.add("LoggingExtras")
+  Pkg.add("MbedTLS")
 
   nothing
 end
@@ -346,12 +356,12 @@ end
 
 
 """
-    newapp(path::String = "."; autostart::Bool = true, fullstack::Bool = false, dbsupport::Bool = false, mvcsupport::Bool = false) :: Nothing
+    newapp(app_name::String; autostart::Bool = true, fullstack::Bool = false, dbsupport::Bool = false, mvcsupport::Bool = false) :: Nothing
 
 Scaffolds a new Genie app, setting up the file structure indicated by the various arguments.
 
 # Arguments
-- `path::String`: the name of the app and the path where to bootstrap it
+- `path::String`: the name of the app and the path where to bootstrap it. Spaces not allowed
 - `autostart::Bool`: automatically start the app once the file structure is created
 - `fullstack::Bool`: the type of app to be bootstrapped. The fullstack app includes MVC structure, DB connection code, and asset pipeline files.
 - `dbsupport::Bool`: bootstrap the files needed for DB connection setup via the SearchLight ORM
@@ -383,8 +393,10 @@ julia> Genie.newapp("MyGenieApp")
 2019-08-06 16:54:32:DEBUG:Main: Web Server running at http://127.0.0.1:8000
 ```
 """
-function newapp(path::String = "."; autostart::Bool = true, fullstack::Bool = false, dbsupport::Bool = false, mvcsupport::Bool = false, testmode::Bool = false) :: Nothing
-  app_path = abspath(path)
+function newapp(app_name::String; autostart::Bool = true, fullstack::Bool = false, dbsupport::Bool = false, mvcsupport::Bool = false, testmode::Bool = false) :: Nothing
+  app_name = validname(app_name)
+
+  app_path = abspath(app_name)
 
   fullstack ? fullstack_app(app_path) : microstack_app(app_path)
 
@@ -394,14 +406,24 @@ function newapp(path::String = "."; autostart::Bool = true, fullstack::Bool = fa
 
   write_secrets_file(app_path)
 
-  write_app_custom_files(path, app_path)
+  write_app_custom_files(app_name, app_path)
 
-  Sys.iswindows() ? setup_windows_bin_files(app_path) : setup_nix_bin_files(app_path)
+  try
+    setup_windows_bin_files(app_path)
+  catch ex
+    @error ex
+  end
 
-  @info "Done! New app created at $(abspath(path))"
+  try
+    setup_nix_bin_files(app_path)
+  catch ex
+    @error ex
+  end
+
+  @info "Done! New app created at $(abspath(app_name))"
 
   @info "Changing active directory to $app_path"
-  cd(path)
+  cd(app_name)
 
   install_app_dependencies(app_path, testmode = testmode)
 

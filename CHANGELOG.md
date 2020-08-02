@@ -1,5 +1,51 @@
 # Changelog
 
+## v1 - 2020-07-21
+
+* added support for SSL to Genie apps
+* added SSL initializer
+* bundled localhost cert and key
+* automatically forwarding all extra arguments from `Genie.up` to `HTTP.serve` `HTTP.listen`
+* added tests
+* fixed failing tests
+* improved content negotiation and default error responses
+
+## v0.32.0 - 2020-07-02
+
+* new html() method, combining string view and file layout
+* removed forgotten debug @show from Plugins
+* fixed issue with <template> tags being stripped away
+* fixed issue with missing <!DOCTYPE>
+* deps update
+* `Router.get_route` warns by default when named route not found (previously errored)
+
+## v0.31.5 - 2020-07-01
+
+* fixed issue with emtpy SECRET_TOKEN
+* Session improvements
+* more tests
+* Markdown views fixes
+* fixed `Genie.serve` for serving static websites
+
+## v0.31.4 - 2020-07-01
+
+* fixed issue with cookie encryption/decryption
+* support for "inline" markdown views
+* more tests
+
+## v0.31.3 - 2020-06-30
+
+* fix issue with CORS "*"
+* documentation improvements
+* doc comments
+
+## v0.21.0 - 2020-04-23
+
+* names of apps and resources are automatically cleaned (illegal Julia vars chars removed)
+* support for file uploads with UTF-8 chars
+* deps updates
+* docs updates
+
 ## v0.25.2 - 2020-02-03
 
 * bug fixes
