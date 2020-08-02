@@ -89,5 +89,5 @@ makedocs(
 )
 
 deploydocs(
-  repo = "github.com/GenieFramework/Genie.jl.git",
+  repo = "github.com/kentei/Genie.jl.git",
 )
