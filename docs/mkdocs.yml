@@ -1,5 +1,5 @@
 site_name:        Genie -- The Highly Productive Julia Web Framework
-repo_url:         https://github.com/GenieFramework/Genie.jl
+repo_url:         https://github.com/kentei/Genie.jl
 site_description: Genie is a web framework that promotes a streamlined and efficient workflow for developing modern web applications with Julia.
 site_author:      Adrian Salceanu
 
