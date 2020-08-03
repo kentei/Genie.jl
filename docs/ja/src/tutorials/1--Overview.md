@@ -1,13 +1,13 @@
-# Welcome to Genie
+# Genieへようこそ
 
-## The Highly Productive Web Framework for Julia
+## Julia向けの生産性の高いWebフレームワーク
 
-Genie is a full stack web framework for the Julia programming language. Genie's goals are: unparalleled developer productivity, excellent run-time performance, and security by default.
+Genieは、Juliaプログラミング言語向けのフルスタックWebフレームワークです。 Genieの目標は、デフォルトでの比類のない開発者の生産性、優れた実行時パフォーマンス、およびセキュリティです。
 
-The Genie web framework follows in the footsteps of mainstream full stack web frameworks like Ruby on Rails and Django, while staying 100% true to its Julia roots. Genie's architecture and development is driven by features present in other frameworks, but not by their design. Genie takes a no-magic-no-nonsense approach by doing things the Julia way: `Controllers` are plain Julia modules, `Models` leverage types and multiple dispatch, Genie apps are nothing but Julia projects, and versioning and dependency management is provided by Julia's own `Pkg`.
+Genie Webフレームワークは、Ruby on RailsやDjangoのような主流のフルスタックWebフレームワークの爪の垢を煎じて飲んでいる一方で、Juliaのルーツに100%忠実です。Genieのアーキテクチャと開発は、他のフレームワークにある機能によって駆動されますが、それらの設計によって駆動されるわけではありません。GenieはJuliaの仕組みで動作させることで、魔法でない現実的なアプローチをとります。例えば、`Controllers`はプレーンなJuliaモジュールであり、`Models`は型と多重ディスパッチを活用し、GenieアプリはJuliaプロジェクトに過ぎず、バージョン管理や依存管理はJuliaの`Pkg`によって提供されます。
 
-Genie also takes inspiration from Julia's "start simple, grow as needed" philosophy, by allowing developers to bootstrap an app in the REPL or in a Jupyter notebook, or easily create web services and APIs with just a few lines of code.
+また、GenieはJuliaの「スタートはシンプルに、必要に応じて成長する」というポリシーにインスピレーションを受けており、開発者がREPLやJupyter Notebookでアプリをブートストラップすることを可能にしたり、数行の単純なコードでWebサービスやAPIを簡単に作成できるようにしています。
 
-As the projects grow more complex, Genie allows adding progressively more structure, by exposing a micro-framework which offers features like powerful routing, flexible logging, support for environments, code reload, etc.
+プロジェクトがより複雑になると、Genieは強力なルーティング機能や柔軟なロギング機能、環境サポート、コードリロードなどを提供するマイクロフレームワークを公開することで構造を徐々に追加することを可能にします。
 
-If database persistence is needed, support for Genie's ORM, SearchLight, can be added at any time. Finally, full MVC structure can be used in order to drive the development and maintenance of complex, end-to-end, web applications.
+データベースの永続性が必要な場合、GenieのORMであるSearchLightによるサポートがいつでも追加できます。最後に、完全なMVC構造を利用することで、複雑でエンドツーエンドなWepアプリ―ケーションの開発や保守の推進が可能です。
