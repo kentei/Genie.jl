@@ -10,10 +10,10 @@ using Genie.Headers, Genie.HTTPUtils, Genie.Inflector, Genie.Input, Genie.Plugin
 using Genie.Renderer, Genie.Requests, Genie.Responses, Genie.Router
 using Genie.Sessions, Genie.Toolbox, Genie.Util, Genie.WebChannels
 
-push!(LOAD_PATH,  "../../src",
-                  "../../src/cache_adapters",
-                  "../../src/session_adapters",
-                  "../../src/renderers")
+push!(LOAD_PATH,  "../../../src",
+                  "../../../src/cache_adapters",
+                  "../../../src/session_adapters",
+                  "../../../src/renderers")
 
 makedocs(
     sitename = "Genie - 生産性の高いJulia Webフレームワーク",
