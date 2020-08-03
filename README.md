@@ -19,7 +19,7 @@ GenieはJulia v1.3以降と互換性があります。
 ---
 
 ## ドキュメント
-<https://kentei.github.io/Genie.jl/>
+<https://kentei.github.io/Genie.jl/dev/>
 
 翻訳元(最新版)：<https://genieframework.github.io/Genie.jl/dev/>
 
