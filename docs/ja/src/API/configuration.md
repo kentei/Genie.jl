@@ -2,17 +2,12 @@
 CurrentModule = Configuration
 ```
 
-```@contents
-```
-
 ```@docs
+GENIE_VERSION
 isdev
 isprod
 istest
-@ifdev
-@ifprod
-@iftest
 env
-cache_enabled
+buildpath
 Settings
 ```

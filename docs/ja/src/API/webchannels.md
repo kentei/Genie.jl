@@ -2,12 +2,15 @@
 CurrentModule = WebChannels
 ```
 
-```@contents
-```
-
 ```@docs
+ChannelNotFoundException
 ChannelClient
+ChannelClientsCollection
+ChannelSubscriptionsCollection
+MessagePayload
 ChannelMessage
+CLIENTS
+SUBSCRIPTIONS
 clients
 subscriptions
 websockets

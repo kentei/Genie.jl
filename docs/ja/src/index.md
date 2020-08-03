@@ -1,23 +1,25 @@
-![Genie Logo](https://kentei.github.io/Genie.jl/content/img/genie_logo.png)
+# Genie
+
+![Genie Logo](https://raw.githubusercontent.com/GenieFramework/Genie.jl/master/docs/content/img/genie_logo.png)
 
 # Genie
 
-## 生産性の高いJulia Webフレームワーク
+## The highly productive Julia web framework
 
-Genieは、モダンなWebアプリケーションを開発するための合理化された効率的なワークフローを提供するフルスタックMVC Webフレームワークです。 Juliaの長所（高レベル、高性能、動的、JITコンパイル）に基づいて構築され、生産的なWeb開発のための豊富なAPIと強力なツールセットを公開します。
+Genie is a full-stack MVC web framework that provides a streamlined and efficient workflow for developing modern web applications. It builds on Julia's strengths (high-level, high-performance, dynamic, JIT compiled), exposing a rich API and a powerful toolset for productive web development.
 
-### 現在の状態
+### Current status
 
-GenieはJulia v1.0以降と互換性があります。
-
----
-
-## ドキュメント
-<https://kentei.github.io/Genie.jl/>
+Genie is compatible with Julia v1.3 and up.
 
 ---
 
-## 謝辞
+## Documentation
+<https://genieframework.github.io/Genie.jl/dev/>
 
-* Genieは、Juliaコミュニティから親切に寄贈された多数のパッケージを使用しています。
-* 素晴らしいGenieロゴは、Alvaro Casanovaによってデザインされました。(www.yeahstyledg.com)
+---
+
+## Acknowledgements
+
+* Genie uses a multitude of packages that have been kindly contributed by the Julia community.
+* The awesome Genie logo was designed by Alvaro Casanova.
