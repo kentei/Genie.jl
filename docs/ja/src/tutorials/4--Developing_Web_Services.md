@@ -1,14 +1,14 @@
-# Developing Genie Web Services
+# Genie Webサービスの開発
 
-Starting up ad-hoc web servers at the REPL and writing small scripts to wrap micro-services works great, but production apps tend to become complex very quickly. They also have more stringent requirements, like managing dependencies, compressing assets, reloading code, logging, environments, or structuring the codebase in a way which promotes efficient workflows when working in teams.
+REPLでアドホック(その場限りな)Webサービスを起動し、マイクロサービスをラップする小さなスクリプトを作成することは非常に効率的ではありますが、製品版アプリは非常に早く複雑になる傾向があります。また、それらにはより厳しい要件があり、例えば依存関係の管理、アセットの圧縮、コードのリロード、ロギング、環境、またはチームで作業する際の効率的なワークフローを促進する方法としてのコードベースの構造化のようなものが挙げられます。
 
-Genie apps provide all these features, from dependency management and versioning (using Julia's `Pkg`, since a Genie app is a Julia project), to a powerful asset pipeline (using industry vetted tools like Yarn and Webpack), automatic code reloading in development (provided by `Revise.jl`), and a clear resource-oriented MVC layout.
+Genieアプリは、依存関係の管理とバージョン管理(GenieアプリがJuliaアプリであることから、Juliaの`Pkg`を利用)から、強力なアセットパイプライン(YarnやWebpackのような業界で検証済みのツールを利用)、開発中の自動コードリロード(`Revise.jl`が提供)、明確なリソース指向であるMVCレイアウトまで、これらすべての機能を提供します。
 
-Genie enables a modular approach towards app building, allowing to add more components as the need arises. You can start with the web service template (which includes dependencies management, logging, environments, and routing), and grow it by sequentially adding DB persistence  (through the SearchLight ORM), high performance HTML view templates with embedded Julia (via Flax), asset pipeline and compilation, and more.
+Genieはアプリの構築に向けてモジュール式アプローチを可能とし、必要に応じてコンポーネントを追加することができます。Webサービステンプレート(依存関係の管理、ロギング、環境、ルーティングを含む)で構築を開始することができ、データベースの永続性(SearchLight ORMを利用)、Juilaに組み込まれた高パフォーマンスのHTMLビューテンプレート(Flaxを利用)、アセットパイプラインやコンパイルなどを順次追加することによってアプリを成長させることができます。
 
-## Setting up a Genie Web Service project
+## Genie Web Serviceプロジェクトのセットアップ
 
-Genie packs handy generator features and templates which help bootstrapping and setting up various parts of an application. For bootstrapping a new app we need to invoke one of the functions in the `newapp` family:
+Genieは、アプリケーションの様々な部分のブートストラップやセットアップに役立つ便利なジェネレータ機能とテンプレートを収録しています。新しいアプリをブートストラップするには、`newapp`群内の関数の1つを呼び出す必要があります。
 
 ```julia
 julia> using Genie
@@ -16,24 +16,24 @@ julia> using Genie
 julia> Genie.newapp_webservice("MyGenieApp")
 ```
 
-If you follow the log messages in the REPL you will see that the command will trigger a flurry of actions in order to set up the new project:
+REPLのログメッセージを参照すると、コマンドが新しいプロジェクトをセットアップするために一度にたくさんのアクションのトリガーになっています。
 
-- it creates a new folder, `MyGenieApp/`, which will hosts the files of the app and whose name corresponds to the name of the app,
-- within the `MyGenieApp/` folder, it creates the files and folders needed by the app,
-- changes the active directory to `MyGenieApp/` and creates a new Julia project within it (adding the `Project.toml` file),
-- installs all the required dependencies for the new Genie app (using `Pkg` and the standard `Manifest.toml` file), and finally,
-- starts the web server
-
----
-**TIP**
-
-Check out the inline help for `Genie.newapp`, `Genie.newapp_webservice`, `Genie.newapp_mvc`, and `Genie.newapp_fullstack` too see what options are available for bootstrapping applications. We'll go over the different configurations in upcoming sections.
+- `MyGenieApp/`という新しいフォルダを作成します。このフォルダはアプリのファイル置き場を提供しており、フォルダの名前はアプリの名前に対応します。
+- `MyGenieApp/`フォルダ内で、アプリに必要なファイルやフォルダーを作成します。
+- アクティブディレクトリを`MyGenieApp/`に変更し、その中で新しいJuliaプロジェクトを作成します。(`Project.toml`ファイルを追加)
+- 新しいGenieアプリに必要な依存関係をすべてインストールします。(`Pkg`と標準の`Manifest.toml`ファイルを利用)
+- 最後にWebサーバを起動します。
 
 ---
+**ヒント**
 
-## The file structure
+`Genie.newapp`、` Genie.newapp_webservice`、 `Genie.newapp_mvc`、` Genie.newapp_fullstack`のインラインヘルプで、アプリケーションのブートストラップに使用できるオプションを確認してください。 さまざまな構成については、今後のセクションで説明します。
 
-Our newly created web service has this file structure:
+---
+
+## ファイル構成
+
+新規作成したWebサービスのファイル構成は以下のとおりです。
 
 ```julia
 ├── Manifest.toml
@@ -48,26 +48,26 @@ Our newly created web service has this file structure:
 └── src
 ```
 
-These are the roles of each of the files and folders:
+ファイルやフォルダにそれぞれ役割があります。
 
-- `Manifest.toml` and `Project.toml` are used by Julia and `Pkg` to manage the app's dependencies.
-- `bin/` includes scripts for starting up a Genie REPL or a Genie server.
-- `bootstrap.jl`, `genie.jl`, as well as all the files within `src/` are used by Genie to load the application and _should not be user modified_.
-- `config/` includes the per-environment configuration files.
-- `log/` is used by Genie to store per-environment log files.
-- `public/` is the document root, which includes static files exposed by the app on the network/internet.
-- `routes.jl` is the dedicated file for registering Genie routes.
-
----
-**HEADS UP**
-
-After creating a new app you might need to change the file permissions to allow editing/saving the files such as `routes.jl`.
+- `Manifest.toml`と`Project.toml`はアプリの依存関係を管理するためにJuliaと`Pkg`に利用されます。
+- `bin/`フォルダにはGenie REPLまたはGenieサーバを起動するためのスクリプトが含まれています。
+- `bootstrap.jl`、`genie.jl`、および`src/`フォルダ内のファイルはすべてのファイルはアプリケーションをロードするためにGenieによって利用されています。(ユーザは編集しないでください)
+- `config/`フォルダには環境ごとの設定ファイルが含まれています。
+- `log/`フォルダは環境ごとのログファイルを保管するためにGenieによって利用されます。
+- `public/`フォルダはドキュメントルートで、ネットワーク/インターネット上のアプリによって公開される静的ファイルを含んでいます。
+- `routes.jl`はGenieのルートを登録するための専用ファイルです。
 
 ---
+**注意喚起**
 
-## Adding logic
+アプリを新規作成した後、`routes.jl`のようなファイルの編集/保存を許可するために、ファイルのアクセス権を変更する必要があります。
 
-You can now edit the `routes.jl` file to add some logic, at the bottom of the file:
+---
+
+## ロジックの追加
+
+`routes.jl`ファイルを編集し、ファイルの下部にいくつかロジックを追加してみましょう。
 
 ```julia
 route("/hello") do
@@ -75,14 +75,14 @@ route("/hello") do
 end
 ```
 
-If you now visit <http://127.0.0.1:8000/hello> you'll see a warm greeting.
+<http://127.0.0.1:8000/hello>に接続すると、温かい挨拶を受けるでしょう。
 
-## Growing the app
+## アプリの成長
 
-Genie apps are just plain Julia projects. This means that `routes.jl` will behave like any other Julia script - you can reference extra packages, you can switch into `pkg>` mode to manage per project dependencies, include other files, etcetera.
+GenieアプリはJuilaプロジェクトでしかありません。つまり、`routes.jl`は他のJuilaスクリプトと同様に動作するということです。例えば、追加パッケージを参照したり、`pkg>`モードに切り替えてプロジェクトごとの依存関係を管理したり、他のファイルを含めたりするなど色々なことができます。
 
-If you have existing Julia code that you want to quickly load into a Genie app, you can add a `lib/` folder in the root of the app and place your Julia files there. When available, `lib/` and all its subfolders are automatically added to the `LOAD_PATH` by Genie, recursively.
+GenieアプリにすぐにロードしたいJuliaコードがある場合、アプリのルートに `lib/`フォルダを追加し、Juliaファイルを配置することができます。利用可能な場合、`lib/`フォルダとそのすべてのサブフォルダはGenieによって再帰的に`LOAD_PATH`に自動追加されます。
 
-If you need to add database support, you can always add the SearchLight ORM by using the dedicated generator, running `julia> Genie.Generator.db_support()` in the app's REPL.
+データベースの対応を追加する必要がある場合は、アプリのREPLで `julia> Genie.Generator.db_support()`を実行し、専用のジェネレーターを利用することでSearchLight ORMをいつでも追加できます。
 
-However, if your app grows in complexity and you develop it from scratch, it is more efficient to take advantage of Genie's resource-oriented MVC structure.
+しかしながら、アプリの複雑さが増し、ゼロから開発する場合は、Genieのリソース指向であるMVC構造を活用する方が効率的です。

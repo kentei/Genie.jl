@@ -27,13 +27,13 @@ makedocs(
           "Using Genie Plugins" => "guides/Genie_Plugins.md",
           "Working With Genie Apps: Intermediate Topics [WIP]" => "guides/Working_With_Genie_Apps_Intermediary_Topics.md"
         ],
-        "Tutorials" => [
-          "Welcome to Genie"  => "tutorials/1--Overview.md",
-          "Installing Genie"  => "tutorials/2--Installing_Genie.md",
-          "Getting started"   => "tutorials/3--Getting_Started.md",
-          "Creating a web service" => "tutorials/4--Developing_Web_Services.md",
-          "Developing MVC web applications" => "tutorials/4-1--Developing_MVC_Web_Apps.md",
-          "Handling URI/query params" => "tutorials/5--Handling_Query_Params.md",
+        "チュートリアル" => [
+          "Genieへようこそ"  => "tutorials/1--Overview.md",
+          "Genieのインストール"  => "tutorials/2--Installing_Genie.md",
+          "Genieを始めよう"   => "tutorials/3--Getting_Started.md",
+          "Webサービスの作成" => "tutorials/4--Developing_Web_Services.md",
+          "MVCによるWebアプリケーション開発" => "tutorials/4-1--Developing_MVC_Web_Apps.md",
+          "クエリパラメータの処理/GETパラメータ" => "tutorials/5--Handling_Query_Params.md",
           "Working with forms and POST payloads" => "tutorials/6--Working_with_POST_Payloads.md",
           "Using JSON payloads" => "tutorials/7--Using_JSON_Payloads.md",
           "Uploading files" => "tutorials/8--Handling_File_Uploads.md",
