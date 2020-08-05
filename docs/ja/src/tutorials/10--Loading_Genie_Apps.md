@@ -1,41 +1,41 @@
-# Loading and starting Genie apps
+# Genieアプリのロードと起動
 
 At any time, you can load and serve an existing Genie app. Loading a Genie app will bring into scope all your app's files, including the main app module, controllers, models, etcetera.
 
-## Starting a Genie REPL session MacOS / Linux
+## MacOS / LinuxでのGenie REPLの起動
 
-The recommended approach is to start an interactive REPL in Genie's environment by executing `bin/repl` in the os shell, while in the project's root folder.
+推奨されるアプローチは、プロジェクトのルートフォルダにて、OSシェルで`bin/repl`を実行し、Genie環境で対話型REPLを開始することです。
 
 ```sh
 $ bin/repl
 ```
 
-The app's environment will be loaded.
+アプリの環境がロードされます。
 
-In order to start the web server, you can next execute:
+Webサーバを起動するために、次のコマンドを実行します。
 
 ```julia
 julia> up()
 ```
 
-If you want to directly start the server, use `bin/server` instead of `bin/repl`:
+サーバを直接開始したい場合は、`bin/repl`の代わりに`bin/server`を利用してください。
 
 ```sh
 $ bin/server
 ```
 
-This will automatically start the web server _in non interactive mode_.
+上記により、Webサーバが自動的に非対話モードで起動します。
 
-Finally, there is the option to start the serve and drop to an interactive REPL, using `bin/serverinteractive` instead.
+最後に、`bin/serverinteractive`を代わりに利用することで、サーバを起動し対話型REPLに落とし込むオプションがあります。
 
-## Starting a Genie REPL on Windows
+## WindowsでのGenie REPLの起動
 
-On Windows the workflow is similar to macOS and Linux, but dedicated Windows scripts, `repl.bat`, `server.bat`, and `serverinteractive.bat` are provided inside the project folder, within the `bin/` directory. Double click them or execute them in the os shell (cmd or PowerShell) to start an interactive REPL session or a server session, respectively, as explained in the previous paragraphs.
+Windowsでは、ワークフローはmacOSやLinuxと似ていますが、Windows専用のスクリプトである`repl.bat`、`server.bat`、`serverinteractive.bat`が、プロジェクトフォルダ内の`bin/`フォルダに含む形で提供されています。それらをダブルクリックするか、OSシェル(コマンドプロンプトまたはPowerShell)で実行することで、前の段落で説明したように、対話型REPLセッションまたはサーバセッションを開始します。
 
 ---
-**HEADS UP**
+**注意喚起**
 
-It is possible that the Windows executables `repl.bat`, `server.bat`, and `serverinteractive.bat` are missing - this is usually the case if the app was generated on a Linux/Mac and ported to a windows computer. You can create them at anytime by running this generator in the Genie/Julia REPL (at the root of the Genie project):
+Windowsの実行可能ファイル`repl.bat`、` server.bat`、および`serverinteractive.bat`が存在しない可能性があります。(この現象が発生するのは通常、アプリがLinux/Macで生成され、Windowsコンピュータに移植された場合です) Genie/Julia REPLで以下のジェネレーターを実行するといつでも作成できます。(場所はGenieプロジェクトのルート)
 
 ```julia
 julia> using Genie
@@ -43,24 +43,24 @@ julia> using Genie
 julia> Genie.Generator.setup_windows_bin_files()
 ```
 
-Alternatively, you can pass the path to the project as the argument to `setup_windows_bin_files`:
+あるいは、プロジェクトのパスを引数として`setup_windows_bin_files`に渡すことができます。
 
 ```julia
 julia> Genie.Generator.setup_windows_bin_files("path/to/your/Genie/project")
 ```
 
-## Juno / Jupyter / other Julia environment
+## Juno / Jupyter / その他のJulia環境
 
-For Juno, Jupyter, and other interactive environments, first make sure that you `cd` into your app's project folder.
+Juno、Jupyter、およびその他の対話型の環境では、最初にアプリのプロジェクトフォルダに`cd`で移動してください。
 
-We will need to make the local package environment available:
+ローカルパッケージ環境を利用可能にする必要があります。
 
 ```julia
 using Pkg
 Pkg.activate(".")
 ```
 
-Then:
+次に以下を実行してください。
 
 ```julia
 using Genie
@@ -68,11 +68,11 @@ using Genie
 Genie.loadapp()
 ```
 
-## Manual loading in Julia's REPL
+## JuliaのREPLでの手動ロード
 
-In order to load a Genie app within an open Julia REPL session, first make sure that you're in the root dir of a Genie app. This is the project's folder and you can tell by the fact that there should be a `bootstrap.jl` file, plus Julia's `Project.toml` and `Manifest.toml` files, amongst others. You can `julia> cd(...)` or `shell> cd ...` your way into the folder of the Genie app.
+開いているJulia REPLセッション内でGenieアプリをロードするため、初めにGenieアプリのルートディレクトリに移動済みであることを確認してください。ここはプロジェクトのフォルダで、`bootstrap.jl`ファイルに加えて、特にJuliaの`Project.toml`ファイルと `Manifest.toml`ファイルが必要であるということです。`julia> cd(...)` または`shell> cd ...`コマンドでGenieアプリのフォルダに移動できます。
 
-Next, from within the active Julia REPL session, we have to activate the local package environment:
+次に、アクティブなJulia REPLセッションないから、ローカルパッケージ環境をアクティブ化する必要があります。
 
 ```julia
 julia> ] # enter pkg> mode
@@ -80,7 +80,7 @@ julia> ] # enter pkg> mode
 pkg> activate .
 ```
 
-Then, back to the julian prompt, run the following to load the Genie app:
+そして、Juliaプロンプトに戻り、以下の通りGenieアプリのロードを実行します。
 
 ```julia
 julia> using Genie
@@ -88,17 +88,17 @@ julia> using Genie
 julia> Genie.loadapp()
 ```
 
-The app's environment will now be loaded.
+これで、アプリの環境がロードされます。
 
-In order to start the web server execute
+サーバを起動するために以下を実行します。
 
 ```julia
 julia> startup()
 ```
 
 ---
-**HEADS UP**
+**注意喚起**
 
-The recommended way to load an app is via the `bin/repl`, `bin/server` and `bin/serverinteractive` commands. It will correctly start the Julia process and start the app REPL with all the dependencies loaded with just one command.
+アプリをロードする推奨方法は、`bin/repl`や`bin/server`、`bin/serverinteractive`コマンドを使用することです。Juliaプロセスを正しく開始し、1つのコマンドですべての依存関係をロードしてアプリのREPLを開始します。
 
 ---

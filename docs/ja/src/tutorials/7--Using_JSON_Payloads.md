@@ -1,8 +1,8 @@
-# Using JSON payloads
+# JSONペイロードの利用
 
-A very common design pattern, especially when developing REST APIs, is to accept JSON payloads sent as `application/json` data over `POST` requests. Genie efficiently handles this use case through the utility function `Requests.jsonpayload`. Under the cover, Genie will process the `POST` request and will attempt to parse the JSON text payload. If this fails, you can still access the raw data (the text payload not converted to JSON) by using the `Requests.rawpayload` method.
+特にREST APIを開発する際の非常に一般的なデザインパターンは、`POST`リクエストを介して`application/json`データとして送られるJSONペイロードを受け入れることです。Genieはユーティリティ関数`Requests.jsonpayload`を利用してこのユースケースを効率的に処理します。関数の内部で、Genieは`POST`リクエストを処理し、JSONテキストペイロードの解析を試みます。これが失敗した場合でも、`Requests.rawpayload`メソッドを利用することで生データ（JSONに変換されていないテキストペイロード）にアクセスできます。
 
-### Example
+### 例
 
 ```julia
 using Genie, Genie.Router, Genie.Requests, Genie.Renderer.Json
@@ -17,7 +17,7 @@ end
 up()
 ```
 
-Next we make a `POST` request using the `HTTP` package:
+次に`HTTP` パッケージを利用することで`POST`リクエストを作成します。
 
 ```julia
 using HTTP
@@ -25,7 +25,7 @@ using HTTP
 HTTP.request("POST", "http://localhost:8000/jsonpayload", [("Content-Type", "application/json")], """{"name":"Adrian"}""")
 ```
 
-We will get the following output:
+以下の内容が出力されます。
 
 ```julia
 jsonpayload() = Dict{String,Any}("name"=>"Adrian")
@@ -42,4 +42,4 @@ Transfer-Encoding: chunked
 "Hello Adrian""""
 ```
 
-First, for the two `@show` calls, notice how `jsonpayload` had successfully converted the `POST` data to a `Dict`. While the `rawpayload` returns the `POST` data as a `String`, exactly as received. Finally, our route handler returns a JSON response, greeting the user by extracting the name from within the `jsonpayload` `Dict`.
+初めに、2つの`@show`の呼び出しについて、`jsonpayload`が`POST`データを`Dict`型に正常に変換したことに注目してください。一方で`rawpayload`は`POST`データを`String`型として、受け取った通りに返しています。最後にルートハンドラーはJSONレスポンスを返し、`jsonpayload` `Dict`から名前を抽出して、ユーザに挨拶しています。

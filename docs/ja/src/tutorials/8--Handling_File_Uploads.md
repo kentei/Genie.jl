@@ -1,10 +1,10 @@
-# Handling file uploads
+# ファイルアップロードの操作
 
-Genie has built-in support for working with file uploads. The collection of uploaded files (as `POST` variables) can be accessed through the `Requests.filespayload` method. Or, we can retrieve the data corresponding to a given file form input by using `Requests.filespayload(key)` -- where `key` is the name of the file input in the form.
+Genieはファイルのアップロード機能を内蔵しています。アップロードされたファイルのコレクション(`POST`変数として扱う)は、`Requests.filespayload`メソッドを介してアクセスできます。または、`Requests.filespayload(key)`を利用することにより、与えられたファイルフォーム入力に対応するデータを取得できます。(`key`はフォーム内のファイル入力の名前(name)です)
 
-In the following snippet we configure two routes in the root of the app (`/`): the first route, handling `GET` requests, displays an upload form. The second route, handling `POST` requests, processes the uploads, generating a file from the uploaded data, saving it, and displaying the file stats.
+以下のスニペットでは、アプリのルート(root)に2つのルート(`/`)を構成します。初めのルートは`GET`リクエストを処理し、アップロード用のフォームを表示します。2つ目のルートは`POST`リクエストを処理し、アップロードを実施し、アップされたデータからファイルを生成し、それを保存、さらにファイルの統計情報を表示します。
 
-### Example
+### 例
 
 ```julia
 using Genie, Genie.Router, Genie.Renderer.Html, Genie.Requests
@@ -33,4 +33,4 @@ end
 up()
 ```
 
-Upon uploading a file and submitting the form, our app will display the file's stats.
+ファイルをアップロードしてフォームを送信すると、アプリにファイルの統計情報が表示されます。
