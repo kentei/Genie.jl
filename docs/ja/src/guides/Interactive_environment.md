@@ -1,10 +1,8 @@
-# Using Genie in an interactive environment (Jupyter/IJulia, REPL, etc)
+# 対話型環境でのGenieの利用(Jupyter/IJulia、REPLなど)
 
-Genie can be used for ad-hoc exploratory programming, to quickly whip up a web server
-and expose your Julia functions.
+Genieはアドホックな探索的プログラミングに利用することで、Webサーバを迅速に立ち上げたり、自作のJulia関数を公開することができます。
 
-Once you have `Genie` into scope, you can define a new `route`.
-A `route` maps a URL to a function.
+一度`Genie`をスコープに入れると、新たな`route`を定義できます。`route`はURLを関数に関連付けます。
 
 ```julia
 julia> import Genie.Router: route
@@ -13,15 +11,15 @@ julia> route("/") do
        end
 ```
 
-You can now start the web server using
+ここで使用するWebサーバを起動します。
 
 ```julia
 julia> Genie.startup()
 ```
 
-Finally, now navigate to <http://localhost:8000> – you should see the message "Hi there!".
+<http://localhost:8000>にアクセスすると、「Hi there！」というメッセージが確認できます。
 
-We can define more complex URIs which can also map to previously defined functions:
+より複雑なURIを定義でき、前に定義した関数に関連付けることができます。
 
 ```julia
 julia> function hello_world()
@@ -30,11 +28,11 @@ julia> function hello_world()
 julia> route("/hello/world", hello_world)
 ```
 
-Obviously, the functions can be defined anywhere (in any other module) as long as they are accessible in the current scope.
+(上記で)明らかなように、関数は現在のスコープでアクセス可能である限り、どこにでも(他のモジュール内でも)定義できます。
 
-You can now visit <http://localhost:8000/hello/world> in the browser.
+現状、ブラウザで<http://localhost:8000/hello/world>にアクセスできるようになっています。
 
-Of course we can access GET params:
+もちろん、GETパラメータにもアクセスできます。
 
 ```julia
 julia> import Genie.Router: @params
@@ -43,9 +41,9 @@ julia> route("/echo/:message") do
        end
 ```
 
-Accessing <http://localhost:8000/echo/ciao> should echo "ciao".
+<http://localhost:8000/echo/ciao>にアクセスすると、`ciao`と出力されます。
 
-And we can even match by types:
+また型で一致させることもできます。
 
 ```julia
 julia> route("/sum/:x::Int/:y::Int") do
@@ -53,21 +51,20 @@ julia> route("/sum/:x::Int/:y::Int") do
        end
 ```
 
-By default, GET params are extracted as `SubString` (more exactly, `SubString{String}`).
-If type constraints are added, Genie will attempt to convert the `SubString` to the indicated type.
+デフォルトでは、GETパラメータは`SubString`(より正確には`SubString{String}`)型として抽出されます。型の制約が追加されると、Genieは`SubString`を指定された型への変換を試みます。
 
-For the above to work, we also need to tell Genie how to perform the conversion:
+上記が機能するためには、Genieに変換の実行方法を伝えることも必要です。
 
 ```julia
 julia> import Base.convert
 julia> convert(::Type{Int}, s::SubString{String}) = parse(Int, s)
 ```
 
-Now if we access <http://localhost:8000/sum/2/3> we should see `5`
+ここで、<http://localhost:8000/sum/2/3>にアクセスすると、`5`と表示されます。
 
-## Handling query string params
+## クエリ文字列パラメータの処理
 
-Query string params, which look like `...?foo=bar&baz=2` are automatically unpacked by Genie and placed into the `@params` collection. For example:
+`...?foo=bar&baz=2`のようなクエリ文字列パラメータは、Genieによって自動的に解凍され、`@params`コレクションに配置されます。例は以下の通りです。
 
 ```julia
 julia> route("/sum/:x::Int/:y::Int") do
@@ -75,4 +72,4 @@ julia> route("/sum/:x::Int/:y::Int") do
        end
 ```
 
-Accessing <http://localhost:8000/sum/2/3?initial_value=10> will now output `15`.
+ここで、<http://localhost:8000/sum/2/3?initial_value=10>にアクセスすると、`15`と出力されます。

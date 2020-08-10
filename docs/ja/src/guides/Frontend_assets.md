@@ -1,66 +1,66 @@
-# Frontend assets
+# フロントエンドアセット
 
-Genie makes use of Yarn and Webpack to compile and serve frontend assets. In fact out of the box a config file making use of Webpack4's most popular features is supplied, as well as Bootstrap4 and jQuey pre-installed. That way you can focus on your web app, taking yet another layer of abstraction away.
+GenieはYarnやWebpackを利用することで、フロントエンドアセットをコンパイルし、提供します。実際、設定をほぼしない状態(out-of-the-box)で、Webpack4の最も人気のある機能を利用する設定ファイルが提供され、Bootstrap4とJQueryも同様にプリインストールされています。それによりWebアプリに集中することができ、べつの抽象化レイヤーを取り除く事ができます。
 
-As summary:
+まとめると以下の通りです。
 
-- production minimizes files, separating CSS from JS
-- development uses webpack-dev-server on node port 3000 (relies on inbuilt socket server)
-- supported file formats: css, scss, sass, js, coffee
-- output is saved to `public/dist` of your Genie app
-- pre-configured with Bootstrap4 and jQuery
-- supports bundling (chunks and async loading)
+- 製品版ではファイルを最小化し、CSSをJavaScriptから分離します
+- 開発はノードポート3000でwebpack-dev-serverを利用します(組み込み型のSocketサーバ)に依存
+- サポートされたファイル形式：css, scss, sass, js, coffee
+- 出力はGenieアプリの`public/dist`に保存されます。
+- Bootstrap4とjQueryで事前に設定済
+- バンドリングをサポート(チャンクと非同期読み込み)
 
-## Requirements
+## 要件
 
-** In order for the Genie app to install the asset pipeline the app needs to be created using the `fullstack = true` option, as in: **
+**Genieアプリでアセットパイプラインをインストールするには以下のように`fullstack = true`オプションを利用してアプリを作成する必要があります。**
 
 ```julia
 julia> Genie.newapp("MyApp", fullstack = true)
 ```
 
 
-You will need NodeJS as well as Yarn to be installed on system. If using Linux, macOS your package manager should easily allow this. Windows please download relevant installer from NodeJS project webpage.
+システムにNodeJSとYarnがインストールされている必要があります。LinuxやMacOSを使用している場合は、パッケージマネージャを利用すると簡単にインストールできます。Windowsの場合は、NodeJSプロジェクトのWebページから関連するインストーラをダウンロードしてください。
 
-## Installing dependencies
+## 依存関係のインストール
 
-From app directory:
+アプリディレクトリで以下を実行します。
 
 ```
 yarn install
 ```
 
-## Development mode
+## 開発モード
 
-From app directory:
+アプリディレクトリで以下を実行します。
 
 ```
 yarn run develop
 ```
 
-Static files will be served via Node server websocket on port 3000. Sourcemaps will be supplied as well, allowing you to easily debug.
+静的ファイルはポート3000のNodeサーバのWebSocketを介して提供されます。ソースマップも同様で、簡単にデバッグができます。
 
-Any changes you make to static files will automatically be sent to browser. If working with React/Vue, state of page will be conserved during process. Save time without re-compiling and reloading page.
+静的ファイルへの変更は、自動的にブラウザに送られます。React/Vueを利用する場合、ページの状態は処理中に保存されます。ページを再コンパイルおよび再リロードすることはなく、時間を節約できます。
 
-Genie by default runs in development mode. Hence if using `app/assets/js/application.js` as main entry point, no additional configurations are required.
+Genieはデフォルトでは開発モードで動作します。したがって、`app/assets/js/application.js`をメインのエントリポイントとして利用する場合、追加の設定は必要ありません。
 
-## Production mode
+## 本番モード
 
-From app directory:
+アプリディレクトリで以下を実行します。
 
 ```
 yarn run build
 ```
 
-This will output minified files to `public/dist` dir of your app, without source maps.
+上記は、アプリの`public/dist`ディレクトリにソースマップなしでミニファイされたファイルを出力します。
 
-Please run Genie in production mode to serve static assets.
+静的アセットを提供するためには、Genieを本番モードで実行してください。
 
-## Considerations
+## 考慮事項
 
-In order to take best advantage of Webpack bundling, it is recommended to serve all static files (images, fonts) via JS `require` calls. Let Webpack optimise bundle.
+Webpackバンドルを最大限活用するために、JavaScriptの`require`呼び出しを介してすべての静的ファイル(画像やフォント)を提供することを推奨します。Webpackにバンドルを最適化させます。
 
-Lazy-loading is also supported. This means that browser will fetch ressources when required, speeding-up page loads. As an example, consider chat integration via a button. With demo code below, the chat functionality will only be fetched by browser once user clicks button.
+遅延読み込みもサポートしています。つまり、ブラウザが必要になったときリソースをフェッチするため、ページの読み込みスピードが向上します。例として、ボタンを介したチャット統合を考えてみてください。以下のデモコードでは、チャット機能はユーザがボタンを1度クリックしたときにのみブラウザによってフェッチされます。
 
 ```
 button.onclick = () => {
@@ -70,10 +70,10 @@ button.onclick = () => {
 }
 ```
 
-## Minimal Bootstrap integration
+## 最小のBootstrap統合
 
-Following Webpack philisophy, it is recommended to only load library dependencies when necessary. Nonetheless for Bootstrap to work, one can do as follows:
+Webpackの方針に従い、必要な時だけライブラリの依存関係を読み込むことを推奨します。それでもなお、Bootstrapを動かしたいなら、以下のようにすることでできます。
 
-- under `app/assets/js/application.js`, add `import "bootstrap";`
-- create new file `app/assets/css/vendor.scss` and add `@import "~bootstrap/scss/bootstrap.scss";`
-- include this new file from `app/assets/js/application.js`, by adding `require("../css/vendor.scss");`
+- `app/assets/js/application.js`の下方に`import "bootstrap";`を追加する
+- 新たなファイル`app/assets/css/vendor.scss`を作成し、`@import "~bootstrap/scss/bootstrap.scss";`を追加する
+- `app/assets/js/application.js`に`require("../css/vendor.scss");`を追加することで、新たなファイルをインクルードする

@@ -20,11 +20,11 @@ makedocs(
     format = Documenter.HTML(prettyurls = false),
     pages = [
         "Home" => "index.md",
-        "Guides" => [
+        "ガイド" => [
           "Working with Genie Apps" => "guides/Working_With_Genie_Apps.md",
-          "Using Genie in an interactive environment" => "guides/Interactive_environment.md",
-          "Developing an API backend" => "guides/Simple_API_backend.md",
-          "Using Genie Plugins" => "guides/Genie_Plugins.md",
+          "対話型環境でのGenieの利用" => "guides/Interactive_environment.md",
+          "APIバックエンドの開発" => "guides/Simple_API_backend.md",
+          "Genieプラグインの利用" => "guides/Genie_Plugins.md",
           "Working With Genie Apps: Intermediate Topics [WIP]" => "guides/Working_With_Genie_Apps_Intermediary_Topics.md"
         ],
         "チュートリアル" => [
@@ -41,14 +41,14 @@ makedocs(
           "Genieアプリのロードと起動" => "tutorials/10--Loading_Genie_Apps.md",
           "Genieアプリの依存管理" => "tutorials/11--Managing_External_Packages.md",
           "高度なルーティング" => "tutorials/12--Advanced_Routing_Techniques.md",
-          "Auto-loading configuration code with initializers" => "tutorials/13--Initializers.md",
-          "The secrets file" => "tutorials/14--The_Secrets_File.md",
-          "Auto-loading user libraries" => "tutorials/15--The_Lib_Folder.md",
-          "Using Genie with Docker" => "tutorials/16--Using_Genie_With_Docker.md",
-          "Working with WebSockets" => "tutorials/17--Working_with_Web_Sockets.md",
-          "Force compiling route handlers" => "tutorials/80--Force_Compiling_Routes.md",
-          "Deploying to Heroku with Buildpacks" => "tutorials/90--Deploying_With_Heroku_Buildpacks.md",
-          "Deploying to Heroku with Docker" => "tutorials/91--Deploying_Genie_Docker_Apps_on_Heroku.md"
+          "イニシャライザによる設定コードの自動読み込み" => "tutorials/13--Initializers.md",
+          "シークレットファイル" => "tutorials/14--The_Secrets_File.md",
+          "ユーザーライブラリの自動読み込み" => "tutorials/15--The_Lib_Folder.md",
+          "DockerでのGenie利用" => "tutorials/16--Using_Genie_With_Docker.md",
+          "WebSocketの利用" => "tutorials/17--Working_with_Web_Sockets.md",
+          "ルートの強制コンパイル" => "tutorials/80--Force_Compiling_Routes.md",
+          "HerokuビルドパックによるGenieアプリのデプロイ" => "tutorials/90--Deploying_With_Heroku_Buildpacks.md",
+          "DockerによるHerokuへのデプロイ" => "tutorials/91--Deploying_Genie_Docker_Apps_on_Heroku.md"
         ],
         "API" => [
           "App" => "API/app.md",
