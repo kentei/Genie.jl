@@ -1,10 +1,10 @@
-# Working with Web Sockets
+# WebSocketの利用
 
-Genie provides a powerful workflow for client-server communication over websockets. The system hides away the complexity of the network level communication, exposing powerful abstractions which resemble Genie's familiar MVC workflow: the clients and the server exchange messages over `channels` (which are the equivalent of `routes`).
+GenieはWebSocketを介したクライアントサーバ間の通信のための強力なワークフローを提供します。そのシステムはネットワークレベルの複雑さを隠し、GenieのMVCワークフローに似た強力な抽象化を公開します。というのも、クライアントとサーバは`channels`(`routes`に相当)を介してメッセージを交換します。
 
-## Registering `channels`
+## `channels`の登録
 
-The messages are mapped to a matching channel, where are processed by Genie's `Router` which extracts the payload and invokes the designated handler (controller method or function). For most purposes, the `channels` are the functional equivalents of `routes` and are defined in the same way:
+メッセージはマッチするチャンネルに紐づけられており、ペイロードを抽出し、指定されたハンドラ(コントローラメソッドまたは関数)を呼び出すGenieの`Router`によって処理されます。ほとんどの場合、`channels`は`routes`と機能的に同等であり、同様の方法で定義されます。
 
 ```julia
 using Genie.Router
@@ -16,11 +16,11 @@ end
 channel("/baz/bax", YourController.your_handler)
 ```
 
-The above `channel` definitions will handle websocket messages sent to `/foo/bar` and `/baz/bax`.
+上記の`channel`の定義は、`/foo/bar`と`/baz/bax`に送信されるWebsocketメッセージを処理します。
 
-## Setting up the client
+## クライアントのセットアップ
 
-In order to enable WebSockets communication in the browser we need to load a JavaScript file. This is provided by Genie, through the `Assets` module. Genie makes it extremely easy to setup the WebSockets infrastructure on the client side, by providing the `Assets.channels_support()` method. For instance, if we want to add support for WebSockets to the root page of a web app, all we need is this:
+ブラウザでWebSocket通信を有効にするには、JavaScriptファイルをロードする必要があります。これは`Assets`モジュールを介することでGenieが提供します。Genieは、`Assets.channels_support()`を提供することで、クライアント側でWebSocketの基盤を非常に簡単に準備できます。例えば、WebアプリのルートページにWebSocketのサポートを追加する場合、必要なのは以下です。
 
 ```julia
 using Genie.Router, Genie.Assets
@@ -30,13 +30,13 @@ route("/") do
 end
 ```
 
-Literally, that is all we need in order to be able to push and receive messages between client and server.
+記載通り、クライアントとサーバ間でメッセージをやりとりできるようにするために必要なことはこれだけです。
 
 ---
 
-## Try it!
+## 試してみよう！
 
-You can follow through by running the following Julia code in a Julia REPL:
+Julia REPLで次のJuliaコードを実行することで進んでいきましょう。
 
 ```julia
 using Genie, Genie.Router, Genie.Assets
@@ -50,7 +50,7 @@ end
 up() # start the servers
 ```
 
-Now if you visit <http://localhost:8000> you'll get a blank page -- which, however, includes all the necessary functionality for WebSockets communication! If you use the browser's developer tools, the Network pane will indicate that a `channels.js` file was loaded and that a WebSockets request was made (Status 101 over GET). Additionally, if you peek at the Console, you will see a `Subscription ready` message. The output in the console should be something like:
+ここで、<http://localhost:8000>にアクセスすると、空白ページが表示されますが、WebSocket通信に必要なすべての機能は既に含まれています！ブラウザの開発者ツールを利用すると、NetWork部分に、`channels.js`ファイルがロードされ、WebSocketsリクエストが行われた旨(GETを介したステータス101)が記されています。さらにコンソールを覗くと、`Subscription ready`メッセージを確認できます。コンソールの出力は次のようになります。
 
 ```text
 Queuing subscription channels.js:107:13
@@ -60,17 +60,17 @@ Overwrite window.parse_payload to handle messages from the server channels.js:98
 OK
 ```
 
-** What happened? **
+**何が起こったか？**
 
-At this point, by invoking `Assets.channels_support()`, Genie has done the following:
+この時点で、`Assets.channels_support()`を呼び出すことで、Genieは以下を実施しました。
 
-* loaded the bundled the `channels.js` file which provides a JS API for communicating over WebSockets
-* has created two default channels, for subscribing and unsubscribing: `/__/subscribe` and `/__/unsubscribe`
-* has invoked `/__/subscribe` and created a WebSockets connection between client and server
+* バンドルされた`channels.js`ファイルをロードしました。このファイルにはWebSocketを介した通信をするためのJavaScript APIを提供します
+* サブスクライブ用とサブスクライブ解除用の2つのデフォルトチャンネルを作成しました。(`/__/subscribe`、`/__/unsubscribe`)
+* `/__/subscribe`を呼び出し、クライアントとサーバ間のWebSocket接続を作成しました。
 
-### Pushing messages from the server
+### サーバーからメッセージのプッシュ
 
-We are ready to interact with the client. Go to the Julia REPL running the web app and run:
+クライアントと対話する準備ができました。Webアプリを実行しているJulia REPLに移動して、次の通り実行します。
 
 ```julia
 julia> Genie.WebChannels.connected_clients()
@@ -78,14 +78,14 @@ julia> Genie.WebChannels.connected_clients()
  Genie.WebChannels.ChannelClient(HTTP.WebSockets.WebSocket{HTTP.ConnectionPool.Transaction{Sockets.TCPSocket}}(T0  🔁    0↑🔒    0↓🔒 100s 127.0.0.1:8001:8001 ≣16, 0x01, true, UInt8[0x7b, 0x22, 0x63, 0x68, 0x61, 0x6e, 0x6e, 0x65, 0x6c, 0x22  …  0x79, 0x6c, 0x6f, 0x61, 0x64, 0x22, 0x3a, 0x7b, 0x7d, 0x7d], UInt8[], false, false), ["__"])
 ```
 
-We have one connected client to the `__` channel! We can send it a message:
+`__`チャンネルに接続されたクライアントが1つあります！　メッセージを送ってみます。
 
 ```julia
 julia> Genie.WebChannels.broadcast("__", "Hey!")
 true
 ```
 
-If you look in the browser's console you will the the "Hey!" message! By default, the client side handler simply outputs the message. We're also informed that we can "Overwrite window.parse_payload to handle messages from the server". Let's do it. Run this in the current REPL (it will overwrite our root route handler):
+ブラウザのコンソールを見ると、「Hey!」というメッセージを確認できます。デフォルトでは、クライアント側のハンドラはメッセージを出力するだけです。「Overwrite window.parse_payload to handle messages from the server(window.parse_payloadを上書きしてサーバからのメッセージを処理する)」ことができることも通知もされる。やってみましょう。現在のREPLで実行します。(ルート(root)のルート(routes)ハンドラが上書きされます)
 
 ```julia
 route("/") do
@@ -100,7 +100,7 @@ route("/") do
 end
 ```
 
-Now if you reload the page and broadcast the message, it will be picked up by our custom payload handler. However, chances are you'll also get an error when broadcasting (don't worry though, the error is just logged, it's not breaking the application as it's not critical):
+ここで、ページをリロードしてメッセージをブロードキャストすると、カスタムペイロードハンドラによって取得されます。ただし、ブロードキャスト時にエラーが発生する可能性もあります。(エラーがログに出力されるが、それは重大ではなくアプリケーションを破壊することはないので、心配する必要はない)
 
 ```julia
 julia> Genie.WebChannels.broadcast("__", "Hey!")
@@ -109,27 +109,27 @@ julia> Genie.WebChannels.broadcast("__", "Hey!")
 true
 ```
 
-The error is caused by the fact that, by reloading the page, our previously connected WebSockets client is now unreachable. However, we still keep a reference to it - and when we try to broadcast to it, we find that the stream has been closed. We can fix this by calling
+このエラーは、ページをリロードした際、前に接続したWebSocketクライアントが到達不可となるために発生しています。しかし、まだ参照を保持しており、ブロードキャストしようとするとストリームが閉じられていることがわかります。これを修正するには、以下を呼び出します。
 
 ```julia
 julia> Genie.WebChannels.unsubscribe_disconnected_clients()
 ```
 
-The output of `unsubscribe_disconnected_clients()` is the collection of remaining (connected) clients.
+`unsubscribe_disconnected_clients()`の出力は、残りの(接続済みの)クライアントのコレクションです。
 
 ---
 
-** Heads up! **
+**注意喚起!**
 
-Although harmless, the error indicates that you have disconnected clients in memory. If you don't need the data, purge them to free memory.
+無害ではありますが、エラーはメモリ内に切断したクライアントが残っていることを示しています。不要なデータであるならば、それらをパージしメモリを開放してください。
 
 ---
 
-At any time, we can check the connected clients with `Genie.WebChannels.connected_clients()` and the disconnected ones with `Genie.WebChannels.disconnected_clients()`.
+いつでも、接続されたクライアントは`Genie.WebChannels.connected_clients()`で、切断されたクライアントは `Genie.WebChannels.disconnected_clients()`でチェックできます。
 
-### Pushing messages from the client
+### クライアントからメッセージのプッシュ
 
-We can also push messages from client to server. As we don't have a UI, we'll use the browser's console and Genie's JavaScript API to send the message. But first, we need to set up the `channel` which will receive our message. Run this in the active Julia REPL:
+クライアントからサーバにメッセージをプッシュすることもできます。UIを用意していないため、ブラウザのコンソールとGenieのJavaScript APIを利用してメッセージを送信してみましょう。しかし、最初にメッセージを受信するための`channel`を設定する必要があります。アクティブなJulia REPLで以下を実行してください。
 
 ```julia
 channel("/__/echo") do
@@ -137,18 +137,18 @@ channel("/__/echo") do
 end
 ```
 
-Now that our endpoint is up, go to the browser's console and run:
+エンドポイントが起動したので、ブラウザのコンソールに移動して以下を実行します。
 ```javascript
 Genie.WebChannels.sendMessageTo('__', 'echo', 'Hello!')
 ```
 
-The console will immediately display the response from the server:
+コンソールはすぐにサーバからのレスポンス表示します。
 
 ```text
 Received: Hello!  channels.js:74:3
 Got this payload: Received: Hello!
 ```
 
-## Summary
+## まとめ
 
-This concludes our intro to working with WebSockets in Genie. You know have the knowledge to set up the communication between client and server, send messages from both server and clients, and perform various tasks using the `WebChannels` API.
+これで、GenieでWebSocketを操作するための紹介は終わりです。クライアントとサーバ間の通信を設定し、サーバとクライアントの両方からメッセージを送信し、`WebChannels` APIを使用して様々なタスクを実行する知識をここまでで得ることができました。

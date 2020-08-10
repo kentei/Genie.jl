@@ -1,44 +1,44 @@
-# Customized application configuration with initializers
+# イニシャライザによるアプリケーション設定のカスタマイズ
 
-Initializers are plain Julia files which are loaded early in the application cycle (before routes, controller, or models). They are designed to expose configuration code which might be needed later on in the application life cycle.
+イニシャライザは、アプリケーションサイクルの早い段階(ルート、コントローラ、モデルよりも早く)に読み込まれる純粋なJuliaファイルです。それらはアプリケーションのライフサイクルの後半で必要になる可能性がある設定コードを公開するように設計されています。
 
-Initializers should be placed within the `config/initializers/` folder and they will be automatically loaded (included) by Genie.
+イニシャライザは`config/initializers/`フォルダ内に配置する必要があり、それらはGenieによって自動的にロード(インクルード)されます。
 
-**If your configuration is environment dependent (ie a database connection which is different between dev and prod), it should be added to the corresponding `config/env/*.jl` file.**
+**設定が環境依存する場合(すなわち、開発と本番環境の間で差異があるデータベース接続)、対応する`config/env/*.jl`ファイルに追加する必要があります。**
 
-## Best practices
+## ベストプラクティス
 
-* You can name the initializers as you wish (ideally a descriptive name, like maybe `redis.jl`).
-* Don't use uppercase names unless you define a module (in order to respect Julia's naming practices).
-* Keep your initializer files small and focused, so they serve only one purpose.
-* You can add as many initializers as you need.
-* Do not abuse them, they are not meant to host complex code.
+* イニシャライザには好きな名前をつけることができます。(理想を言えば、`redis.jl`のように説明的な名前)
+* モジュールを定義しない限り、大文字の名前は使わないでください。(Juliaの命名規則を尊重するため)
+* イニシャライザファイルは小さく集中させてください。そうすることでファイルの目的は一つだけになります。
+* イニシャライザは必要な数だけ追加することができます。
+* イニシャライザを乱用しないでください。それらは複雑なコードをもつことを意図していません。
 
-## Load order
+## ロード順序
 
-The initializers are loaded in the order they are read from the file system. If you have initializers which depend on other initializers, this is most likely a sign that you need to refactor using a model or a library file.
-
----
-**HEADS UP**
-
-Library files are Julia files which provide distinct functionality and can be placed in the `lib/` folder where they are also automatically loaded by Genie. If the `lib/` folder does not exist, you can create it yourself.
+イニシャライザはファイルシステムから読まれた順番にロードされます。他のイニシャライザに依存するイニシャライザがある場合、これはモデルまたはライブラリファイルを利用してリファクタリングする必要があることを示唆している可能性があります。
 
 ---
+**注意喚起**
 
-## Scope
-
-All the definitions (variables, constants, functions, modules, etc) added to initializer files are loaded into your app's module. So if your app is called `MyGenieApp`, the definitions will be available under the `MyGenieApp` module.
-
----
-**HEADS UP**
-
-Given that your app's name is variable, you can also access your app's module through the `UserApp` constant. So all the definitions added to initializers can also be accessed through the `UserApp` module (`UserApp === MyGenieApp`).
+ライブラリファイルは明確な機能を提供するJuliaファイルで、Genieによって自動的にロードされる`lib/`フォルダに配置することができます。`lib/`フォルダが存在しない場合は、自分でそれを作成することができます。
 
 ---
 
-## Example
+## スコープ
 
-This is Genie's default initializer for loading the SearchLight ORM. Please notice that the initializers does contain database configuration information, which is defined in a dedicated, environment dependent file. The initializer simply delegates the configuration loading and setup to the SearchLight package.
+イニシャライザファイルに追加されたすべての定義(変数、定数、関数、モジュールなど)はアプリのモジュールにロードされます。そのため、アプリが`MyGenieApp`という名前の場合、定義は`MyGenieApp`モジュールで利用できます。
+
+---
+**注意喚起**
+
+アプリの名前が変数の場合、`UserApp`定数を介してアプリモジュールにアクセスすることができます。そのため、イニシャライザに追加されたすべての定義は、`UserApp`モジュールを介してアクセスすることができます。(`UserApp === MyGenieApp`)
+
+---
+
+## 例
+
+これは、SearchLight ORMをロードするためのGenieのデフォルトイニシャライザです。イニシャライザは、専用の環境依存ファイルで定義されているデータベースの設定情報を含んでいることに注意してください。イニシャライザは、設定のロードとセットアップをSearchLightパッケージに任せるだけです。
 
 ```julia
 using SearchLight, SearchLight.QueryBuilder

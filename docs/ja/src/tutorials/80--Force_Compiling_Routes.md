@@ -1,8 +1,8 @@
-# Force compiling Genie routes
+# Genieルートの強制コンパイル
 
-Because Julia JIT-compiles the code, upon starting up the application, at the time of the first to a certain route, Julia will need to compile the function(s) which are responsible for handling the request. This means that the first request will potentially take many seconds to resolve, which might not be acceptable in a production environment. For such cases, once can use Genie itself to visit each defined route and trigger the compilation.
+アプリケーション起動時に、JuliaはコードをJITコンパイルするため、特定のルートへの初回到達時に、Juliaはリクエストを処理する役割を担った関数をコンパイルする必要があります。これは、最初のリクエストが解決されるまでに多くの秒数がかかる可能性があることを示唆しています。それは本番環境では受け入れられないことかもしれません。このような場合のため、一度定義されたルートにアクセスするためにGenie自体を利用し、コンパイルをトリガーすることができます。
 
-Here is a sample script which defines two `GET` routes and then automatically triggers them upon starting up the application:
+ここでは、2つの`Get`ルートを定義し、アプリケーション起動時にそれらを自動的にトリガーする簡単なスクリプトを示します。
 
 ```julia
 using Genie, Genie.Router, Genie.Requests, Genie.Renderer.Json
@@ -29,4 +29,4 @@ end
 up(async = false)
 ```
 
-In the snippet we define two routes. Then we add a function, `force_compile` which iterates over the routes and hits them through the web server. We then invoke the function, which will be executed with a 5 seconds delay, enough to allow the web server to start up.
+上記スニペットでは、2つのルートを定義しています。 次に、ルートを反復してWebサーバ経由でヒットする関数`force_compile`を追加します。 次に、その関数を呼び出します。この関数は、Webサーバが起動するのに十分な5秒の遅延で実行されます。
