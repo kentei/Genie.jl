@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/><title>Genieアプリの操作 · Genie - 生産性の高いJulia Webフレームワーク</title><link href="https://fonts.googleapis.com/css?family=Lato|Roboto+Mono" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.2/css/fontawesome.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.2/css/solid.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.11.2/css/brands.min.css" rel="stylesheet" type="text/css"/><link href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.11.1/katex.min.css" rel="stylesheet" type="text/css"/><script>documenterBaseURL=".."</script><script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" data-main="../assets/documenter.js"></script><script src="../siteinfo.js"></script><script src="../../versions.js"></script><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../assets/themes/documenter-dark.css" data-theme-name="documenter-dark"/><link class="docs-theme-link" rel="stylesheet" type="text/css" href="../assets/themes/documenter-light.css" data-theme-name="documenter-light" data-theme-primary/><script src="../assets/themeswap.js"></script></head><body><div id="documenter"><nav class="docs-sidebar"><div class="docs-package-name"><span class="docs-autofit">Genie - 生産性の高いJulia Webフレームワーク</span></div><form class="docs-search" action="../search.html"><input class="docs-search-query" id="documenter-search-query" name="q" type="text" placeholder="Search docs"/></form><ul class="docs-menu"><li><a class="tocitem" href="../index.html">Home</a></li><li><span class="tocitem">ガイド</span><ul><li class="is-active"><a class="tocitem" href="Working_With_Genie_Apps.html">Genieアプリの操作</a><ul class="internal"><li><a class="tocitem" href="#リソースの操作"><span>リソースの操作</span></a></li><li><a class="tocitem" href="#コントローラの利用"><span>コントローラの利用</span></a></li><li><a class="tocitem" href="#SeachLightモデルでデータベースに接続"><span><code>SeachLight</code>モデルでデータベースに接続</span></a></li><li><a class="tocitem" href="#おめでとうございます"><span>おめでとうございます</span></a></li></ul></li><li><a class="tocitem" href="Interactive_environment.html">対話型環境でのGenieの利用</a></li><li><a class="tocitem" href="Simple_API_backend.html">APIバックエンドの開発</a></li><li><a class="tocitem" href="Genie_Plugins.html">Genieプラグインの利用</a></li><li><a class="tocitem" href="Working_With_Genie_Apps_Intermediary_Topics.html">Genieアプリの操作: 中級トピック [WIP]</a></li></ul></li><li><span class="tocitem">チュートリアル</span><ul><li><a class="tocitem" href="../tutorials/1--Overview.html">Genieへようこそ</a></li><li><a class="tocitem" href="../tutorials/2--Installing_Genie.html">Genieのインストール</a></li><li><a class="tocitem" href="../tutorials/3--Getting_Started.html">Genieを始めよう</a></li><li><a class="tocitem" href="../tutorials/4--Developing_Web_Services.html">Webサービスの作成</a></li><li><a class="tocitem" href="../tutorials/4-1--Developing_MVC_Web_Apps.html">MVCによるWebアプリケーション開発</a></li><li><a class="tocitem" href="../tutorials/5--Handling_Query_Params.html">クエリパラメータの処理/GETパラメータ</a></li><li><a class="tocitem" href="../tutorials/6--Working_with_POST_Payloads.html">POSTペイロードの操作</a></li><li><a class="tocitem" href="../tutorials/7--Using_JSON_Payloads.html">JSONペイロードの利用</a></li><li><a class="tocitem" href="../tutorials/8--Handling_File_Uploads.html">ファイルアップロードの操作</a></li><li><a class="tocitem" href="../tutorials/9--Publishing_Your_Julia_Code_Online_With_Genie_Apps.html">Genieアプリに既存Juliaコードの追加</a></li><li><a class="tocitem" href="../tutorials/10--Loading_Genie_Apps.html">Genieアプリのロードと起動</a></li><li><a class="tocitem" href="../tutorials/11--Managing_External_Packages.html">Genieアプリの依存管理</a></li><li><a class="tocitem" href="../tutorials/12--Advanced_Routing_Techniques.html">高度なルーティング</a></li><li><a class="tocitem" href="../tutorials/13--Initializers.html">イニシャライザによる設定コードの自動読み込み</a></li><li><a class="tocitem" href="../tutorials/14--The_Secrets_File.html">シークレットファイル</a></li><li><a class="tocitem" href="../tutorials/15--The_Lib_Folder.html">ユーザーライブラリの自動読み込み</a></li><li><a class="tocitem" href="../tutorials/16--Using_Genie_With_Docker.html">DockerでのGenie利用</a></li><li><a class="tocitem" href="../tutorials/17--Working_with_Web_Sockets.html">WebSocketの利用</a></li><li><a class="tocitem" href="../tutorials/80--Force_Compiling_Routes.html">ルートの強制コンパイル</a></li><li><a class="tocitem" href="../tutorials/90--Deploying_With_Heroku_Buildpacks.html">HerokuビルドパックによるGenieアプリのデプロイ</a></li><li><a class="tocitem" href="../tutorials/91--Deploying_Genie_Docker_Apps_on_Heroku.html">DockerによるHerokuへのデプロイ</a></li></ul></li><li><span class="tocitem">API</span><ul><li><a class="tocitem" href="../API/app.html">App</a></li><li><a class="tocitem" href="../API/appserver.html">AppServer</a></li><li><a class="tocitem" href="../API/assets.html">Assets</a></li><li><a class="tocitem" href="../API/cache.html">Cache</a></li><li><a class="tocitem" href="../API/commands.html">Commands</a></li><li><a class="tocitem" href="../API/configuration.html">Configuration</a></li><li><a class="tocitem" href="../API/cookies.html">Cookies</a></li><li><input class="collapse-toggle" id="menuitem-4-8" type="checkbox"/><label class="tocitem" for="menuitem-4-8"><span class="docs-label">Deploy</span><i class="docs-chevron"></i></label><ul class="collapsed"><li><a class="tocitem" href="../API/deploy_docker.html">Docker</a></li><li><a class="tocitem" href="../API/deploy_heroku.html">Heroku</a></li></ul></li><li><a class="tocitem" href="../API/encryption.html">Encryption</a></li><li><a class="tocitem" href="../API/exceptions.html">Exceptions</a></li><li><a class="tocitem" href="../API/filetemplates.html">FileTemplates</a></li><li><a class="tocitem" href="../API/flash.html">Flash</a></li><li><a class="tocitem" href="../API/generator.html">Generator</a></li><li><a class="tocitem" href="../API/genie.html">Genie</a></li><li><a class="tocitem" href="../API/headers.html">Headers</a></li><li><a class="tocitem" href="../API/httputils.html">HttpUtils</a></li><li><a class="tocitem" href="../API/inflector.html">Inflector</a></li><li><a class="tocitem" href="../API/input.html">Input</a></li><li><a class="tocitem" href="../API/plugins.html">Plugins</a></li><li><a class="tocitem" href="../API/renderer.html">Renderer</a></li><li><a class="tocitem" href="../API/renderer_html.html">HTML Renderer</a></li><li><a class="tocitem" href="../API/renderer_js.html">JS Renderer</a></li><li><a class="tocitem" href="../API/renderer_json.html">JSON Renderer</a></li><li><a class="tocitem" href="../API/requests.html">Requests</a></li><li><a class="tocitem" href="../API/responses.html">Responses</a></li><li><a class="tocitem" href="../API/router.html">Router</a></li><li><a class="tocitem" href="../API/sessions.html">Sessions</a></li><li><a class="tocitem" href="../API/toolbox.html">Toolbox</a></li><li><a class="tocitem" href="../API/util.html">Util</a></li><li><a class="tocitem" href="../API/webchannels.html">WebChannels</a></li></ul></li></ul><div class="docs-version-selector field has-addons"><div class="control"><span class="docs-label button is-static is-size-7">Version</span></div><div class="docs-selector control is-expanded"><div class="select is-fullwidth is-size-7"><select id="documenter-version-selector"></select></div></div></div></nav><div class="docs-main"><header class="docs-navbar"><nav class="breadcrumb"><ul class="is-hidden-mobile"><li><a class="is-disabled">ガイド</a></li><li class="is-active"><a href="Working_With_Genie_Apps.html">Genieアプリの操作</a></li></ul><ul class="is-hidden-tablet"><li class="is-active"><a href="Working_With_Genie_Apps.html">Genieアプリの操作</a></li></ul></nav><div class="docs-right"><a class="docs-edit-link" href="https://github.com/kentei/Genie.jl/blob/master/docs/ja/src/guides/Working_With_Genie_Apps.md" title="Edit on GitHub"><span class="docs-icon fab"></span><span class="docs-label is-hidden-touch">Edit on GitHub</span></a><a class="docs-settings-button fas fa-cog" id="documenter-settings-button" href="#" title="Settings"></a><a class="docs-sidebar-button fa fa-bars is-hidden-desktop" id="documenter-sidebar-button" href="#"></a></div></header><article class="content" id="documenter-page"><h1 id="Genieアプリ(プロジェクト)の操作"><a class="docs-heading-anchor" href="#Genieアプリ(プロジェクト)の操作">Genieアプリ(プロジェクト)の操作</a><a id="Genieアプリ(プロジェクト)の操作-1"></a><a class="docs-heading-anchor-permalink" href="#Genieアプリ(プロジェクト)の操作" title="Permalink"></a></h1><p>対話型環境でGenieを操作することは便利な場合がありますが、大抵の場合、アプリケーションを永続化し、セッション間で再利用したいことが多いです。これを成し遂げるための1つの方法がIJuliaノートブックとして保存し、セルを再実行することです。</p><p>しかしながら、Genieアプリで操作することでGenieを最大限活用できます。GeneiアプリはMVC(Model-View-Contoroller)構造のWebアプリケーションで、「設定より規約を重視する」(convention-over-configuration,CoC)の原則を促進している。Genieアプリの構造内でいくつかの定義済みファイルを操作することで、フレームワークはたくさんの重大な内容を解決し、開発生産性を大幅に向上することができる。しかし、Genieのワークフローに従うと、自動モジュールのロードと再ロード、専用の設定ファイル、ロギング、環境のサポート、コードジェネレータ、キャッシュ、Genieプラグインのサポートなどのような機能がすぐに利用できます。</p><p>新規でGenieアプリを生成するために、<code>Genie.newapp($app_name)</code>を実行する必要があります。</p><pre><code class="language-julia">julia&gt; Genie.newapp(&quot;MyGenieApp&quot;)</code></pre><p>上記コマンドが実行されれば、Genieは以下を実施する。</p><ul><li><code>MyGenieApp</code>という名前の新しいディレクトリを作成し、<code>cd()</code>で中に移動する</li><li>アプリの依存関係をすべてインストールする</li><li>新しいJuliaプロジェクトを生成する(<code>Project.toml</code>と<code>Manifest.toml</code>ファイルを追加)</li><li>プロジェクトをアクティブな状態にする</li><li>REPL内に新しいアプリの環境を自動的にロードする</li><li>Genieのデフォルトホスト(127.0.0.1)とポート(8000)でWebサーバを起動する</li></ul><p>この時点で、任意のWebブラウザで<a href="http://127.0.0.1:8000">http://127.0.0.1:8000</a>にアクセスすると、期待した通りにすべてが動作することを確認できます。Genieのウェルカムページが表示されます。</p><p>次に新しいルート(route)を追加してみましょう。ルートはJulia関数にリクエストURLをマッピングするために使われます。これらの関数はクライアントに返信される応答を提供します。ルートはそれ専用の<code>routes.jl</code>ファイルで定義されます。エディタで<code>MyGenieApp/routes.jl</code>を開くか、以下のコマンドを実行してください。(カレントディレクトリがアプリのディレクトリであることを確認してください)</p><pre><code class="language-julia">julia&gt; edit(&quot;routes.jl&quot;)</code></pre><p><code>routes.jl</code>ファイルの下方に以下のコードを追加し保存してください。</p><pre><code class="language-julia"># routes.jl
+route(&quot;/hello&quot;) do
+  &quot;Welcome to Genie!&quot;
+end</code></pre><p><code>route</code>メソッドを利用し、<code>/hello</code>URLと「Genieへようこそ！」という文字列を返す匿名関数を渡します。これは、<code>/hello</code>URLへの各リクエストに対して、アプリがルートハンドラ関数を呼び出し、ウェルカムメッセージをレスポンスするということです。</p><p><a href="http://127.0.0.1:8000/hello">http://127.0.0.1:8000/hello</a>にアクセスして温かい歓迎を受けてください！</p><h2 id="リソースの操作"><a class="docs-heading-anchor" href="#リソースの操作">リソースの操作</a><a id="リソースの操作-1"></a><a class="docs-heading-anchor-permalink" href="#リソースの操作" title="Permalink"></a></h2><p>コードを<code>routes.jl</code>ファイルに追加することは、Web上で機能をすばやく公開したい小規模なプロジェクトには最適です。しかし、大規模なプロジェクトの場合、GenieのMVC構造を利用するほうが適切です（MVCはModel-View-Controllerの略です）。MVCデザインパターンを採用することで、コードを明確な責任をもったモジュールに分割することができます。というのも、モデル(Model)はデータのアクセスに利用され、ビュー(View)はクライアントへのレスポンスをレンダリングし、コントローラ(Controller)はモデルとビュー間の相互作用を調整し、リクエストを操作します。モジュール単位のコードはコーディング、テスト、保守がより簡単になります。</p><p>Genieアプリは「リソース」の概念に基づいて設計できます。リソースはビジネスエンティティ(ユーザ、製品、アカウントなど)を表し、一連のファイル(コントローラ、モデル、ビューなど)に対応します。リソースは<code>app/resources/</code>フォルダ配下にあり、各リソースにはそれぞれ専用のフォルダがあり、すべてのファイルが配置されています。例えば、「書籍」についてのWebアプリがある場合、「書籍」リソース用のフォルダは<code>app/resources/books</code>にあり、Web上に書籍を公開するためのファイルはすべてこのフォルダに含まれます。(大抵の場合、コントローラには<code>BooksController.jl</code>、モデルには<code>Books.jl</code>、モデルの検証ツール(バリデータ)には<code>BooksValidator.jl</code>となります。なお、書籍データのレンダリングに必要なビューファイルは<code>views</code>フォルダに配置します。)</p><hr/><p><strong>注意喚起</strong></p><p>デフォルトのGenieアプリを生成する際、<code>app/</code>フォルダが見つからない場合があります。Genieのジェネレータを介してリソースを一度追加すると、自動的に生成されます。</p><hr/><h2 id="コントローラの利用"><a class="docs-heading-anchor" href="#コントローラの利用">コントローラの利用</a><a id="コントローラの利用-1"></a><a class="docs-heading-anchor-permalink" href="#コントローラの利用" title="Permalink"></a></h2><p>コントローラは、クライアントリクエスト、モデル(データアクセス処理)、ビュー(クライアントのWebブラウザに送られるレスポンスのレンダリングを担当)間の対話を調整するために利用されます。標準のワークフローでは、<code>route</code>はコントローラ内のメソッドを指します。ネットワークを介してレスポンスを生成して、クライアントに送信する役割を果たします。</p><p>「書籍」コントローラを追加してみましょう。Genieにはお手軽なジェネレータが収録されており、そのうちの一つが新しいコントローラを作るためのものです。</p><h3 id="コントローラの生成"><a class="docs-heading-anchor" href="#コントローラの生成">コントローラの生成</a><a id="コントローラの生成-1"></a><a class="docs-heading-anchor-permalink" href="#コントローラの生成" title="Permalink"></a></h3><p><code>BooksController</code>を生成してみましょう。</p><pre><code class="language-julia">julia&gt; Genie.newcontroller(&quot;Books&quot;)
+[info]: New controller created at ./app/resources/books/BooksController.jl</code></pre><p>素晴らしい！<code>BooksController.jl</code>を編集して(<code>julia&gt; edit(&quot;./app/resources/books/BooksController.jl&quot;)</code>)、何かを追加してみましょう。例えば、ビルゲイツのおすすめ本をいくつか返す機能が便利でしょう。<code>BooksController.jl</code>が以下のようになっていることを確認してください。</p><pre><code class="language-julia"># app/resources/books/BooksController.jl
+module BooksController
+
+struct Book
+  title::String
+  author::String
+end
+
+const BillGatesBooks = Book[
+  Book(&quot;The Best We Could Do&quot;, &quot;Thi Bui&quot;),
+  Book(&quot;Evicted: Poverty and Profit in the American City&quot;, &quot;Matthew Desmond&quot;),
+  Book(&quot;Believe Me: A Memoir of Love, Death, and Jazz Chickens&quot;, &quot;Eddie Izzard&quot;),
+  Book(&quot;The Sympathizer&quot;, &quot;Viet Thanh Nguyen&quot;),
+  Book(&quot;Energy and Civilization, A History&quot;, &quot;Vaclav Smil&quot;)
+]
+
+function billgatesbooks()
+  &quot;
+  &lt;h1&gt;Bill Gates&#39; list of recommended books&lt;/h1&gt;
+  &lt;ul&gt;
+    $([&quot;&lt;li&gt;$(book.title) by $(book.author)&lt;/li&gt;&quot; for book in BillGatesBooks]...)
+  &lt;/ul&gt;
+  &quot;
+end
+
+end</code></pre><p>コントローラは単なる<code>Julia</code>モジュールで、<code>Book</code>型/構造と書籍オブジェクトの配列を設定しています。そして、<code>billgatesbooks</code>という関数を定義しています。この関数は、<code>H1</code>見出しとすべての書籍の番号なしリストを含むHTML文字列を返します。配列内包表記を利用して各書籍を反復処理し、<code>&lt;li&gt;</code>要素でレンダリングしています。配列の要素はsplat展開(<code>...</code>演算子)を用いて連結されています。 計画ではこの関数をルートに紐づけて、インターネット上に公開します。</p><h4 id="チェックポイント"><a class="docs-heading-anchor" href="#チェックポイント">チェックポイント</a><a id="チェックポイント-1"></a><a class="docs-heading-anchor-permalink" href="#チェックポイント" title="Permalink"></a></h4><p>Web上に公開する前に、REPL上で関数をテストすることができます。</p><pre><code class="language-julia">julia&gt; using BooksController
+
+julia&gt; BooksController.billgatesbooks()</code></pre><p>関数呼び出しの出力は、以下のようなHTML文字列です。</p><pre><code class="language-julia">&quot;\n  &lt;h1&gt;Bill Gates&#39; list of recommended books&lt;/h1&gt;\n  &lt;ul&gt;\n    &lt;li&gt;The Best We Could Do by Thi Bui&lt;/li&gt;&lt;li&gt;Evicted: Poverty and Profit in the American City by Matthew Desmond&lt;/li&gt;&lt;li&gt;Believe Me: A Memoir of Love, Death, and Jazz Chickens by Eddie Izzard&lt;/li&gt;&lt;li&gt;The Sympathizer by Viet Thanh Nguyen&lt;/li&gt;&lt;li&gt;Energy and Civilization, A History by Vaclav Smil&lt;/li&gt;\n  &lt;/ul&gt;\n&quot;</code></pre><p>期待通り動作しているか確認してください。</p><h3 id="ルートのセットアップ"><a class="docs-heading-anchor" href="#ルートのセットアップ">ルートのセットアップ</a><a id="ルートのセットアップ-1"></a><a class="docs-heading-anchor-permalink" href="#ルートのセットアップ" title="Permalink"></a></h3><p>では、<code>billgatebooks</code>メソッドをWeb上に公開してみましょう。それを指し示す新しい<code>route</code>が必要です。<code>routes.jl</code>ファイルに以下を追加しましょう。</p><pre><code class="language-julia"># routes.jl
+using Genie.Router
+using BooksController
+
+route(&quot;/bgbooks&quot;, BooksController.billgatesbooks)</code></pre><p>このスニペットでは、<code>using BooksController</code>を宣言(Genieはファイルの場所知っているため、ファイルの場所を明示的に含める必要はありません)し、<code>/bgbooks</code>と<code>BooksController.billgatesbooks</code>関数の間に<code>route</code>を定義します。(<code>BooksController.billgatesbooks</code>は<code>/bgbooks</code>URLまたはendpointに対するルートハンドラであると言います。)</p><p>ここまでですべてです! <a href="http://localhost:8000/bgbooks">http://localhost:8000/bgbooks</a>にアクセスすると、ビルゲイツの推薦書籍の一覧が表示されます。(まぁ少なくともそれらのうちいくつかを、人はよく読みます!)</p><hr/><p><strong>プロのヒント</strong></p><p>HTML文字列の代わりにJuliaを利用したい場合、Genieの<code>Html</code>APIを利用することができます。すべての標準HTML要素を紐づける関数を提供します。例えば、<code>BooksController.billgatesbooks</code>関数はHTML要素の配列として以下のように書くことができます。</p><pre><code class="language-julia">using Genie.Renderer.Html
+
+function billgatesbooks()
+  [
+    Html.h1() do
+      &quot;Bill Gates&#39; list of recommended books&quot;
+    end
+    Html.ul() do
+      @foreach(BillGatesBooks) do book
+        Html.li() do
+          book.title * &quot; by &quot; * book.author
+        end
+      end
+    end
+  ]
+end</code></pre><p><code>@foreach</code>マクロはコレクションを反復処理し、各ループの出力をループの結果に連結します。それについてはこの後すぐに説明します。</p><hr/><h3 id="ビューの追加"><a class="docs-heading-anchor" href="#ビューの追加">ビューの追加</a><a id="ビューの追加-1"></a><a class="docs-heading-anchor-permalink" href="#ビューの追加" title="Permalink"></a></h3><p>ただ、HTMLをコントローラに置くことは良い考えとは言えません。HTMLは専用のビューファイルに記載し、できる限りロジックを少なくするべきです。代わりにビューを利用するようにコードをリファクタリングしてみましょう。</p><p>リソースのレンダリングに利用されるビューは、リソース自体のフォルダ内にある<code>views/</code>フォルダに配置されるべきです。 そのため今回のケースでは、<code>app/resources/books/views</code>フォルダを追加します。そのまま先に進んでください。Genieはこのタスク用のジェネレータを提供していません。</p><pre><code class="language-julia">julia&gt; mkdir(joinpath(&quot;app&quot;, &quot;resources&quot;, &quot;books&quot;, &quot;views&quot;))
+&quot;app/resources/books/views&quot;</code></pre><p><code>app/resources/books/</code>フォルダ内に<code>views/</code>フォルダを生成しました。REPLがアプリのルートフォルダで実行されるため、フルパスを指定しました。また、Juilaがクロスプラットフォームでパスを作成するように、<code>joinpath</code>関数を使用します。</p><h3 id="ビューの名づけ"><a class="docs-heading-anchor" href="#ビューの名づけ">ビューの名づけ</a><a id="ビューの名づけ-1"></a><a class="docs-heading-anchor-permalink" href="#ビューの名づけ" title="Permalink"></a></h3><p>通常、各コントローラメソッドには独自のレンダリングロジックがあります。それゆえに、独自のビューファイルがあります。したがって、ビューファイルにメソッドと同じ名前をつけることをお勧めします。ビューファイルがどこで使われているか追跡できるからです。</p><p>現状、Genieは標準のJuliaと同じくらいにHTMLとMarkdownビューファイルをサポートしています。それらの種類はファイルの拡張子で区別されるため、拡張子は重要な要素です。HTMLビューは<code>.jl.html</code>拡張子を利用しており、Markdownファイルは<code>.jl.md</code>拡張子を、Juliaファイルは<code>.jl</code>を利用します。</p><h3 id="HTMLビュー"><a class="docs-heading-anchor" href="#HTMLビュー">HTMLビュー</a><a id="HTMLビュー-1"></a><a class="docs-heading-anchor-permalink" href="#HTMLビュー" title="Permalink"></a></h3><p>それでは、 <code>BooksController.billgatesbooks</code>メソッドの最初のビューファイルを追加してみましょう。JuliaでHTMLビューファイルを生成してみましょう。</p><pre><code class="language-julia">julia&gt; touch(joinpath(&quot;app&quot;, &quot;resources&quot;, &quot;books&quot;, &quot;views&quot;, &quot;billgatesbooks.jl.html&quot;))</code></pre><p>GenieはJuilaコードの埋め込みが可能な特殊な形式の動的HTMLビューをサポートしています。これらは高性能のコンパイル済みビューです。それらは文字列として解析されません。代わりに、<strong>HTMLはネイティブなJuliaレンダリングコードに変換され、ファイルすシステムにキャッシュされ、他のJuliaファイルと同じようにロードされます。</strong> したがって、ビューを初めてロードするとき、または変更した後は、特定の遅延を感じるかもしれません。それはビューの生成、コンパイル、ロードに必要な時間です。次回の実行では、非常に高速になります!(特に本番環境)</p><p>ここで必要なのは、HTMLコードをコントローラから移動し、書籍の数も表示するように少し改善することです。ビューファイルは以下のように編集します。(修正方法：<code>julia&gt; edit(&quot;app/resources/books/views/billgatesbooks.jl.html&quot;)</code>)</p><pre><code class="language-html">&lt;!-- billgatesbooks.jl.html --&gt;
+&lt;h1&gt;Bill Gates&#39; top $(length(books)) recommended books&lt;/h1&gt;
+&lt;ul&gt;
+  &lt;% @foreach(books) do book %&gt;
+    &lt;li&gt;$(book.title) by $(book.author)&lt;/li&gt;
+  &lt;% end %&gt;
+&lt;/ul&gt;</code></pre><p>見た通り、Juliaが埋め込まれた標準のHTMLです。<code>&lt;% ... %&gt;</code>コードブロックタグを利用することでJuliaコードを追加できます。これらは、より複雑な複数行の式に利用されるべきです。またはシンプルに値を出力するために<code>$（...）</code>でJuliaを用いた文字列挿入をします。</p><p>HTML生成をより効率的に行うため、Genieはヘルパー群を提供します。例えば、上記の<code>@foreach</code>マクロはコレクションを反復処理し、現在のアイテムを処理関数に渡します。</p><hr/><p><strong>注意喚起</strong></p><p><strong>GenieビューはHTML文字列をレンダリングすることで機能することを気に留めておくことは非常に重要です。したがって、Juliaビューコードは結果として文字列を返す必要があり、処理の出力がページ上に表示されます。</strong>Juliaが最後の処理の結果を自動で返すため、ほとんどの場合これは自然に進みます。ただし、テンプレートが期待したものを出力しないと気づいた場合は、コードが文字列(または文字列に変換することができる何か)を返すことを確認してください。</p><hr/><h3 id="ビューのレンダリング"><a class="docs-heading-anchor" href="#ビューのレンダリング">ビューのレンダリング</a><a id="ビューのレンダリング-1"></a><a class="docs-heading-anchor-permalink" href="#ビューのレンダリング" title="Permalink"></a></h3><p>ここで、ビューを使用するようにコントローラーをリファクタリングし、期待された変数を渡す必要があります。レスポンスをHTMLとしてレンダリングし出力する<code>html</code>メソッドを使用します。以下のように<code>billgatesbooks</code>関数の定義を更新してください。</p><pre><code class="language-julia"># BooksController.jl
+using Genie.Renderer.Html
+
+function billgatesbooks()
+  html(:books, :billgatesbooks, books = BillGatesBooks)
+end</code></pre><p>まず、<code>html</code>メソッドへのアクセスをするために、依存関係として<code>Genie.Renderer.Html</code>を追加する必要があることに注意してください。<code>html</code>メソッドに関しては、リソースの名前、ビューファイルの名前、そしてビュー変数を表すキーワード引数の一覧を引数として取ります。</p><ul><li><code>:books</code>はリソースの名前です。(どのviewsフォルダでGenieがビューファイルを検索するかを示します。今回のケースでは<code>app/resources/books/views</code>となります)</li><li><code>:billgatesbooks</code>はビューファイルの名前です。拡張子を渡す必要はありません。この名前のファイルは一つしかないため、Genieは判断できます</li><li>そして最後に、ビューで公開したい値をキーワード引数として渡します</li></ul><p>それだけです。リファクタリングされたアプリは準備済みです。<a href="http://localhost:8000/bgbooks">http://localhost:8000/bgbooks</a>で試してみてください。</p><h3 id="Markdownビュー"><a class="docs-heading-anchor" href="#Markdownビュー">Markdownビュー</a><a id="Markdownビュー-1"></a><a class="docs-heading-anchor-permalink" href="#Markdownビュー" title="Permalink"></a></h3><p>MarkdownビューはHTMLビューと同じように動作し、同じく組み込まれたJuliaの機能を使用します。<code>billgatebooks</code>関数にMarkdownビューを追加する方法を示していきます。</p><p>初めに、<code>.jl.md</code>拡張子を利用することで、対応するビューファイルを生成しましょう。おそらく以下のやり方になるでしょう。</p><pre><code class="language-julia">julia&gt; touch(joinpath(&quot;app&quot;, &quot;resources&quot;, &quot;books&quot;, &quot;views&quot;, &quot;billgatesbooks.jl.md&quot;))</code></pre><p>ここで、ファイルを編集し、以下のようになることを確認してください。</p><pre><code class="language-md">&lt;!-- app/resources/books/views/billgatesbooks.jl.md --&gt;
+# Bill Gates&#39; $(length(@vars(:books))) recommended books
+
+$(
+  @foreach(@vars(:books)) do book
+    &quot;* $(book.title) by $(book.author) \n&quot;
+  end
+)</code></pre><p>MarkdownビューはGenieの埋め込みJuilaタグである<code>&lt;% ... %&gt;</code>をサポートしていないことに注意してください。文字列挿入の<code>$(...)</code>のみ使用できますが、複数行に渡って機能します。現時点でもう1つの注目すべき違いは、Markdownビューが<code>@vars</code>コレクションを介してのみ変数へのアクセスをサポートすることです。(<code>@vars</code>コレクションはHTMLビューでも利用できますが、変数への直接アクセスが可能であるため、必須ではありません。)</p><p>現状、ページをリロードすると、GenieはまだHTMLビューをロードします。その理由は、ビューファイルが1つしかない場合はGenieが管理しますが、複数ある場合はGenieはどれを選択すればよいか判断できないためです。エラーは発生しませんが、優先バージョン(HTMLバージョン)が選択されるのです。</p><p><code>BookiesController</code>に簡単な変更を実施します。Genieに対してロードするファイル、拡張子などを明示的に指定します。</p><pre><code class="language-julia"># BooksController.jl
+function billgatesbooks()
+  html(:books, &quot;billgatesbooks.jl.md&quot;, books = BillGatesBooks)
+end</code></pre><h3 id="レイアウトを活用"><a class="docs-heading-anchor" href="#レイアウトを活用">レイアウトを活用</a><a id="レイアウトを活用-1"></a><a class="docs-heading-anchor-permalink" href="#レイアウトを活用" title="Permalink"></a></h3><p>Genieのビューはレイアウトファイル内でレンダリングされます。レイアウトはWebサイトのテーマ、またはビュー周りの「フレーム」をレンダリングするものです。これは、すべてのページに共通する要素です。レイアウトファイルは、メインメニューやフッターなどの様々な要素を含んでいます。<code>&lt;head&gt;</code>タグまたはそれに関連するタグ(<code>&lt;link&gt;</code>タグや<code>&lt;script&gt;</code>タグなどCSSやJavaScriptをページ全体で読み込むためのもの)も含むでしょう。</p><p>すべてのGenieアプリはデフォルトで利用するメインレイアウトファイルがあります。これは<code>app/layouts/</code>にあり、<code>app.jl.html</code>という名前です。内容は以下の通りです。</p><pre><code class="language-html">&lt;!-- app/layouts/app.jl.html --&gt;
+&lt;!DOCTYPE html&gt;
+&lt;html lang=&quot;en&quot;&gt;
+  &lt;head&gt;
+    &lt;meta charset=&quot;utf-8&quot; /&gt;
+    &lt;title&gt;Genie :: The highly productive Julia web framework&lt;/title&gt;
+    &lt;!-- link rel=&quot;stylesheet&quot; href=&quot;/css/application.css&quot; / --&gt;
+  &lt;/head&gt;
+  &lt;body&gt;
+    &lt;%
+      @yield
+    %&gt;
+    &lt;!-- script src=&quot;/js/application.js&quot;&gt;&lt;/script --&gt;
+  &lt;/body&gt;
+&lt;/html&gt;</code></pre><p>これを修正していきましょう。例として、<code>&lt;body&gt;</code>開始タグの真下(<code>&lt;%</code>タグの真上)に以下を追記します。</p><pre><code class="language-html">&lt;h1&gt;Welcome to top books&lt;/h1&gt;</code></pre><p>If you reload the page at <a href="http://localhost:8000/bgbooks">http://localhost:8000/bgbooks</a> you will see the new heading.</p><p>しかし、デフォルトで我慢する必要はありません。レイアウトは追加できます。例えば完全に異なるテーマとするべき管理ページがあるとしましょう。 それ専用のレイアウトを追加します。</p><pre><code class="language-julia">julia&gt; touch(joinpath(&quot;app&quot;, &quot;layouts&quot;, &quot;admin.jl.html&quot;))
+&quot;app/layouts/admin.jl.html&quot;</code></pre><p>ここで上記ファイルを編集します。(編集コマンド：<code>julia&gt; edit(&quot;app/layouts/admin.jl.html&quot;)</code>)　以下のように修正します。</p><pre><code class="language-html">&lt;!-- app/layouts/admin.jl.html --&gt;
+&lt;!DOCTYPE html&gt;
+&lt;html lang=&quot;en&quot;&gt;
+  &lt;head&gt;
+    &lt;title&gt;Genie Admin&lt;/title&gt;
+  &lt;/head&gt;
+  &lt;body&gt;
+    &lt;h1&gt;Books admin&lt;/h1&gt;
+    &lt;%
+      @yield
+    %&gt;
+  &lt;/body&gt;
+&lt;/html&gt;</code></pre><p>適用したい場合は、<code>BooksController</code>で上記を利用するように命令する必要があります。<code>html</code>関数でレイアウトファイルを指定するための<code>layout</code>という名前のキーワード引数を取るようにします。 <code>billgatesbooks</code>関数を以下のように更新してみましょう。</p><pre><code class="language-julia"># BooksController.jl
+function billgatesbooks()
+  html(:books, :billgatesbooks, books = BillGatesBooks, layout = :admin)
+end</code></pre><p>ページを更新することで、新たなヘッダが表示されます。</p><h4 id="@yield命令"><a class="docs-heading-anchor" href="#@yield命令"><code>@yield</code>命令</a><a id="@yield命令-1"></a><a class="docs-heading-anchor-permalink" href="#@yield命令" title="Permalink"></a></h4><p>レイアウトには<code>@yield</code>という特殊な命令があります。それは、コントローラを介してレンダリングされたビューの内容を出力します。そのため、このマクロが存在する場合、Genieはコントローラ内のルートハンドラ関数を実行することで、ビューをレンダリングした結果のHTMLを出力します。</p><h4 id="ビューパスの利用"><a class="docs-heading-anchor" href="#ビューパスの利用">ビューパスの利用</a><a id="ビューパスの利用-1"></a><a class="docs-heading-anchor-permalink" href="#ビューパスの利用" title="Permalink"></a></h4><p>非常にシンプルなアプリケーションの場合、MVCやリソース中心のアプローチでは、あまりに多くの定型文を含みすぎているかもしれません。そのようなケースでは、ファイルパスでビュー(またはレイアウト)を参照することでコードを簡素化できます。例は以下の通りです。</p><pre><code class="language-julia"># BooksController.jl
+using Genie.Renderer
+
+function billgatesbooks()
+  html(path&quot;app/resources/books/views/billgatesbooks.jl.html&quot;, books = BillGatesBooks, layout = path&quot;app/layouts/app.jl.html&quot;)
+end</code></pre><h3 id="JSONビューのレンダリング"><a class="docs-heading-anchor" href="#JSONビューのレンダリング">JSONビューのレンダリング</a><a id="JSONビューのレンダリング-1"></a><a class="docs-heading-anchor-permalink" href="#JSONビューのレンダリング" title="Permalink"></a></h3><p>Webアプリの一般的なユースケースは、RESTful APIのバックエンドとして動作することです。今回の場合、JSONは優先度の高いデータ形式です。GenieはJSONレスポンスのサポートを組み込んでいるので喜んでもらえるのではないでしょうか。APIのエンドポイントを追加しましょう。この対応でビルゲイツの本がJSONとしてレンダリングされるようになります。</p><p><code>routes.jl</code>ファイルで、以下を追加することからスタートしましょう。</p><pre><code class="language-julia">route(&quot;/api/v1/bgbooks&quot;, BooksController.API.billgatesbooks)</code></pre><p>次に、<code>BooksController.jl</code>で、ファイルの最下方にある<code>end</code>の前に追加処理を追記します。ファイル全体は以下のようになります。</p><pre><code class="language-julia"># BooksController.jl
+module BooksController
+
+using Genie.Renderer.Html
+
+struct Book
+  title::String
+  author::String
+end
+
+const BillGatesBooks = Book[
+  Book(&quot;The Best We Could Do&quot;, &quot;Thi Bui&quot;),
+  Book(&quot;Evicted: Poverty and Profit in the American City&quot;, &quot;Matthew Desmond&quot;),
+  Book(&quot;Believe Me: A Memoir of Love, Death, and Jazz Chickens&quot;, &quot;Eddie Izzard&quot;),
+  Book(&quot;The Sympathizer!&quot;, &quot;Viet Thanh Nguyen&quot;),
+  Book(&quot;Energy and Civilization, A History&quot;, &quot;Vaclav Smil&quot;)
+]
+
+function billgatesbooks()
+  html(:books, :billgatesbooks, layout = :admin, books = BillGatesBooks)
+end
+
+
+module API
+
+using ..BooksController
+using Genie.Renderer.Json
+
+function billgatesbooks()
+  json(BooksController.BillGatesBooks)
+end
+
+end
+
+end</code></pre><p><code>BooksController</code>モジュールの中にAPIモジュールをネストさせました。そこで、JSONを出力する別の<code>billgatesbooks</code>関数を定義しました。</p><p><a href="http://localhost:8000/api/v1/bgbooks">http://localhost:8000/api/v1/bgbooks</a>にアクセスすると、期待通りに動作します。</p><h4 id="JSONビュー"><a class="docs-heading-anchor" href="#JSONビュー">JSONビュー</a><a id="JSONビュー-1"></a><a class="docs-heading-anchor-permalink" href="#JSONビュー" title="Permalink"></a></h4><p>しかしながら、API開発のきわめて重大な過ちの1つをコミットしてしまっています。内部データ構造を外部表現に永続的に結合していることです。これにより、将来のリファクタリングが非常に複雑となり、データ変更を加えることでクライアントとの結合を壊れるためにエラーが発生しやすくなります。解決策としては、ビューを使用して、データのレンダリング方法を完全に制御し、Web上でのレンダリングからデータ構造を切り離すことです。</p><p>GenieはJSONビューをサポートしています。これらは、「.json.jl」という拡張子をもつ標準のJuliaファイルです。<code>views</code>フォルダに1つ追加してみましょう。</p><pre><code class="language-julia">julia&gt; touch(joinpath(&quot;app&quot;, &quot;resources&quot;, &quot;books&quot;, &quot;views&quot;, &quot;billgatesbooks.json.jl&quot;))
+&quot;app/resources/books/views/billgatesbooks.json.jl&quot;</code></pre><p>ここで、適切な応答を作成します。 以下をビューファイルに追加します。</p><pre><code class="language-julia"># app/resources/books/views/billgatesbooks.json.jl
+&quot;Bill Gates&#39; list of recommended books&quot; =&gt; books</code></pre><p>最後のステップは、ビューをレンダリングするように<code>BooksController</code>に命令することです。<code>API</code>サブモジュール内の既存の<code>billgatesbooks</code>関数を以下のように置き換えるだけです。</p><pre><code class="language-julia">function billgatesbooks()
+  json(:books, :billgatesbooks, books = BooksController.BillGatesBooks)
+end</code></pre><p>これは驚くほどの事ではありません。<code>json</code>関数は以前見た<code>html</code>関数に似ています。今はカスタムJSONレスポンスをレンダリングしています。ここまでですべてが機能します。</p><hr/><p><strong>注意喚起</strong></p><h4 id="なぜJSONビューの拡張子の終わりには.jlがついていて、HTMLビューやMarkdownビューにはついていないのか?"><a class="docs-heading-anchor" href="#なぜJSONビューの拡張子の終わりには.jlがついていて、HTMLビューやMarkdownビューにはついていないのか?">なぜJSONビューの拡張子の終わりには<code>.jl</code>がついていて、HTMLビューやMarkdownビューにはついていないのか?</a><a id="なぜJSONビューの拡張子の終わりには.jlがついていて、HTMLビューやMarkdownビューにはついていないのか?-1"></a><a class="docs-heading-anchor-permalink" href="#なぜJSONビューの拡張子の終わりには.jlがついていて、HTMLビューやMarkdownビューにはついていないのか?" title="Permalink"></a></h4><p>良い質問です! ビューの拡張子はIDE/コードエディタ内で正しい構文のハイライト表示を維持するために選ばれています。</p><p>HTMLビューとMarkdownビューは、Juliaコードが埋め込まれたHTMLファイルとMarkdownファイルであるため、HTMLまたはMarkdown構文のハイライト表示を使用します。JSONビューの場合は、純正のJuliaを利用するため、Julia構文のハイライト表示を使用します。</p><hr/><h2 id="SeachLightモデルでデータベースに接続"><a class="docs-heading-anchor" href="#SeachLightモデルでデータベースに接続"><code>SeachLight</code>モデルでデータベースに接続</a><a id="SeachLightモデルでデータベースに接続-1"></a><a class="docs-heading-anchor-permalink" href="#SeachLightモデルでデータベースに接続" title="Permalink"></a></h2><p>シームレスなオブジェクト関係マッピング(ORM)レイヤーであるSearchLightとGenieを組み合わせることで、Genieを最大限に活用できます。ネイティブJulia ORMであるSearchLightは、リレーショナルデータベースでの作業に素晴らしいサポートを提供します。Genie + SearchLightコンボはCRUD(Create-Read-Update-Delete)アプリを生産的に開発するために利用できます。</p><hr/><p><strong>注意喚起</strong></p><p>CRUDはCreate-Read-Update-Deleteの略称で、リソースの作成、読み込み(一覧化)、更新、削除を行う多くのWebアプリのデータワークフローを表しています。</p><hr/><p>SearchLightはGenieのMVC基盤の「M」部分(モデル層)を表現します。</p><p>GenieアプリにSearchLightを追加してみましょう。すべてのGenieアプリは<code>Project.toml</code>と<code>Manifest.toml</code>ファイルを通して、アプリ独自のJulia環境で依存関係を管理しています。</p><p>そのため、最初に<code>pkg&gt;</code>シェルモードであることを確認する必要があります。(Juliaモードで<code>]</code>を入力すると、シェルモードに入ります。(すなわち<code>julia&gt;]</code>) カーソルが<code>(MyGenieApp) pkg&gt;</code>に変わります。</p><p>次に、<code>SearchLight</code>を追加します。</p><pre><code class="language-julia">(MyGenieApp) pkg&gt; add SearchLight</code></pre><h3 id="データベースアダプタの追加"><a class="docs-heading-anchor" href="#データベースアダプタの追加">データベースアダプタの追加</a><a id="データベースアダプタの追加-1"></a><a class="docs-heading-anchor-permalink" href="#データベースアダプタの追加" title="Permalink"></a></h3><p><code>SearchLight</code>は様々なバックエンド(現時点では、MySQL,SQLite,Postgres)を操作するためのデータベースに依存しないAPIを提供します。したがって、特定のアダプタも追加する必要があります。シンプルさを維持するため、アプリにSQLiteを使いましょう。ゆえに、<code>SearchLightSQLite</code>パッケージが必要になります。</p><pre><code class="language-julia">(MyGenieApp) pkg&gt; add SearchLightSQLite</code></pre><h3 id="データベース接続のセットアップ"><a class="docs-heading-anchor" href="#データベース接続のセットアップ">データベース接続のセットアップ</a><a id="データベース接続のセットアップ-1"></a><a class="docs-heading-anchor-permalink" href="#データベース接続のセットアップ" title="Permalink"></a></h3><p>GenieはSearchLightとシームレスに結合するように設計されており、様々なデータベース指向のジェネレータへのアクセスを提供します。はじめに、Genie/SearchLightにデータベースへの接続方法を伝える必要があります。データベースサポートを設定するためにそれらを利用してみましょう。Genie/Julia REPLで以下を実行します。</p><pre><code class="language-julia">julia&gt; Genie.Generator.db_support()</code></pre><p>コマンドはアプリのルートディレクトリ内に<code>db/</code>フォルダを追加します。データベースへの接続の方法をSearchLightに伝えるための<code>db/connection.yml</code>ファイルを探索します。それを編集してみましょう。以下のようにファイルを修正します。</p><pre><code class="language-yaml">env: ENV[&quot;GENIE_ENV&quot;]
+
+dev:
+  adapter: SQLite
+  database: db/books.sqlite
+  config:</code></pre><p>これはSearchLightに対して、現在のGenieアプリの環境(デフォルトは<code>dev</code>)で動作し、アダプタ(バックエンド)として<code>SQLight</code>を利用し、データベースは<code>db/books.sqlite</code>(存在しない場合は自動で作成される)で保存するように命令しています。<code>config</code>オブジェクト内で追加の設定オプションを渡すこともできますが、今は何も必要ありません。</p><hr/><p><strong>注意喚起</strong></p><p>他のアダプタを利用している場合、設定済みのデータベースがすでに存在し、設定済みのユーザがそのデータベースに正常にアクセスできることを確認してください。SearchLightはデータベースの作成を試みることはしません。</p><hr/><p>ここまでで、SearchLightにロードするよう要求ができます。</p><pre><code class="language-julia">julia&gt; using SearchLight
+
+julia&gt; SearchLight.Configuration.load()
+Dict{String,Any} with 4 entries:
+  &quot;options&quot;  =&gt; Dict{String,String}()
+  &quot;config&quot;   =&gt; nothing
+  &quot;database&quot; =&gt; &quot;db/books.sqlite&quot;
+  &quot;adapter&quot;  =&gt; &quot;SQLite&quot;</code></pre><p>次に進んで、データベースに接続してみましょう。</p><pre><code class="language-julia">julia&gt; using SearchLightSQLite
+
+julia&gt; SearchLight.Configuration.load() |&gt; SearchLight.connect
+SQLite.DB(&quot;db/books.sqlite&quot;)</code></pre><p>接続が成功し、SQLiteデータベースハンドルが返されました。</p><hr/><p><strong>プロのヒント</strong></p><p>各データベースアダプタは、接続情報にアクセスできる<code>CONNECTIONS</code>コレクションを公開します。</p><pre><code class="language-julia">julia&gt; SearchLightSQLite.CONNECTIONS
+1-element Array{SQLite.DB,1}:
+ SQLite.DB(&quot;db/books.sqlite&quot;)</code></pre><hr/><p>素晴らしい！　すべてが順調であれば、<code>db/</code>フォルダ内に<code>books.sqlite</code>データベースがあります。</p><pre><code class="language-julia">shell&gt; tree db
+db
+├── books.sqlite
+├── connection.yml
+├── migrations
+└── seeds</code></pre><h3 id="SearchLightマイグレーションでデータベーススキーマを管理"><a class="docs-heading-anchor" href="#SearchLightマイグレーションでデータベーススキーマを管理"><code>SearchLight</code>マイグレーションでデータベーススキーマを管理</a><a id="SearchLightマイグレーションでデータベーススキーマを管理-1"></a><a class="docs-heading-anchor-permalink" href="#SearchLightマイグレーションでデータベーススキーマを管理" title="Permalink"></a></h3><p>データベースの移行は、スキーマ変換を確実かつ一貫して繰り返し適用する(元に戻す)方法を提供します。それらはデータベースのテーブルを追加、削除、変更するための特別なスクリプトです。これらのスクリプトはバージョン管理化におかれ、実行されたスクリプトと実行されなかったスクリプトを認識し、正しい順番でスクリプトを実行できる専用のシステムで管理されます。</p><p>SearchLightはマイグレーションの状態を追跡しつづけるために独自のデータベーステーブルを必要とします。それを設定してみましょう。</p><pre><code class="language-julia">julia&gt; SearchLight.Migrations.create_migrations_table()
+[ Info: Created table schema_migrations</code></pre><p>このコマンドは移行を管理するために必要なテーブルをデータベースに設定します。</p><hr/><p><strong>プロのヒント</strong></p><p>SearchLight APIを利用して、データベースバックエンドに対してランダムクエリを実行できます。例えばテーブルが実際にあることを確認することができます。</p><pre><code class="language-julia">julia&gt; SearchLight.query(&quot;SELECT name FROM sqlite_master WHERE type =&#39;table&#39; AND name NOT LIKE &#39;sqlite_%&#39;&quot;)
+┌ Info: SELECT name FROM sqlite_master WHERE type =&#39;table&#39; AND name NOT LIKE &#39;sqlite_%&#39;
+└
+
+1×1 DataFrames.DataFrame
+│ Row │ name              │
+│     │ String⍰           │
+├─────┼───────────────────┤
+│ 1   │ schema_migrations │</code></pre><p>結果はおなじみの <code>DataFrame</code>オブジェクトです。</p><hr/><h3 id="Bookモデルの作成"><a class="docs-heading-anchor" href="#Bookモデルの作成">Bookモデルの作成</a><a id="Bookモデルの作成-1"></a><a class="docs-heading-anchor-permalink" href="#Bookモデルの作成" title="Permalink"></a></h3><p>Genietと同様に、SearchLightはConvention-over-Configuration設計パターンを利用します。それは大規模な構成ファイルの中ですべてを定義する必要はなく、特定の方法で設定することを好み、実用的なデフォルトを提供します。そして幸いにも、SearchLightには豊富なジェネレータ一式が付属しているため、これらの規則を覚える必要さえありません。</p><p>新しいモデルを作成するようにSearchLightに依頼してみましょう。</p><pre><code class="language-julia">julia&gt; SearchLight.Generator.newresource(&quot;Book&quot;)
+
+[ Info: New model created at /Users/adrian/Dropbox/Projects/MyGenieApp/app/resources/books/Books.jl
+[ Info: New table migration created at /Users/adrian/Dropbox/Projects/MyGenieApp/db/migrations/2020020909574048_create_table_books.jl
+[ Info: New validator created at /Users/adrian/Dropbox/Projects/MyGenieApp/app/resources/books/BooksValidator.jl
+[ Info: New unit test created at /Users/adrian/Dropbox/Projects/MyGenieApp/test/books_test.jl</code></pre><p>SearchLightは<code>Books.jl</code>モデルと、<code>*_create_table_books.jl</code>マイグレーションファイル、<code>BooksValidator.jl</code>モデルバリデータ、<code>books_test</code>テストファイルを作成します。</p><hr/><p><strong>注意喚起</strong></p><p>移行ファイルの最初の部分はあなたのものとは異なります。</p><p>名前の前半部分はファイル作成のタイムスタンプであるため、<code>*_create_table_books.jl</code>ファイルには別の名前がつけられます。このタイムスタンプ部分は、名前はユニークで、ファイル競合を回避することを保証します。(例えばチームとで作業していて似たような移行ファイルを作成する場合)</p><hr/><h4 id="テーブルマイグレーションの記載"><a class="docs-heading-anchor" href="#テーブルマイグレーションの記載">テーブルマイグレーションの記載</a><a id="テーブルマイグレーションの記載-1"></a><a class="docs-heading-anchor-permalink" href="#テーブルマイグレーションの記載" title="Permalink"></a></h4><p>booksテーブルを作成するため、マイグレーションを記述してみましょう。SearchLightはマイグレーションを記載するために強力なDSLを提供します。 各マイグレーションファイルは2つのメソッドを定義する必要があります。1つは変更を適用する<code>up</code>メソッド、もう1つはその<code>up</code>メソッドの効果を元に戻す<code>down</code>メソッドです。 そのため、<code>up</code>メソッドはテーブルを生成し、<code>down</code>メソッドはテーブルを削除します。</p><p>SearchLightのテーブルの命名規則では、テーブル名を複数形(例：<code>books</code>)にする必要があります。なぜなら、テーブルには複数の本(books)が含まれるためです(各行はオブジェクト&quot;book&quot;を表現しています)。 しかし、心配することはありません。マイグレーションファイルは正しいテーブル名で既に入力されているからです。</p><p><code>db/migrations/*_create_table_books.jl</code>ファイルを編集して、以下のようにしてください。</p><pre><code class="language-julia">module CreateTableBooks
+
+import SearchLight.Migrations: create_table, column, primary_key, add_index, drop_table
+
+function up()
+  create_table(:books) do
+    [
+      primary_key()
+      column(:title, :string, limit = 100)
+      column(:author, :string, limit = 100)
+    ]
+  end
+
+  add_index(:books, :title)
+  add_index(:books, :author)
+end
+
+function down()
+  drop_table(:books)
+end
+
+end</code></pre><p>DSLはとても読みやすいです。<code>up</code>関数内で<code>create_table</code>を呼び、列の配列を渡します。主キー、<code>title</code>列と<code>author</code>列(両方とも文字列は最大長100文字)です。また、2つのインデックス(1つは<code>title</code>列で、もう一方は<code>author</code>列)を追加します。<code>down</code>メソッドは、テーブルを削除するために<code>drop_table</code>関数を呼びます。</p><h4 id="マイグレーションの実行"><a class="docs-heading-anchor" href="#マイグレーションの実行">マイグレーションの実行</a><a id="マイグレーションの実行-1"></a><a class="docs-heading-anchor-permalink" href="#マイグレーションの実行" title="Permalink"></a></h4><p><code>SearchLight.Migrations.status</code>コマンドによりSearchLightがマイグレーションについて知っていることを確認できます。</p><pre><code class="language-julia">julia&gt; SearchLight.Migrations.status()
+|   | Module name &amp; status                   |
+|   | File name                              |
+|---|----------------------------------------|
+|   |                 CreateTableBooks: DOWN |
+| 1 | 2020020909574048_create_table_books.jl |</code></pre><p>マイグレーションは<code>down</code>状態です。つまり、<code>up</code>メソッドはまだ実行されていません。これは簡単に直せます。</p><pre><code class="language-julia">julia&gt; SearchLight.Migrations.last_up()
+[ Info: Executed migration CreateTableBooks up</code></pre><p>再びチェックすると、マイグレーションがupとなります。</p><pre><code class="language-julia">julia&gt; SearchLight.Migrations.status()
+|   | Module name &amp; status                   |
+|   | File name                              |
+|---|----------------------------------------|
+|   |                   CreateTableBooks: UP |
+| 1 | 2020020909574048_create_table_books.jl |</code></pre><p>テーブルが準備できました！</p><h4 id="モデルの定義"><a class="docs-heading-anchor" href="#モデルの定義">モデルの定義</a><a id="モデルの定義-1"></a><a class="docs-heading-anchor-permalink" href="#モデルの定義" title="Permalink"></a></h4><p>今度は、<code>app/resources/books/Books.jl</code>のモデルファイルを修正するときです。SearchLightの他の規則は、モジュールに複数形の名前(<code>Books</code>)を利用していることです。なぜなら、複数の本を管理するためのものだからです。その中で<code>Book</code>という名の型(<code>可変構造体(mutable struct)</code>)を定義します。基盤となるデータベースの行に割り当てるアイテム(単一の本)を表現します。</p><p><code>Books.jl</code>ファイルを修正して、以下のようにしてください。</p><pre><code class="language-julia"># Books.jl
+module Books
+
+import SearchLight: AbstractModel, DbId, save!
+import Base: @kwdef
+
+export Book
+
+@kwdef mutable struct Book &lt;: AbstractModel
+  id::DbId = DbId()
+  title::String = &quot;&quot;
+  author::String = &quot;&quot;
+end
+
+end</code></pre><p>SearchLightが必要とするキーワードコンストラクターも定義するために、<code>@kwdef</code>マクロを利用することで、前の<code>Book</code>型と一致する<code>可変構造体(mutable struct)</code>を定義しました。</p><h4 id="モデルの利用"><a class="docs-heading-anchor" href="#モデルの利用">モデルの利用</a><a id="モデルの利用-1"></a><a class="docs-heading-anchor-permalink" href="#モデルの利用" title="Permalink"></a></h4><p>もっと興味深くするために、データベースに現在の本をインポートする必要があります。<code>Books.jl</code>モジュールの<code>Book()</code>コンストラクタ定義の下(モジュールの<code>end</code>のちょうど上)に、この関数を追加してください。</p><pre><code class="language-julia"># Books.jl
+function seed()
+  BillGatesBooks = [
+    (&quot;The Best We Could Do&quot;, &quot;Thi Bui&quot;),
+    (&quot;Evicted: Poverty and Profit in the American City&quot;, &quot;Matthew Desmond&quot;),
+    (&quot;Believe Me: A Memoir of Love, Death, and Jazz Chickens&quot;, &quot;Eddie Izzard&quot;),
+    (&quot;The Sympathizer!&quot;, &quot;Viet Thanh Nguyen&quot;),
+    (&quot;Energy and Civilization, A History&quot;, &quot;Vaclav Smil&quot;)
+  ]
+
+  for b in BillGatesBooks
+    Book(title = b[1], author = b[2]) |&gt; save!
+  end
+end</code></pre><h4 id="データベース設定の自動読み込み"><a class="docs-heading-anchor" href="#データベース設定の自動読み込み">データベース設定の自動読み込み</a><a id="データベース設定の自動読み込み-1"></a><a class="docs-heading-anchor-permalink" href="#データベース設定の自動読み込み" title="Permalink"></a></h4><p>実際に試してみます。Genieはアプリを読み込む際、すべてのリソースファイルを読み込みます。これを実施するため、Genieはデータベースの設定を自動で読み込み、SearchLightをセットアップするイニシャライザと呼ばれる特別なファイルを備えています。<code>config/initializers/searchlight.jl</code>を確認してください。それは以下のようになっています。</p><pre><code class="language-julia">using SearchLight
+
+try
+  SearchLight.Configuration.load()
+
+  if SearchLight.config.db_config_settings[&quot;adapter&quot;] !== nothing
+    eval(Meta.parse(&quot;using SearchLight$(SearchLight.config.db_config_settings[&quot;adapter&quot;])&quot;))
+    SearchLight.connect()
+  end
+catch ex
+  @error ex
+end</code></pre><hr/><p><strong>注意喚起!</strong></p><p><code>config/initializers/</code>フォルダの中に配置された<code>*.jl</code>ファイルのすべてはGenieアプリ起動時にGenieによって自動的にインクルードされます。それらはコントローラ、モデル、ビューが読み込まれるより前の初期化時にインクルードされます。</p><hr/><h4 id="試してみる"><a class="docs-heading-anchor" href="#試してみる">試してみる</a><a id="試してみる-1"></a><a class="docs-heading-anchor-permalink" href="#試してみる" title="Permalink"></a></h4><p>REPLセッションを再開して、アプリをテストしてみましょう。Julia REPLセッションを閉じて、OSコマンドラインに戻り、以下のコマンドを実行します。</p><pre><code class="language-bash">$ bin/repl</code></pre><p>Windowsの場合、アプリケーションディレクトリ内の<code>bin/</code>フォルダに移動し、ターミナルで<code>repl.bat</code>を実行してください。</p><p>アプリの<code>bin/</code>フォルダに配置された<code>repl</code>実行可能スクリプトは新たなJulia REPLセッションを開始し、アプリケーションの環境を読み込みます。すべてが自動的に読み込まれ、データベース設定がインクルードされます。以前定義したbooksを挿入する<code>seed</code>関数を呼び出します。</p><pre><code class="language-julia">julia&gt; using Books
+
+julia&gt; Books.seed()</code></pre><p>データがデータベースに挿入される方法を示すクエリの一覧があります。</p><pre><code class="language-julia">julia&gt; Books.seed()
+[ Info: INSERT  INTO books (&quot;title&quot;, &quot;author&quot;) VALUES (&#39;The Best We Could Do&#39;, &#39;Thi Bui&#39;)
+[ Info: INSERT  INTO books (&quot;title&quot;, &quot;author&quot;) VALUES (&#39;Evicted: Poverty and Profit in the American City&#39;, &#39;Matthew Desmond&#39;)
+# output truncated</code></pre><p>すべてがうまくいったことを確認したければ(私を信じて実施してください。さもないとSearchLightは<code>Exception</code>を返していただろう!)、挿入結果を取得するようにSearchLightに要求します。</p><pre><code class="language-julia">julia&gt; using SearchLight
+
+julia&gt; all(Book)
+[ Info: 2020-02-09 13:29:32 SELECT &quot;books&quot;.&quot;id&quot; AS &quot;books_id&quot;, &quot;books&quot;.&quot;title&quot; AS &quot;books_title&quot;, &quot;books&quot;.&quot;author&quot; AS &quot;books_author&quot; FROM &quot;books&quot; ORDER BY books.id ASC
+
+5-element Array{Book,1}:
+ Book
+| KEY            | VALUE                |
+|----------------|----------------------|
+| author::String | Thi Bui              |
+| id::DbId       | 1                    |
+| title::String  | The Best We Could Do |
+
+ Book
+| KEY            | VALUE                                            |
+|----------------|--------------------------------------------------|
+| author::String | Matthew Desmond                                  |
+| id::DbId       | 2                                                |
+| title::String  | Evicted: Poverty and Profit in the American City |
+
+# output truncated</code></pre><p><code>SearchLight.all</code>メソッドはデータベースからすべての<code>Book</code>アイテムを返します。</p><p>すべてうまくいきました！</p><p>次に、モデルを利用するためにコントローラを更新する必要があります。<code>app/resources/books/BooksController.jl</code>を以下のようになっているか確認してください。</p><pre><code class="language-julia"># BooksController.jl
+module BooksController
+
+using Genie.Renderer.Html, SearchLight, Books
+
+function billgatesbooks()
+  html(:books, :billgatesbooks, books = all(Book))
+end
+
+module API
+
+using ..BooksController
+using Genie.Renderer.Json, SearchLight, Books
+
+function billgatesbooks()
+  json(:books, :billgatesbooks, books = all(Book))
+end
+
+end
+
+end</code></pre><p>JSONビューも少しだけ調整が必要です。</p><pre><code class="language-julia"># app/resources/books/views/billgatesbooks.json.jl
+&quot;Bill&#39;s Gates list of recommended books&quot; =&gt; [Dict(&quot;author&quot; =&gt; b.author, &quot;title&quot; =&gt; b.title) for b in books]</code></pre><p>サーバを起動すれば、データベースから提供される本の一覧を表示できるようになります。</p><pre><code class="language-julia"># Start the server
+julia&gt; up()</code></pre><p><code>up</code>メソッドはWebサーバを起動し、対話型のJulia REPLプロンプトに戻ります</p><p>例えば、<a href="http://localhost:8000/api/v1/bgbooks">http://localhost:8000/api/v1/bgbooks</a>に移動した場合、出力結果は以下のJSONドキュメントと一致します。</p><pre><code class="language-json">{
+  &quot;Bill&#39;s Gates list of recommended books&quot;: [
+    {
+      &quot;author&quot;: &quot;Thi Bui&quot;,
+      &quot;title&quot;: &quot;The Best We Could Do&quot;
+    },
+    {
+      &quot;author&quot;: &quot;Matthew Desmond&quot;,
+      &quot;title&quot;: &quot;Evicted: Poverty and Profit in the American City&quot;
+    },
+    {
+      &quot;author&quot;: &quot;Eddie Izzard&quot;,
+      &quot;title&quot;: &quot;Believe Me: A Memoir of Love, Death, and Jazz Chickens&quot;
+    },
+    {
+      &quot;author&quot;: &quot;Viet Thanh Nguyen&quot;,
+      &quot;title&quot;: &quot;The Sympathizer!&quot;
+    },
+    {
+      &quot;author&quot;: &quot;Vaclav Smil&quot;,
+      &quot;title&quot;: &quot;Energy and Civilization, A History&quot;
+    }
+  ]
+}</code></pre><p>その動き方を確認するために新しい本を追加してみましょう。新たな<code>Book</code>アイテムを生成し、<code>SearchLight.save!</code>メソッドを利用してそれを永続化します。</p><pre><code class="language-julia">julia&gt; newbook = Book(title = &quot;Leonardo da Vinci&quot;, author = &quot;Walter Isaacson&quot;)
+
+Book
+| KEY            | VALUE             |
+|----------------|-------------------|
+| author::String | Walter Isaacson   |
+| id::DbId       | NULL              |
+| title::String  | Leonardo da Vinci |
+
+
+julia&gt; save!(newbook)
+
+[ Info: INSERT  INTO books (&quot;title&quot;, &quot;author&quot;) VALUES (&#39;Leonardo da Vinci&#39;, &#39;Walter Isaacson&#39;)
+[ Info: ; SELECT CASE WHEN last_insert_rowid() = 0 THEN -1 ELSE last_insert_rowid() END AS id
+[ Info: SELECT &quot;books&quot;.&quot;id&quot; AS &quot;books_id&quot;, &quot;books&quot;.&quot;title&quot; AS &quot;books_title&quot;, &quot;books&quot;.&quot;author&quot; AS &quot;books_author&quot; FROM &quot;books&quot; WHERE &quot;id&quot; = 6 ORDER BY books.id ASC
+
+Book
+| KEY            | VALUE             |
+|----------------|-------------------|
+| author::String | Walter Isaacson   |
+| id::DbId       | 6                 |
+| title::String  | Leonardo da Vinci |</code></pre><p><code>save!</code>メソッドを呼び出すことで、SearchLightはデータベースにオブジェクトを永続化し、それを取得して返しました(<code>id::DbId</code>が更新されたことに注意してください)。</p><p>同じように<code>save!</code>操作はワンライナーで書くことができます。</p><pre><code class="language-julia">julia&gt; Book(title = &quot;Leonardo da Vinci&quot;, author = &quot;Walter Isaacson&quot;) |&gt; save!</code></pre><hr/><p><strong>注意喚起</strong></p><p>ワンライナーの<code>save!</code>例を実行する場合、」同じ本が再び追加されます。問題はありませんが、それを消したい場合は<code>delete</code>メソッドを利用します。</p><pre><code class="language-julia">julia&gt; delete(ans)
+[ Info: DELETE FROM books WHERE id = &#39;7&#39;
+
+Book
+| KEY            | VALUE             |
+|----------------|-------------------|
+| author::String | Walter Isaacson   |
+| id::DbId       | NULL              |
+| title::String  | Leonardo da Vinci |</code></pre><hr/><p><a href="http://localhost:8000/bgbooks">http://localhost:8000/bgbooks</a>のページをリロードすると、新しい本が表示されます。</p><pre><code class="language-json">{
+  &quot;Bill&#39;s Gates list of recommended books&quot;: [
+    {
+      &quot;author&quot;: &quot;Thi Bui&quot;,
+      &quot;title&quot;: &quot;The Best We Could Do&quot;
+    },
+    {
+      &quot;author&quot;: &quot;Matthew Desmond&quot;,
+      &quot;title&quot;: &quot;Evicted: Poverty and Profit in the American City&quot;
+    },
+    {
+      &quot;author&quot;: &quot;Eddie Izzard&quot;,
+      &quot;title&quot;: &quot;Believe Me: A Memoir of Love, Death, and Jazz Chickens&quot;
+    },
+    {
+      &quot;author&quot;: &quot;Viet Thanh Nguyen&quot;,
+      &quot;title&quot;: &quot;The Sympathizer!&quot;
+    },
+    {
+      &quot;author&quot;: &quot;Vaclav Smil&quot;,
+      &quot;title&quot;: &quot;Energy and Civilization, A History&quot;
+    },
+    {
+      &quot;author&quot;: &quot;Walter Isaacson&quot;,
+      &quot;title&quot;: &quot;Leonardo da Vinci&quot;
+    }
+  ]
+}</code></pre><hr/><p><strong>プロのヒント</strong></p><p>SearchLightは、2つの似たようなデータ永続化メソッドである<code>save!</code>と<code>save</code>を公開します。それらは両方とも同じ動作(データベースにオブジェクトを永続化)をしますが、<code>save</code>メソッドは操作が成功したことを示す<code>Bool</code>型の<code>true</code>を、または失敗したことを示す<code>Bool</code>型の<code>false</code>を返します。一方で<code>save!</code>は成功すると永続化オブジェクトを返し、失敗すると例外をスローします。</p><hr/><h2 id="おめでとうございます"><a class="docs-heading-anchor" href="#おめでとうございます">おめでとうございます</a><a id="おめでとうございます-1"></a><a class="docs-heading-anchor-permalink" href="#おめでとうございます" title="Permalink"></a></h2><p>段階的なウォークスルーの最初のパートを無事終わらせることができました。Genieの基本をマスターし、新しいアプリのセットアップ、ルート登録、リソース(コントローラ、モデル、ビュー)の追加、データベースサポートの追加、マイグレーションを伴うデータベーススキーマバージョン管理、SearchLightでの基本的なクエリ実行が可能となりました！</p><p>次のパートでは、フォームやファイルのアップロード、テンプレートによるレンダリング、対話型の処理など、より高度なトピックを見ていきます。</p></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../index.html">« Home</a><a class="docs-footer-nextpage" href="Interactive_environment.html">対話型環境でのGenieの利用 »</a><div class="flexbox-break"></div><p class="footer-message">Powered by <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> and the <a href="https://julialang.org/">Julia Programming Language</a>.</p></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> on <span class="colophon-date" title="Tuesday 11 August 2020 02:57">Tuesday 11 August 2020</span>. Using Julia version 1.4.2.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
