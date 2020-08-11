@@ -21,11 +21,11 @@ makedocs(
     pages = [
         "Home" => "index.md",
         "ガイド" => [
-          "Working with Genie Apps" => "guides/Working_With_Genie_Apps.md",
+          "Genieアプリの操作" => "guides/Working_With_Genie_Apps.md",
           "対話型環境でのGenieの利用" => "guides/Interactive_environment.md",
           "APIバックエンドの開発" => "guides/Simple_API_backend.md",
           "Genieプラグインの利用" => "guides/Genie_Plugins.md",
-          "Working With Genie Apps: Intermediate Topics [WIP]" => "guides/Working_With_Genie_Apps_Intermediary_Topics.md"
+          "Genieアプリの操作: 中級トピック [WIP]" => "guides/Working_With_Genie_Apps_Intermediary_Topics.md"
         ],
         "チュートリアル" => [
           "Genieへようこそ"  => "tutorials/1--Overview.md",

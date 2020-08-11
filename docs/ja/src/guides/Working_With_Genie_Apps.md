@@ -1,33 +1,33 @@
-# Working with Genie apps (projects)
+# Genieアプリ(プロジェクト)の操作
 
-Working with Genie in an interactive environment can be useful – but usually we want to persist the application and reuse it between sessions. One way to achieve this is to save it as an IJulia notebook and rerun the cells.
+対話型環境でGenieを操作することは便利な場合がありますが、大抵の場合、アプリケーションを永続化し、セッション間で再利用したいことが多いです。これを成し遂げるための1つの方法がIJuliaノートブックとして保存し、セルを再実行することです。
 
-However, you can get the best of Genie by working with Genie apps. A Genie app is a MVC (Model-View-Controller) web application which promotes the convention-over-configuration principle. By working with a few predefined files, within the Genie app structure, the framework can lift a lot of weight and massively improve development productivity. But following Genie's workflow, one instantly gets, out of the box, features like automatic module loading and reloading, dedicated configuration files, logging, support for environments, code generators, caching, support for Genie plugins, and more.
+しかしながら、Genieアプリで操作することでGenieを最大限活用できます。GeneiアプリはMVC(Model-View-Contoroller)構造のWebアプリケーションで、「設定より規約を重視する」(convention-over-configuration,CoC)の原則を促進している。Genieアプリの構造内でいくつかの定義済みファイルを操作することで、フレームワークはたくさんの重大な内容を解決し、開発生産性を大幅に向上することができる。しかし、Genieのワークフローに従うと、自動モジュールのロードと再ロード、専用の設定ファイル、ロギング、環境のサポート、コードジェネレータ、キャッシュ、Genieプラグインのサポートなどのような機能がすぐに利用できます。
 
-In order to create a new Genie app, we need to run `Genie.newapp($app_name)`:
+新規でGenieアプリを生成するために、`Genie.newapp($app_name)`を実行する必要があります。
 
 ```julia
 julia> Genie.newapp("MyGenieApp")
 ```
 
-Upon executing the command, Genie will:
+上記コマンドが実行されれば、Genieは以下を実施する。
 
-* make a new dir called `MyGenieApp` and `cd()` into it,
-* install all the app's dependencies,
-* create a new Julia project (adding the `Project.toml` and `Manifest.toml` files),
-* activate the project,
-* automatically load the new app's environment into the REPL,
-* start the web server on the default Genie port (port 8000) and host (127.0.0.1).
+* `MyGenieApp`という名前の新しいディレクトリを作成し、`cd()`で中に移動する
+* アプリの依存関係をすべてインストールする
+* 新しいJuliaプロジェクトを生成する(`Project.toml`と`Manifest.toml`ファイルを追加)
+* プロジェクトをアクティブな状態にする
+* REPL内に新しいアプリの環境を自動的にロードする
+* Genieのデフォルトホスト(127.0.0.1)とポート(8000)でWebサーバを起動する
 
-At this point you can confirm that everything worked as expected by visiting <http://127.0.0.1:8000> in your favourite web browser. You should see Genie's welcome page.
+この時点で、任意のWebブラウザで<http://127.0.0.1:8000>にアクセスすると、期待した通りにすべてが動作することを確認できます。Genieのウェルカムページが表示されます。
 
-Next, let's add a new route. Routes are used to map request URLs to Julia functions. These functions provide the response that will be sent back to the client. Routes are meant to be defined in the dedicated `routes.jl` file. Open `MyGenieApp/routes.jl` in your editor or run the following command (making sure that you are in the app's directory):
+次に新しいルート(route)を追加してみましょう。ルートはJulia関数にリクエストURLをマッピングするために使われます。これらの関数はクライアントに返信される応答を提供します。ルートはそれ専用の`routes.jl`ファイルで定義されます。エディタで`MyGenieApp/routes.jl`を開くか、以下のコマンドを実行してください。(カレントディレクトリがアプリのディレクトリであることを確認してください)
 
 ```julia
 julia> edit("routes.jl")
 ```
 
-Append this at the bottom of the `routes.jl` file and save it:
+`routes.jl`ファイルの下方に以下のコードを追加し保存してください。
 
 ```julia
 # routes.jl
@@ -36,39 +36,39 @@ route("/hello") do
 end
 ```
 
-We are using the `route` method, passing in the "/hello" URL and an anonymous function which returns the string "Welcome to Genie!". What this means is that for each request to the "/hello" URL, our app will invoke the route handler function and respond with the welcome message.
+`route`メソッドを利用し、`/hello`URLと「Genieへようこそ！」という文字列を返す匿名関数を渡します。これは、`/hello`URLへの各リクエストに対して、アプリがルートハンドラ関数を呼び出し、ウェルカムメッセージをレスポンスするということです。
 
-Visit <http://127.0.0.1:8000/hello> for a warm welcome!
+<http://127.0.0.1:8000/hello>にアクセスして温かい歓迎を受けてください！
 
-## Working with resources
+## リソースの操作
 
-Adding our code to the `routes.jl` file works great for small projects, where you want to quickly publish features on the web. But for larger projects we're better off using Genie's MVC structure (MVC stands for Model-View-Controller). By employing the Model-View-Controller design pattern we can break our code into modules with clear responsibilities: the Model is used for data access, the View renders the response to the client, and the Controller orchestrates the interactions between Models and Views and handles requests. Modular code is easier to write, test and maintain.
+コードを`routes.jl`ファイルに追加することは、Web上で機能をすばやく公開したい小規模なプロジェクトには最適です。しかし、大規模なプロジェクトの場合、GenieのMVC構造を利用するほうが適切です（MVCはModel-View-Controllerの略です）。MVCデザインパターンを採用することで、コードを明確な責任をもったモジュールに分割することができます。というのも、モデル(Model)はデータのアクセスに利用され、ビュー(View)はクライアントへのレスポンスをレンダリングし、コントローラ(Controller)はモデルとビュー間の相互作用を調整し、リクエストを操作します。モジュール単位のコードはコーディング、テスト、保守がより簡単になります。
 
-A Genie app can be architected around the concept of "resources". A resource represents a business entity (something like a user, or a product, or an account) and maps to a bundle of files (controller, model, views, etc). Resources live under the `app/resources/` folder and each resource has its own dedicated folder, where all of its files are hosted. For example, if we have a web app about "books", a "books" folder would be found at `app/resources/books` and will contain all the files for publishing books on the web (usually called `BooksController.jl` for the controller, `Books.jl` for the model, `BooksValidator.jl` for the model validator -- as well as a `views` folder for hosting all the view files necessary for rendering books data).
-
----
-**HEADS UP**
-
-When creating a default Genie app, the `app/` folder might be missing. It will be automatically created the first time you add a resource via Genie's generators.
+Genieアプリは「リソース」の概念に基づいて設計できます。リソースはビジネスエンティティ(ユーザ、製品、アカウントなど)を表し、一連のファイル(コントローラ、モデル、ビューなど)に対応します。リソースは`app/resources/`フォルダ配下にあり、各リソースにはそれぞれ専用のフォルダがあり、すべてのファイルが配置されています。例えば、「書籍」についてのWebアプリがある場合、「書籍」リソース用のフォルダは`app/resources/books`にあり、Web上に書籍を公開するためのファイルはすべてこのフォルダに含まれます。(大抵の場合、コントローラには`BooksController.jl`、モデルには`Books.jl`、モデルの検証ツール(バリデータ)には`BooksValidator.jl`となります。なお、書籍データのレンダリングに必要なビューファイルは`views`フォルダに配置します。)
 
 ---
+**注意喚起**
 
-## Using Controllers
+デフォルトのGenieアプリを生成する際、`app/`フォルダが見つからない場合があります。Genieのジェネレータを介してリソースを一度追加すると、自動的に生成されます。
 
-Controllers are used to orchestrate interactions between client requests, Models (which handle data access), and Views (which are responsible for rendering the responses which will be sent to the clients' web browsers). In a standard workflow, a `route` points to a method in the controller – which is charged with building and sending the response over the network, back to the client.
+---
 
-Let's add a "books" controller. Genie comes with handy generators and one of them is for creating new controllers:
+## コントローラの利用
 
-### Generate the Controller
+コントローラは、クライアントリクエスト、モデル(データアクセス処理)、ビュー(クライアントのWebブラウザに送られるレスポンスのレンダリングを担当)間の対話を調整するために利用されます。標準のワークフローでは、`route`はコントローラ内のメソッドを指します。ネットワークを介してレスポンスを生成して、クライアントに送信する役割を果たします。
 
-Let's generate our `BooksController`:
+「書籍」コントローラを追加してみましょう。Genieにはお手軽なジェネレータが収録されており、そのうちの一つが新しいコントローラを作るためのものです。
+
+### コントローラの生成
+
+`BooksController`を生成してみましょう。
 
 ```julia
 julia> Genie.newcontroller("Books")
 [info]: New controller created at ./app/resources/books/BooksController.jl
 ```
 
-Great! Let's edit `BooksController.jl` (`julia> edit("./app/resources/books/BooksController.jl")`) and add something to it. For example, a function which returns some of Bill Gates' recommended books would be nice. Make sure that `BooksController.jl` looks like this:
+素晴らしい！`BooksController.jl`を編集して(`julia> edit("./app/resources/books/BooksController.jl")`)、何かを追加してみましょう。例えば、ビルゲイツのおすすめ本をいくつか返す機能が便利でしょう。`BooksController.jl`が以下のようになっていることを確認してください。
 
 ```julia
 # app/resources/books/BooksController.jl
@@ -99,12 +99,12 @@ end
 end
 ```
 
-Our controller is just a plain Julia module where we define a `Book` type/struct and set up an array of book objects. We then defined a function, `billgatesbooks`, which returns an HTML string, with a `H1` heading and an unordered list of all the books. We used an array comprehension to iterate over each book and render it in a `<li>` element. The elements of the array are then concatenated using the splat `...` operator.
-The plan is to map this function to a route and expose it on the internet.
+コントローラは単なる`Julia`モジュールで、`Book`型/構造と書籍オブジェクトの配列を設定しています。そして、`billgatesbooks`という関数を定義しています。この関数は、`H1`見出しとすべての書籍の番号なしリストを含むHTML文字列を返します。配列内包表記を利用して各書籍を反復処理し、`<li>`要素でレンダリングしています。配列の要素はsplat展開(`...`演算子)を用いて連結されています。
+計画ではこの関数をルートに紐づけて、インターネット上に公開します。
 
-#### Checkpoint
+#### チェックポイント
 
-Before exposing it on the web, we can test the function in the REPL:
+Web上に公開する前に、REPL上で関数をテストすることができます。
 
 ```julia
 julia> using BooksController
@@ -112,17 +112,17 @@ julia> using BooksController
 julia> BooksController.billgatesbooks()
 ```
 
-The output of the function call should be a HTML string which looks like this:
+関数呼び出しの出力は、以下のようなHTML文字列です。
 
 ```julia
 "\n  <h1>Bill Gates' list of recommended books</h1>\n  <ul>\n    <li>The Best We Could Do by Thi Bui</li><li>Evicted: Poverty and Profit in the American City by Matthew Desmond</li><li>Believe Me: A Memoir of Love, Death, and Jazz Chickens by Eddie Izzard</li><li>The Sympathizer by Viet Thanh Nguyen</li><li>Energy and Civilization, A History by Vaclav Smil</li>\n  </ul>\n"
 ```
 
-Please make sure that it works as expected.
+期待通り動作しているか確認してください。
 
-### Setup the route
+### ルートのセットアップ
 
-Now, let's expose our `billgatesbooks` method on the web. We need to add a new `route` which points to it. Add these to the `routes.jl` file:
+では、`billgatebooks`メソッドをWeb上に公開してみましょう。それを指し示す新しい`route`が必要です。`routes.jl`ファイルに以下を追加しましょう。
 
 ```julia
 # routes.jl
@@ -132,14 +132,14 @@ using BooksController
 route("/bgbooks", BooksController.billgatesbooks)
 ```
 
-In the snippet we declared that we're `using BooksController` (notice that Genie will know where to find it, no need to explicitly include the file) and then we defined a `route` between `/bgbooks` and the `BooksController.billgatesbooks` function (we say that the `BooksController.billgatesbooks` is the route handler for the `/bgbooks` URL or endpoint).
+このスニペットでは、`using BooksController`を宣言(Genieはファイルの場所知っているため、ファイルの場所を明示的に含める必要はありません)し、`/bgbooks`と`BooksController.billgatesbooks`関数の間に`route`を定義します。(`BooksController.billgatesbooks`は`/bgbooks`URLまたはendpointに対するルートハンドラであると言います。)
 
-That's all! If you now visit `http://localhost:8000/bgbooks` you'll see Bill Gates' list of recommended books (well, at least some of them, the man reads a lot!).
+ここまでですべてです! <http://localhost:8000/bgbooks>にアクセスすると、ビルゲイツの推薦書籍の一覧が表示されます。(まぁ少なくともそれらのうちいくつかを、人はよく読みます!)
 
 ---
-**PRO TIP**
+**プロのヒント**
 
-If you would rather work with Julia instead of wrangling HTML strings, you can use Genie's `Html` API. It provides functions which map every standard HTML element. For instance, the `BooksController.billgatesbooks` function can be written as follows, as an array of HTML elements:
+HTML文字列の代わりにJuliaを利用したい場合、Genieの`Html`APIを利用することができます。すべての標準HTML要素を紐づける関数を提供します。例えば、`BooksController.billgatesbooks`関数はHTML要素の配列として以下のように書くことができます。
 
 ```julia
 using Genie.Renderer.Html
@@ -160,44 +160,42 @@ function billgatesbooks()
 end
 ```
 
-The `@foreach` macro iterates over a collection and concatenates the output of each loop into the result of the loop. We'll talk about it more soon.
+`@foreach`マクロはコレクションを反復処理し、各ループの出力をループの結果に連結します。それについてはこの後すぐに説明します。
 
 ---
 
-### Adding views
+### ビューの追加
 
-However, putting HTML into the controllers is a bad idea: HTML should stay in the dedicated view files and contain as little logic as possible. Let's refactor our code to use views instead.
+ただ、HTMLをコントローラに置くことは良い考えとは言えません。HTMLは専用のビューファイルに記載し、できる限りロジックを少なくするべきです。代わりにビューを利用するようにコードをリファクタリングしてみましょう。
 
-The views used for rendering a resource should be placed inside the `views/` folder, within that resource's own folder structure.
-So in our case, we will add an `app/resources/books/views/` folder. Just go ahead and do it, Genie does not provide a generator for this task:
+リソースのレンダリングに利用されるビューは、リソース自体のフォルダ内にある`views/`フォルダに配置されるべきです。
+そのため今回のケースでは、`app/resources/books/views`フォルダを追加します。そのまま先に進んでください。Genieはこのタスク用のジェネレータを提供していません。
 
 ```julia
 julia> mkdir(joinpath("app", "resources", "books", "views"))
 "app/resources/books/views"
 ```
 
-We created the `views/` folder in `app/resources/books/`. We provided the full path as our REPL is running in the the root folder of the app. Also, we use the `joinpath` function so that Julia creates the path in a cross-platform way.
+`app/resources/books/`フォルダ内に`views/`フォルダを生成しました。REPLがアプリのルートフォルダで実行されるため、フルパスを指定しました。また、Juilaがクロスプラットフォームでパスを作成するように、`joinpath`関数を使用します。
 
-### Naming views
+### ビューの名づけ
 
-Usually each controller method will have its own rendering logic – hence, its own view file. Thus, it's a good practice to name the view files just like the methods, so that we can keep track of where they're used.
+通常、各コントローラメソッドには独自のレンダリングロジックがあります。それゆえに、独自のビューファイルがあります。したがって、ビューファイルにメソッドと同じ名前をつけることをお勧めします。ビューファイルがどこで使われているか追跡できるからです。
 
-At the moment, Genie supports HTML and Markdown view files, as well as plain Julia. Their type is identified by file extension so that's an important part.
-The HTML views use a `.jl.html` extension while the Markdown files go with `.jl.md` and the Julia ones by `.jl`.
+現状、Genieは標準のJuliaと同じくらいにHTMLとMarkdownビューファイルをサポートしています。それらの種類はファイルの拡張子で区別されるため、拡張子は重要な要素です。HTMLビューは`.jl.html`拡張子を利用しており、Markdownファイルは`.jl.md`拡張子を、Juliaファイルは`.jl`を利用します。
 
-### HTML views
+### HTMLビュー
 
-All right then, let's add our first view file for the `BooksController.billgatesbooks` method. Let's create an HTML view file. With Julia:
+それでは、 `BooksController.billgatesbooks`メソッドの最初のビューファイルを追加してみましょう。JuliaでHTMLビューファイルを生成してみましょう。
 
 ```julia
 julia> touch(joinpath("app", "resources", "books", "views", "billgatesbooks.jl.html"))
 ```
 
-Genie supports a special type of dynamic HTML view, where we can embed Julia code. These are high performance compiled views. They are _not_ parsed as strings: instead, **the HTML is converted to native Julia rendering code which is cached to the file system and loaded like any other Julia file**.
-Hence, the first time you load a view, or after you change one, you might notice a certain delay – it's the time needed to generate, compile and load the view.
-On next runs (especially in production) it's going to be blazing fast!
+GenieはJuilaコードの埋め込みが可能な特殊な形式の動的HTMLビューをサポートしています。これらは高性能のコンパイル済みビューです。それらは文字列として解析されません。代わりに、**HTMLはネイティブなJuliaレンダリングコードに変換され、ファイルすシステムにキャッシュされ、他のJuliaファイルと同じようにロードされます。**
+したがって、ビューを初めてロードするとき、または変更した後は、特定の遅延を感じるかもしれません。それはビューの生成、コンパイル、ロードに必要な時間です。次回の実行では、非常に高速になります!(特に本番環境)
 
-Now all we need to do is to move the HTML code out of the controller and into the view, improving it a bit to also show a count of the number of books. Edit the view file as follows (`julia> edit("app/resources/books/views/billgatesbooks.jl.html")`):
+ここで必要なのは、HTMLコードをコントローラから移動し、書籍の数も表示するように少し改善することです。ビューファイルは以下のように編集します。(修正方法：`julia> edit("app/resources/books/views/billgatesbooks.jl.html")`)
 
 ```html
 <!-- billgatesbooks.jl.html -->
@@ -209,20 +207,20 @@ Now all we need to do is to move the HTML code out of the controller and into th
 </ul>
 ```
 
-As you can see, it's just plain HTML with embedded Julia. We can add Julia code by using the `<% ... %>` code block tags – these should be used for more complex, multiline expressions. Or by using plain Julia string interpolation with `$(...)` – for simple values outputting.
+見た通り、Juliaが埋め込まれた標準のHTMLです。`<% ... %>`コードブロックタグを利用することでJuliaコードを追加できます。これらは、より複雑な複数行の式に利用されるべきです。またはシンプルに値を出力するために`$（...）`でJuliaを用いた文字列挿入をします。
 
-To make HTML generation more efficient, Genie provides a series of helpers, like the above `@foreach` macro which allows iterating over a collection, passing the current item into the processing function.
-
----
-**HEADS UP**
-
-**It is very important to keep in mind that Genie views work by rendering a HTML string. Thus, the Julia view code _must return a string_ as its result, so that the output of the computation comes up on the page**. Given that Julia automatically returns the result of the last computation, most of the times this just flows naturally. But if sometimes you notice that the templates don't output what is expected, do check that the code returns a string (or something which can be converted to a string).
+HTML生成をより効率的に行うため、Genieはヘルパー群を提供します。例えば、上記の`@foreach`マクロはコレクションを反復処理し、現在のアイテムを処理関数に渡します。
 
 ---
+**注意喚起**
 
-### Rendering views
+**GenieビューはHTML文字列をレンダリングすることで機能することを気に留めておくことは非常に重要です。したがって、Juliaビューコードは結果として文字列を返す必要があり、処理の出力がページ上に表示されます。**Juliaが最後の処理の結果を自動で返すため、ほとんどの場合これは自然に進みます。ただし、テンプレートが期待したものを出力しないと気づいた場合は、コードが文字列(または文字列に変換することができる何か)を返すことを確認してください。
 
-We now need to refactor our controller to use the view, passing in the expected variables. We will use the `html` method which renders and outputs the response as HTML. Update the definition of the `billgatesbooks` function to be as follows:
+---
+
+### ビューのレンダリング
+
+ここで、ビューを使用するようにコントローラーをリファクタリングし、期待された変数を渡す必要があります。レスポンスをHTMLとしてレンダリングし出力する`html`メソッドを使用します。以下のように`billgatesbooks`関数の定義を更新してください。
 
 ```julia
 # BooksController.jl
@@ -233,25 +231,25 @@ function billgatesbooks()
 end
 ```
 
-First, notice that we needed to add `Genie.Renderer.Html` as a dependency, to get access to the `html` method. As for the `html` method itself, it takes as its arguments the name of the resource, the name of the view file, and a list of keyword arguments representing view variables:
+まず、`html`メソッドへのアクセスをするために、依存関係として`Genie.Renderer.Html`を追加する必要があることに注意してください。`html`メソッドに関しては、リソースの名前、ビューファイルの名前、そしてビュー変数を表すキーワード引数の一覧を引数として取ります。
 
-* `:books` is the name of the resource (which effectively indicates in which `views` folder Genie should look for the view file -- in our case `app/resources/books/views`);
-* `:billgatesbooks` is the name of the view file. We don't need to pass the extension, Genie will figure it out since there's only one file with this name;
-* and finally, we pass the values we want to expose in the view, as keyword arguments.
+* `:books`はリソースの名前です。(どのviewsフォルダでGenieがビューファイルを検索するかを示します。今回のケースでは`app/resources/books/views`となります)
+* `:billgatesbooks`はビューファイルの名前です。拡張子を渡す必要はありません。この名前のファイルは一つしかないため、Genieは判断できます
+* そして最後に、ビューで公開したい値をキーワード引数として渡します
 
-That's it – our refactored app should be ready! You can try it out for yourself at <http://localhost:8000/bgbooks>
+それだけです。リファクタリングされたアプリは準備済みです。<http://localhost:8000/bgbooks>で試してみてください。
 
-### Markdown views
+### Markdownビュー
 
-Markdown views work similar to HTML views – employing the same embedded Julia functionality. Here is how you can add a Markdown view for our `billgatesbooks` function.
+MarkdownビューはHTMLビューと同じように動作し、同じく組み込まれたJuliaの機能を使用します。`billgatebooks`関数にMarkdownビューを追加する方法を示していきます。
 
-First, create the corresponding view file, using the `.jl.md` extension. Maybe with:
+初めに、`.jl.md`拡張子を利用することで、対応するビューファイルを生成しましょう。おそらく以下のやり方になるでしょう。
 
 ```julia
 julia> touch(joinpath("app", "resources", "books", "views", "billgatesbooks.jl.md"))
 ```
 
-Now edit the file and make sure it looks like this:
+ここで、ファイルを編集し、以下のようになることを確認してください。
 
 ```md
 <!-- app/resources/books/views/billgatesbooks.jl.md -->
@@ -264,12 +262,11 @@ $(
 )
 ```
 
-Notice that Markdown views do not support Genie's embedded Julia tags `<% ... %>`. Only string interpolation `$(...)` is accepted, but it works across multiple lines. Another notable difference is that at the moment, markdown views support access to variables only through the `@vars` collection (the `@vars` collection can be used in HTML views as well, but it's not necessary, as the variables can be accessed directly as well).
+MarkdownビューはGenieの埋め込みJuilaタグである`<% ... %>`をサポートしていないことに注意してください。文字列挿入の`$(...)`のみ使用できますが、複数行に渡って機能します。現時点でもう1つの注目すべき違いは、Markdownビューが`@vars`コレクションを介してのみ変数へのアクセスをサポートすることです。(`@vars`コレクションはHTMLビューでも利用できますが、変数への直接アクセスが可能であるため、必須ではありません。)
 
-If you reload the page now, however, Genie will still load the HTML view. The reason is that, _if we have only one view file_, Genie will manage.
-But if there's more than one, the framework won't know which one to pick. It won't error out but will pick the preferred one, which is the HTML version.
+現状、ページをリロードすると、GenieはまだHTMLビューをロードします。その理由は、ビューファイルが1つしかない場合はGenieが管理しますが、複数ある場合はGenieはどれを選択すればよいか判断できないためです。エラーは発生しませんが、優先バージョン(HTMLバージョン)が選択されるのです。
 
-It's a simple change in the `BookiesController`: we have to explicitly tell Genie which file to load, extension and all:
+`BookiesController`に簡単な変更を実施します。Genieに対してロードするファイル、拡張子などを明示的に指定します。
 
 ```julia
 # BooksController.jl
@@ -278,11 +275,11 @@ function billgatesbooks()
 end
 ```
 
-### Taking advantage of layouts
+### レイアウトを活用
 
-Genie's views are rendered within a layout file. Layouts are meant to render the theme of the website, or the "frame" around the view – the elements which are common on all the pages. The layout file can include visible elements, like the main menu or the footer. But also maybe the `<head>` tag or the assets tags (`<link>` and `<script>` tags for loading CSS and JavaScript files in all the pages).
+Genieのビューはレイアウトファイル内でレンダリングされます。レイアウトはWebサイトのテーマ、またはビュー周りの「フレーム」をレンダリングするものです。これは、すべてのページに共通する要素です。レイアウトファイルは、メインメニューやフッターなどの様々な要素を含んでいます。`<head>`タグまたはそれに関連するタグ(`<link>`タグや`<script>`タグなどCSSやJavaScriptをページ全体で読み込むためのもの)も含むでしょう。
 
-Every Genie app has a main layout file which is used by default – it can be found in `app/layouts/` and is called `app.jl.html`. It looks like this:
+すべてのGenieアプリはデフォルトで利用するメインレイアウトファイルがあります。これは`app/layouts/`にあり、`app.jl.html`という名前です。内容は以下の通りです。
 
 ```html
 <!-- app/layouts/app.jl.html -->
@@ -302,7 +299,7 @@ Every Genie app has a main layout file which is used by default – it can be fo
 </html>
 ```
 
-We can edit it. For example, add this right under the opening `<body>` tag, just above the `<%` tag:
+これを修正していきましょう。例として、`<body>`開始タグの真下(`<%`タグの真上)に以下を追記します。
 
 ```html
 <h1>Welcome to top books</h1>
@@ -310,15 +307,15 @@ We can edit it. For example, add this right under the opening `<body>` tag, just
 
 If you reload the page at <http://localhost:8000/bgbooks> you will see the new heading.
 
-But we don't have to stick to the default; we can add additional layouts. Let's suppose that we have, for example, an admin area which should have a completely different theme.
-We can add a dedicated layout for that:
+しかし、デフォルトで我慢する必要はありません。レイアウトは追加できます。例えば完全に異なるテーマとするべき管理ページがあるとしましょう。
+それ専用のレイアウトを追加します。
 
 ```julia
 julia> touch(joinpath("app", "layouts", "admin.jl.html"))
 "app/layouts/admin.jl.html"
 ```
 
-Now edit it (`julia> edit("app/layouts/admin.jl.html")`) and make it look like this:
+ここで上記ファイルを編集します。(編集コマンド：`julia> edit("app/layouts/admin.jl.html")`)　以下のように修正します。
 
 ```html
 <!-- app/layouts/admin.jl.html -->
@@ -336,8 +333,8 @@ Now edit it (`julia> edit("app/layouts/admin.jl.html")`) and make it look like t
 </html>
 ```
 
-If we want to apply it, we must instruct our `BooksController` to use it. The `html` function takes a keyword argument named `layout`, for the layout file.
-Update the `billgatesbooks` function to look like this:
+適用したい場合は、`BooksController`で上記を利用するように命令する必要があります。`html`関数でレイアウトファイルを指定するための`layout`という名前のキーワード引数を取るようにします。
+`billgatesbooks`関数を以下のように更新してみましょう。
 
 ```julia
 # BooksController.jl
@@ -346,15 +343,15 @@ function billgatesbooks()
 end
 ```
 
-Reload the page and you'll see the new heading.
+ページを更新することで、新たなヘッダが表示されます。
 
-#### The `@yield` instruction
+#### `@yield`命令
 
-There is a special instruction in the layouts: `@yield`. It outputs the contents of the view as rendered through the controller. So where this macro is present, Genie will output the HTML resulting from rendering the view by executing the route handler function within the controller.
+レイアウトには`@yield`という特殊な命令があります。それは、コントローラを介してレンダリングされたビューの内容を出力します。そのため、このマクロが存在する場合、Genieはコントローラ内のルートハンドラ関数を実行することで、ビューをレンダリングした結果のHTMLを出力します。
 
-#### Using view paths
+#### ビューパスの利用
 
-For very simple applications the MVC and the resource-centric approaches might involve too much boilerplate. In such cases, we can simplify the code by referencing the view (and layout) by file path, ex:
+非常にシンプルなアプリケーションの場合、MVCやリソース中心のアプローチでは、あまりに多くの定型文を含みすぎているかもしれません。そのようなケースでは、ファイルパスでビュー(またはレイアウト)を参照することでコードを簡素化できます。例は以下の通りです。
 
 ```julia
 # BooksController.jl
@@ -365,17 +362,17 @@ function billgatesbooks()
 end
 ```
 
-### Rendering JSON views
+### JSONビューのレンダリング
 
-A common use case for web apps is to serve as backends for RESTful APIs. For this cases, JSON is the preferred data format. You'll be happy to hear that Genie has built-in support for JSON responses. Let's add an endpoint for our API – which will render Bill Gates' books as JSON.
+Webアプリの一般的なユースケースは、RESTful APIのバックエンドとして動作することです。今回の場合、JSONは優先度の高いデータ形式です。GenieはJSONレスポンスのサポートを組み込んでいるので喜んでもらえるのではないでしょうか。APIのエンドポイントを追加しましょう。この対応でビルゲイツの本がJSONとしてレンダリングされるようになります。
 
-We can start in the `routes.jl` file, by appending this
+`routes.jl`ファイルで、以下を追加することからスタートしましょう。
 
 ```julia
 route("/api/v1/bgbooks", BooksController.API.billgatesbooks)
 ```
 
-Next, in `BooksController.jl`, append the extra logic at the end of the file, before the closing `end`. The whole file should look like this:
+次に、`BooksController.jl`で、ファイルの最下方にある`end`の前に追加処理を追記します。ファイル全体は以下のようになります。
 
 ```julia
 # BooksController.jl
@@ -415,29 +412,29 @@ end
 end
 ```
 
-We nested an API module within the `BooksController` module, where we defined another `billgatesbooks` function which outputs a JSON.
+`BooksController`モジュールの中にAPIモジュールをネストさせました。そこで、JSONを出力する別の`billgatesbooks`関数を定義しました。
 
-If you go to `http://localhost:8000/api/v1/bgbooks` it should already work as expected.
+<http://localhost:8000/api/v1/bgbooks>にアクセスすると、期待通りに動作します。
 
-#### JSON views
+#### JSONビュー
 
-However, we have just committed one of the cardinal sins of API development. We have just forever coupled our internal data structure to its external representation. This will make future refactoring very complicated and error prone as any changes in the data will break the client's integrations. The solution is to, again, use views, to fully control how we render our data – and decouple the data structure from its rendering on the web.
+しかしながら、API開発のきわめて重大な過ちの1つをコミットしてしまっています。内部データ構造を外部表現に永続的に結合していることです。これにより、将来のリファクタリングが非常に複雑となり、データ変更を加えることでクライアントとの結合を壊れるためにエラーが発生しやすくなります。解決策としては、ビューを使用して、データのレンダリング方法を完全に制御し、Web上でのレンダリングからデータ構造を切り離すことです。
 
-Genie has support for JSON views – these are plain Julia files which have the ".json.jl" extension. Let's add one in our `views/` folder:
+GenieはJSONビューをサポートしています。これらは、「.json.jl」という拡張子をもつ標準のJuliaファイルです。`views`フォルダに1つ追加してみましょう。
 
 ```julia
 julia> touch(joinpath("app", "resources", "books", "views", "billgatesbooks.json.jl"))
 "app/resources/books/views/billgatesbooks.json.jl"
 ```
 
-We can now create a proper response. Put this in the view file:
+ここで、適切な応答を作成します。 以下をビューファイルに追加します。
 
 ```julia
 # app/resources/books/views/billgatesbooks.json.jl
 "Bill Gates' list of recommended books" => books
 ```
 
-Final step, instructing `BooksController` to render the view. Simply replace the existing `billgatesbooks` function within the `API` sub-module with the following:
+最後のステップは、ビューをレンダリングするように`BooksController`に命令することです。`API`サブモジュール内の既存の`billgatesbooks`関数を以下のように置き換えるだけです。
 
 ```julia
 function billgatesbooks()
@@ -445,60 +442,60 @@ function billgatesbooks()
 end
 ```
 
-This should hold no surprises – the `json` function is similar to the `html` one we've seen before. So now we're rendering a custom JSON response. That's all – everything should work!
+これは驚くほどの事ではありません。`json`関数は以前見た`html`関数に似ています。今はカスタムJSONレスポンスをレンダリングしています。ここまでですべてが機能します。
 
 ---
-**HEADS UP**
+**注意喚起**
 
-#### Why JSON views have the extension ending in `.jl` but HTML and Markdown views do not?
+#### なぜJSONビューの拡張子の終わりには`.jl`がついていて、HTMLビューやMarkdownビューにはついていないのか?
 
-Good question! The extension of the views is chosen in order to preserve correct syntax highlighting in the IDE/code editor.
+良い質問です! ビューの拡張子はIDE/コードエディタ内で正しい構文のハイライト表示を維持するために選ばれています。
 
-Since practically HTML and Markdown views are HTML and Markdown files with some embedded Julia code, we want to use the HTML or Markdown syntax highlighting. For JSON views, we use pure Julia, so we want Julia syntax highlighting.
-
----
-
-## Accessing databases with `SeachLight` models
-
-You can get the most out of Genie by pairing it with its seamless ORM layer, SearchLight. SearchLight, a native Julia ORM, provides excellent support for working with relational databases. The Genie + SearchLight combo can be used to productively develop CRUD (Create-Read-Update-Delete) apps.
-
----
-**HEADS UP**
-
-CRUD stands for Create-Read-Update-Delete and describes the data workflow in many web apps, where resources are created, read (listed), updated, and deleted.
+HTMLビューとMarkdownビューは、Juliaコードが埋め込まれたHTMLファイルとMarkdownファイルであるため、HTMLまたはMarkdown構文のハイライト表示を使用します。JSONビューの場合は、純正のJuliaを利用するため、Julia構文のハイライト表示を使用します。
 
 ---
 
-SearchLight represents the "M" part in Genie's MVC architecture (thus, the Model layer).
+## `SeachLight`モデルでデータベースに接続
 
-Let's begin by adding SearchLight to our Genie app. All Genie apps manage their dependencies in their own Julia environment, through their `Project.toml` and `Manifest.toml` files.
+シームレスなオブジェクト関係マッピング(ORM)レイヤーであるSearchLightとGenieを組み合わせることで、Genieを最大限に活用できます。ネイティブJulia ORMであるSearchLightは、リレーショナルデータベースでの作業に素晴らしいサポートを提供します。Genie + SearchLightコンボはCRUD(Create-Read-Update-Delete)アプリを生産的に開発するために利用できます。
 
-So we need to make sure that we're in `pkg> ` shell mode first (which is entered by typing `]` in julian mode, ie: `julia>]`).
-The cursor should change to `(MyGenieApp) pkg>`.
+---
+**注意喚起**
 
-Next, we add `SearchLight`:
+CRUDはCreate-Read-Update-Deleteの略称で、リソースの作成、読み込み(一覧化)、更新、削除を行う多くのWebアプリのデータワークフローを表しています。
+
+---
+
+SearchLightはGenieのMVC基盤の「M」部分(モデル層)を表現します。
+
+GenieアプリにSearchLightを追加してみましょう。すべてのGenieアプリは`Project.toml`と`Manifest.toml`ファイルを通して、アプリ独自のJulia環境で依存関係を管理しています。
+
+そのため、最初に`pkg>`シェルモードであることを確認する必要があります。(Juliaモードで`]`を入力すると、シェルモードに入ります。(すなわち`julia>]`)
+カーソルが`(MyGenieApp) pkg>`に変わります。
+
+次に、`SearchLight`を追加します。
 
 ```julia
 (MyGenieApp) pkg> add SearchLight
 ```
 
-### Adding a database adapter
+### データベースアダプタの追加
 
-`SearchLight` provides a database agnostic API for working with various backends (at the moment, MySQL, SQLite, and Postgres). Thus, we also need to add the specific adapter. To keep things simple, let's use SQLite for our app. Hence, we'll need the `SearchLightSQLite` package:
+`SearchLight`は様々なバックエンド(現時点では、MySQL,SQLite,Postgres)を操作するためのデータベースに依存しないAPIを提供します。したがって、特定のアダプタも追加する必要があります。シンプルさを維持するため、アプリにSQLiteを使いましょう。ゆえに、`SearchLightSQLite`パッケージが必要になります。
 
 ```julia
 (MyGenieApp) pkg> add SearchLightSQLite
 ```
 
-### Setup the database connection
+### データベース接続のセットアップ
 
-Genie is designed to seamlessly integrate with SearchLight and provides access to various database oriented generators. First we need to tell Genie/SearchLight how to connect to the database. Let's use them to set up our database support. Run this in the Genie/Julia REPL:
+GenieはSearchLightとシームレスに結合するように設計されており、様々なデータベース指向のジェネレータへのアクセスを提供します。はじめに、Genie/SearchLightにデータベースへの接続方法を伝える必要があります。データベースサポートを設定するためにそれらを利用してみましょう。Genie/Julia REPLで以下を実行します。
 
 ```julia
 julia> Genie.Generator.db_support()
 ```
 
-The command will add a `db/` folder within the root of the app. What we're looking for is the `db/connection.yml` file which tells SearchLight how to connect to the database. Let's edit it. Make the file look like this:
+コマンドはアプリのルートディレクトリ内に`db/`フォルダを追加します。データベースへの接続の方法をSearchLightに伝えるための`db/connection.yml`ファイルを探索します。それを編集してみましょう。以下のようにファイルを修正します。
 
 ```yaml
 env: ENV["GENIE_ENV"]
@@ -509,16 +506,16 @@ dev:
   config:
 ```
 
-This instructs SearchLight to run in the environment of the current Genie app (by default `dev`), using `SQLite` for the adapter (backend) and a database stored at `db/books.sqlite` (the database will be created automatically if it does not exist). We could pass extra configuration options in the `config` object, but for now we don't need anything else.
+これはSearchLightに対して、現在のGenieアプリの環境(デフォルトは`dev`)で動作し、アダプタ(バックエンド)として`SQLight`を利用し、データベースは`db/books.sqlite`(存在しない場合は自動で作成される)で保存するように命令しています。`config`オブジェクト内で追加の設定オプションを渡すこともできますが、今は何も必要ありません。
 
 ---
-**HEADS UP**
+**注意喚起**
 
-If you are using a different adapter, make sure that the database configured already exists and that the configured user can successfully access it -- SearchLight will not attempt to create the database.
+他のアダプタを利用している場合、設定済みのデータベースがすでに存在し、設定済みのユーザがそのデータベースに正常にアクセスできることを確認してください。SearchLightはデータベースの作成を試みることはしません。
 
 ---
 
-Now we can ask SearchLight to load it up:
+ここまでで、SearchLightにロードするよう要求ができます。
 
 ```julia
 julia> using SearchLight
@@ -531,7 +528,7 @@ Dict{String,Any} with 4 entries:
   "adapter"  => "SQLite"
 ```
 
-Let's just go ahead and try it out by connecting to the DB:
+次に進んで、データベースに接続してみましょう。
 
 ```julia
 julia> using SearchLightSQLite
@@ -540,12 +537,12 @@ julia> SearchLight.Configuration.load() |> SearchLight.connect
 SQLite.DB("db/books.sqlite")
 ```
 
-The connection succeeded and we got back a SQLite database handle.
+接続が成功し、SQLiteデータベースハンドルが返されました。
 
 ---
-**PRO TIP**
+**プロのヒント**
 
-Each database adapter exposes a `CONNECTIONS` collection where we can access the connection:
+各データベースアダプタは、接続情報にアクセスできる`CONNECTIONS`コレクションを公開します。
 
 ```julia
 julia> SearchLightSQLite.CONNECTIONS
@@ -555,7 +552,7 @@ julia> SearchLightSQLite.CONNECTIONS
 
 ---
 
-Awesome! If all went well you should have a `books.sqlite` database in the `db/` folder.
+素晴らしい！　すべてが順調であれば、`db/`フォルダ内に`books.sqlite`データベースがあります。
 
 ```julia
 shell> tree db
@@ -566,23 +563,23 @@ db
 └── seeds
 ```
 
-### Managing the database schema with `SearchLight` migrations
+### `SearchLight`マイグレーションでデータベーススキーマを管理
 
-Database migrations provide a way to reliably, consistently and repeatedly apply (and undo) schema transformations. They are specialised scripts for adding, removing and altering DB tables – these scripts are placed under version control and are managed by a dedicated system which knows which scripts have been run and which not, and is able to run them in the correct order.
+データベースの移行は、スキーマ変換を確実かつ一貫して繰り返し適用する(元に戻す)方法を提供します。それらはデータベースのテーブルを追加、削除、変更するための特別なスクリプトです。これらのスクリプトはバージョン管理化におかれ、実行されたスクリプトと実行されなかったスクリプトを認識し、正しい順番でスクリプトを実行できる専用のシステムで管理されます。
 
-SearchLight needs its own DB table to keep track of the state of the migrations so let's set it up:
+SearchLightはマイグレーションの状態を追跡しつづけるために独自のデータベーステーブルを必要とします。それを設定してみましょう。
 
 ```julia
 julia> SearchLight.Migrations.create_migrations_table()
 [ Info: Created table schema_migrations
 ```
 
-This command sets up our database with the needed table in order to manage migrations.
+このコマンドは移行を管理するために必要なテーブルをデータベースに設定します。
 
 ---
-**PRO TIP**
+**プロのヒント**
 
-You can use the SearchLight API to execute random queries against the database backend. For example we can confirm that the table is really there:
+SearchLight APIを利用して、データベースバックエンドに対してランダムクエリを実行できます。例えばテーブルが実際にあることを確認することができます。
 
 ```julia
 julia> SearchLight.query("SELECT name FROM sqlite_master WHERE type ='table' AND name NOT LIKE 'sqlite_%'")
@@ -596,15 +593,15 @@ julia> SearchLight.query("SELECT name FROM sqlite_master WHERE type ='table' AND
 │ 1   │ schema_migrations │
 ```
 
-The result is a familiar `DataFrame` object.
+結果はおなじみの `DataFrame`オブジェクトです。
 
 ---
 
-### Creating our Book model
+### Bookモデルの作成
 
-SearchLight, just like Genie, uses the convention-over-configuration design pattern. It prefers for things to be setup in a certain way and provides sensible defaults, versus having to define everything in extensive configuration files. And fortunately, we don't even have to remember what these conventions are, as SearchLight also comes with an extensive set of generators.
+Genietと同様に、SearchLightはConvention-over-Configuration設計パターンを利用します。それは大規模な構成ファイルの中ですべてを定義する必要はなく、特定の方法で設定することを好み、実用的なデフォルトを提供します。そして幸いにも、SearchLightには豊富なジェネレータ一式が付属しているため、これらの規則を覚える必要さえありません。
 
-Lets ask SearchLight to create a new model:
+新しいモデルを作成するようにSearchLightに依頼してみましょう。
 
 ```julia
 julia> SearchLight.Generator.newresource("Book")
@@ -615,28 +612,28 @@ julia> SearchLight.Generator.newresource("Book")
 [ Info: New unit test created at /Users/adrian/Dropbox/Projects/MyGenieApp/test/books_test.jl
 ```
 
-SearchLight has created the `Books.jl` model, the `*_create_table_books.jl` migration file, the `BooksValidator.jl` model validator and the `books_test.jl` test file.
+SearchLightは`Books.jl`モデルと、`*_create_table_books.jl`マイグレーションファイル、`BooksValidator.jl`モデルバリデータ、`books_test`テストファイルを作成します。
 
 ---
-**HEADS UP**
+**注意喚起**
 
-The first part of the migration file will be different for you!
+移行ファイルの最初の部分はあなたのものとは異なります。
 
-The `*_create_table_books.jl` file will be named differently as the first part of the name is the file creation timestamp. This timestamp part guarantees that names are unique and file name clashes are avoided (for example when working as a team a creating similar migration files).
+名前の前半部分はファイル作成のタイムスタンプであるため、`*_create_table_books.jl`ファイルには別の名前がつけられます。このタイムスタンプ部分は、名前はユニークで、ファイル競合を回避することを保証します。(例えばチームとで作業していて似たような移行ファイルを作成する場合)
 
 ---
 
 
-#### Writing the table migration
+#### テーブルマイグレーションの記載
 
-Lets begin by writing the migration to create our books table. SearchLight provides a powerful DSL for writing migrations.
-Each migration file needs to define two methods: `up` which applies the changes – and `down` which undoes the effects of the `up` method.
-So in our `up` method we want to create the table – and in `down` we want to drop the table.
+booksテーブルを作成するため、マイグレーションを記述してみましょう。SearchLightはマイグレーションを記載するために強力なDSLを提供します。
+各マイグレーションファイルは2つのメソッドを定義する必要があります。1つは変更を適用する`up`メソッド、もう1つはその`up`メソッドの効果を元に戻す`down`メソッドです。
+そのため、`up`メソッドはテーブルを生成し、`down`メソッドはテーブルを削除します。
 
-The naming convention for tables in SearchLight is that the table name should be pluralized (`books`) – because a table contains multiple books (each row represents an object, a "book").
-But don't worry, the migration file should already be pre-populated with the correct table name.
+SearchLightのテーブルの命名規則では、テーブル名を複数形(例：`books`)にする必要があります。なぜなら、テーブルには複数の本(books)が含まれるためです(各行はオブジェクト"book"を表現しています)。
+しかし、心配することはありません。マイグレーションファイルは正しいテーブル名で既に入力されているからです。
 
-Edit the `db/migrations/*_create_table_books.jl` file and make it look like this:
+`db/migrations/*_create_table_books.jl`ファイルを編集して、以下のようにしてください。
 
 ```julia
 module CreateTableBooks
@@ -663,11 +660,11 @@ end
 end
 ```
 
-The DSL is pretty readable: in the `up` function we call `create_table` and pass an array of columns: a primary key, a `title` column and an `author` column (both strings have a max length of 100). We also add two indices (one on the `title` and the other on the `author` columns). As for the `down` method, it invokes the `drop_table` function to remove the table.
+DSLはとても読みやすいです。`up`関数内で`create_table`を呼び、列の配列を渡します。主キー、`title`列と`author`列(両方とも文字列は最大長100文字)です。また、2つのインデックス(1つは`title`列で、もう一方は`author`列)を追加します。`down`メソッドは、テーブルを削除するために`drop_table`関数を呼びます。
 
-#### Running the migration
+#### マイグレーションの実行
 
-We can see what SearchLight knows about our migrations with the `SearchLight.Migrations.status` command:
+`SearchLight.Migrations.status`コマンドによりSearchLightがマイグレーションについて知っていることを確認できます。
 
 ```julia
 julia> SearchLight.Migrations.status()
@@ -678,14 +675,14 @@ julia> SearchLight.Migrations.status()
 | 1 | 2020020909574048_create_table_books.jl |
 ```
 
-So our migration is in the `down` state – meaning that its `up` method has not been run. We can easily fix this:
+マイグレーションは`down`状態です。つまり、`up`メソッドはまだ実行されていません。これは簡単に直せます。
 
 ```julia
 julia> SearchLight.Migrations.last_up()
 [ Info: Executed migration CreateTableBooks up
 ```
 
-If we recheck the status, the migration is up:
+再びチェックすると、マイグレーションがupとなります。
 
 ```julia
 julia> SearchLight.Migrations.status()
@@ -696,13 +693,13 @@ julia> SearchLight.Migrations.status()
 | 1 | 2020020909574048_create_table_books.jl |
 ```
 
-Our table is ready!
+テーブルが準備できました！
 
-#### Defining the model
+#### モデルの定義
 
-Now it's time to edit our model file at `app/resources/books/Books.jl`. Another convention in SearchLight is that we're using the pluralized name (`Books`) for the module – because it's for managing multiple books. And within it we define a type (a `mutable struct`), called `Book` – which represents an item (a single book) which maps to a row in the underlying database.
+今度は、`app/resources/books/Books.jl`のモデルファイルを修正するときです。SearchLightの他の規則は、モジュールに複数形の名前(`Books`)を利用していることです。なぜなら、複数の本を管理するためのものだからです。その中で`Book`という名の型(`可変構造体(mutable struct)`)を定義します。基盤となるデータベースの行に割り当てるアイテム(単一の本)を表現します。
 
-Edit the `Books.jl` file to make it look like this:
+`Books.jl`ファイルを修正して、以下のようにしてください。
 
 ```julia
 # Books.jl
@@ -722,11 +719,11 @@ end
 end
 ```
 
-We defined a `mutable struct` which matches our previous `Book` type by using the `@kwdef` macro, in order to also define a keyword constructor, as SearchLight needs it.
+SearchLightが必要とするキーワードコンストラクターも定義するために、`@kwdef`マクロを利用することで、前の`Book`型と一致する`可変構造体(mutable struct)`を定義しました。
 
-#### Using our model
+#### モデルの利用
 
-To make things more interesting, we should import our current books into the database. Add this function to the `Books.jl` module, under the `Book()` constructor definition (just above the module's closing `end`):
+もっと興味深くするために、データベースに現在の本をインポートする必要があります。`Books.jl`モジュールの`Book()`コンストラクタ定義の下(モジュールの`end`のちょうど上)に、この関数を追加してください。
 
 ```julia
 # Books.jl
@@ -745,9 +742,9 @@ function seed()
 end
 ```
 
-#### Auto-loading the DB configuration
+#### データベース設定の自動読み込み
 
-Now, to try things out. Genie takes care of loading all our resource files for us when we load the app. To do this, Genie comes with a special file called an initializer, which automatically loads the database configuration and sets up SearchLight. Check `config/initializers/searchlight.jl`. It should look like this:
+実際に試してみます。Genieはアプリを読み込む際、すべてのリソースファイルを読み込みます。これを実施するため、Genieはデータベースの設定を自動で読み込み、SearchLightをセットアップするイニシャライザと呼ばれる特別なファイルを備えています。`config/initializers/searchlight.jl`を確認してください。それは以下のようになっています。
 
 ```julia
 using SearchLight
@@ -765,23 +762,23 @@ end
 ```
 
 ---
-**Heads up!**
+**注意喚起!**
 
-All the `*.jl` files placed into the `config/initializers/` folder are automatically included by Genie upon starting the Genie app. They are included early (upon initialisation), before the controllers, models, views, are loaded.
+`config/initializers/`フォルダの中に配置された`*.jl`ファイルのすべてはGenieアプリ起動時にGenieによって自動的にインクルードされます。それらはコントローラ、モデル、ビューが読み込まれるより前の初期化時にインクルードされます。
 
 ---
 
-#### Trying it out
+#### 試してみる
 
-Now it's time to restart our REPL session and test our app. Close the Julia REPL session to exit to the OS command line and run:
+REPLセッションを再開して、アプリをテストしてみましょう。Julia REPLセッションを閉じて、OSコマンドラインに戻り、以下のコマンドを実行します。
 
 ```bash
 $ bin/repl
 ```
 
-In Windows go into the `bin/` folder within the application's directory and run `repl.bat` in the terminal.
+Windowsの場合、アプリケーションディレクトリ内の`bin/`フォルダに移動し、ターミナルで`repl.bat`を実行してください。
 
-The `repl` executable script placed within the app's `bin/` folder starts a new Julia REPL session and loads the applications' environment. Everything should be automatically loaded now, DB configuration included - so we can invoke the previously defined `seed` function to insert the books:
+アプリの`bin/`フォルダに配置された`repl`実行可能スクリプトは新たなJulia REPLセッションを開始し、アプリケーションの環境を読み込みます。すべてが自動的に読み込まれ、データベース設定がインクルードされます。以前定義したbooksを挿入する`seed`関数を呼び出します。
 
 ```julia
 julia> using Books
@@ -789,7 +786,7 @@ julia> using Books
 julia> Books.seed()
 ```
 
-There should be a list of queries showing how the data is inserted in the DB:
+データがデータベースに挿入される方法を示すクエリの一覧があります。
 
 ```julia
 julia> Books.seed()
@@ -798,7 +795,7 @@ julia> Books.seed()
 # output truncated
 ```
 
-If you want to make sure all went right (although trust me, it did, otherwise SearchLight would've thrown an `Exception`!), just ask SearchLight to retrieve them:
+すべてがうまくいったことを確認したければ(私を信じて実施してください。さもないとSearchLightは`Exception`を返していただろう!)、挿入結果を取得するようにSearchLightに要求します。
 
 ```julia
 julia> using SearchLight
@@ -824,11 +821,11 @@ julia> all(Book)
 # output truncated
 ```
 
-The `SearchLight.all` method returns all the `Book` items from the database.
+`SearchLight.all`メソッドはデータベースからすべての`Book`アイテムを返します。
 
-All good!
+すべてうまくいきました！
 
-The next thing we need to do is to update our controller to use the model. Make sure that `app/resources/books/BooksController.jl` reads like this:
+次に、モデルを利用するためにコントローラを更新する必要があります。`app/resources/books/BooksController.jl`を以下のようになっているか確認してください。
 
 ```julia
 # BooksController.jl
@@ -854,23 +851,23 @@ end
 end
 ```
 
-Our JSON view needs a bit of tweaking too:
+JSONビューも少しだけ調整が必要です。
 
 ```julia
 # app/resources/books/views/billgatesbooks.json.jl
 "Bill's Gates list of recommended books" => [Dict("author" => b.author, "title" => b.title) for b in books]
 ```
 
-Now if we just start the server we'll be able to see the list of books served from the database:
+サーバを起動すれば、データベースから提供される本の一覧を表示できるようになります。
 
 ```julia
 # Start the server
 julia> up()
 ```
 
-The `up` method starts up the web server and takes us back to the interactive Julia REPL prompt.
+`up`メソッドはWebサーバを起動し、対話型のJulia REPLプロンプトに戻ります
 
-Now, if, for example, we navigate to <http://localhost:8000/api/v1/bgbooks>, the output should match the following JSON document:
+例えば、<http://localhost:8000/api/v1/bgbooks>に移動した場合、出力結果は以下のJSONドキュメントと一致します。
 
 ```json
 {
@@ -899,7 +896,7 @@ Now, if, for example, we navigate to <http://localhost:8000/api/v1/bgbooks>, the
 }
 ```
 
-Let's add a new book to see how it works. We'll create a new `Book` item and persist it using the `SearchLight.save!` method:
+その動き方を確認するために新しい本を追加してみましょう。新たな`Book`アイテムを生成し、`SearchLight.save!`メソッドを利用してそれを永続化します。
 
 ```julia
 julia> newbook = Book(title = "Leonardo da Vinci", author = "Walter Isaacson")
@@ -926,18 +923,18 @@ Book
 | title::String  | Leonardo da Vinci |
 ```
 
-Calling the `save!` method, SearchLight has persisted the object in the database and then retrieved it and returned it (notice the updated `id::DbId` field).
+`save!`メソッドを呼び出すことで、SearchLightはデータベースにオブジェクトを永続化し、それを取得して返しました(`id::DbId`が更新されたことに注意してください)。
 
-The same `save!` operation can be written as a one-liner:
+同じように`save!`操作はワンライナーで書くことができます。
 
 ```julia
 julia> Book(title = "Leonardo da Vinci", author = "Walter Isaacson") |> save!
 ```
 
 ---
-**HEADS UP**
+**注意喚起**
 
-If you also run the one-liner `save!` example, it will add the same book again. No problem, but if you want to remove it, you can use the `delete` method:
+ワンライナーの`save!`例を実行する場合、」同じ本が再び追加されます。問題はありませんが、それを消したい場合は`delete`メソッドを利用します。
 
 ```julia
 julia> delete(ans)
@@ -953,7 +950,7 @@ Book
 
 ---
 
-If you reload the page at <http://localhost:8000/bgbooks> the new book should show up.
+<http://localhost:8000/bgbooks>のページをリロードすると、新しい本が表示されます。
 
 ```json
 {
@@ -987,14 +984,14 @@ If you reload the page at <http://localhost:8000/bgbooks> the new book should sh
 ```
 
 ---
-**PRO TIP**
+**プロのヒント**
 
-SearchLight exposes two similar data persistence methods: `save!` and `save`. They both perform the same action (persisting the object to the database), but `save` will return a `Bool` `true` to indicate that the operation was successful or a `Bool` `false` to indicate that the operation has failed. While the `save!` variant will return the persisted object upon success or will throw an exception on failure.
+SearchLightは、2つの似たようなデータ永続化メソッドである`save!`と`save`を公開します。それらは両方とも同じ動作(データベースにオブジェクトを永続化)をしますが、`save`メソッドは操作が成功したことを示す`Bool`型の`true`を、または失敗したことを示す`Bool`型の`false`を返します。一方で`save!`は成功すると永続化オブジェクトを返し、失敗すると例外をスローします。
 
 ---
 
-## Congratulations
+## おめでとうございます
 
-You have successfully finished the first part of the step by step walkthrough - you now master the Genie basics, allowing you to set up a new app, register routes, add resources (controllers, models, and views), add database support, version the database schema with migrations, and execute basic queries with SearchLight!
+段階的なウォークスルーの最初のパートを無事終わらせることができました。Genieの基本をマスターし、新しいアプリのセットアップ、ルート登録、リソース(コントローラ、モデル、ビュー)の追加、データベースサポートの追加、マイグレーションを伴うデータベーススキーマバージョン管理、SearchLightでの基本的なクエリ実行が可能となりました！
 
-In the next part we'll look at more advanced topics like handling forms and file uploads, templates rendering, interactivity and more.
+次のパートでは、フォームやファイルのアップロード、テンプレートによるレンダリング、対話型の処理など、より高度なトピックを見ていきます。
