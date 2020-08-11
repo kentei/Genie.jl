@@ -16,6 +16,8 @@ const ASSET_FINGERPRINT = ""
     bootstrap(context::Union{Module,Nothing} = nothing) :: Nothing
 
 Kickstarts the loading of a Genie app by loading the environment settings.
+(ja)
+環境設定をロードすることで、Genieアプリのロードをキックスタートする。
 """
 function bootstrap(context::Union{Module,Nothing} = Genie.default_context(context)) :: Nothing
   if haskey(ENV, "GENIE_ENV") && isfile(joinpath(Genie.config.path_env, ENV["GENIE_ENV"] * ".jl"))

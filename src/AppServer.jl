@@ -12,6 +12,8 @@ import Genie
     ServersCollection(webserver::Union{Task,Nothing}, websockets::Union{Task,Nothing})
 
 Represents a object containing references to Genie's web and websockets servers.
+(ja)
+GenieのWebサーバとWebSocketサーバへの参照を含むオブジェクト。
 """
 mutable struct ServersCollection
   webserver::Union{Task,Nothing}
@@ -22,6 +24,8 @@ end
     SERVERS
 
 ServersCollection constant containing references to the current app's web and websockets servers.
+(ja)
+現在のアプリのWebサーバとWebSocketサーバへの参照を含むServersCollection定数
 """
 const SERVERS = ServersCollection(nothing, nothing)
 
@@ -46,6 +50,23 @@ julia> up(8000, "127.0.0.1", async = false)
 [ Info: Ready!
 Web Server starting at http://127.0.0.1:8000
 ```
+
+(ja)
+Webサーバを起動する。
+
+# 引数
+- `port::Int`: Webサーバで利用するポート番号
+- `host::String`: Webサーバで利用するホスト名
+- `ws_port::Int`: WebSocketサーバで利用するポート番号
+- `async::Bool`: Webサーバータスクを非同期で実行するかどうかのフラグ
+
+# 例
+```julia-repl
+julia> up(8000, "127.0.0.1", async = false)
+[ Info: Ready!
+Web Server starting at http://127.0.0.1:8000
+```
+
 """
 function startup(port::Int = Genie.config.server_port, host::String = Genie.config.server_host;
                   ws_port::Int = Genie.config.websockets_port, async::Bool = ! Genie.config.run_as_server,
@@ -101,6 +122,8 @@ const up = startup
 
 Updates the corresponding Genie configurations to the corresponding values for
   `port`, `host`, and `ws_port`, if these are passed as arguments when starting up the server.
+(ja)
+サーバ起動時に`port`、`host`、`ws_port`の引数が渡される場合、対応するGenie設定を更新する。
 """
 function update_config(port::Int, host::String, ws_port::Int) :: Nothing
   Genie.config.server_port = port
@@ -115,6 +138,8 @@ end
     downdown(; webserver::Bool = true, websockets::Bool = true) :: ServersCollection
 
 Shuts down the servers optionally indicating which of the `webserver` and `websockets` servers to be stopped.
+(ja)
+WebサーバとWebSocketサーバの内、指定されたサーバをシャットダウンする。
 """
 function down(; webserver::Bool = true, websockets::Bool = true) :: ServersCollection
   webserver && (@async Base.throwto(SERVERS.webserver, InterruptException()))
@@ -128,6 +153,8 @@ end
     handle_request(req::HTTP.Request, res::HTTP.Response, ip::IPv4 = IPv4(Genie.config.server_host)) :: HTTP.Response
 
 Http server handler function - invoked when the server gets a request.
+(ja)
+HTTPサーバーハンドラー関数 - サーバーがリクエストを受け取ったときに呼び出される。
 """
 function handle_request(req::HTTP.Request, res::HTTP.Response, ip::Sockets.IPv4 = Sockets.IPv4(Genie.config.server_host)) :: HTTP.Response
   try
@@ -149,6 +176,8 @@ end
     setup_http_handler(req::HTTP.Request, res::HTTP.Response = HTTP.Response()) :: HTTP.Response
 
 Configures the handler for the HTTP Request and handles errors.
+(ja)
+HTTPリクエストハンドラーを設定し、エラーを処理する。
 """
 function setup_http_handler(req::HTTP.Request, res::HTTP.Response = HTTP.Response()) :: HTTP.Response
   try
@@ -179,6 +208,8 @@ end
     setup_ws_handler(req::HTTP.Request, ws_client) :: Nothing
 
 Configures the handler for WebSockets requests.
+(ja)
+WebSocketリクエストハンドラーを設定する。
 """
 function setup_ws_handler(req::HTTP.Request, ws_client) :: Nothing
   while ! eof(ws_client)
@@ -193,6 +224,8 @@ end
     handle_ws_request(req::HTTP.Request, msg::String, ws_client, ip::IPv4 = IPv4(Genie.config.server_host)) :: String
 
 Http server handler function - invoked when the server gets a request.
+(ja)
+HTTPサーバーハンドラー関数 - サーバーがリクエストを受け取ったときに呼び出される。(websocket用)
 """
 function handle_ws_request(req::HTTP.Request, msg::String, ws_client, ip::Sockets.IPv4 = Sockets.IPv4(Genie.config.server_host)) :: String
   msg == "" && return "" # keep alive
